@@ -1,5 +1,5 @@
 # Ignore _internal
-/src/_internal.json
+src/_internal.json
 
 # Ingore _ratelimit
-/src/_ratelimit.json
+src/_ratelimit.json
