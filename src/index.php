@@ -36,11 +36,11 @@ foreach ($files as $file) {
 <body>
 	<div class="body-info">
 		<p>
-		Welcome to the hub site for Beatrun courses <br>
-		Here you can download Beatrun and upload courses for any map
+		Welcome to my custom Beatrun Course Database <br>
+		Here you can download Beatrun and upload courses for any available map
 		</p>
 
-		<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
+		<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord (Latest Beatrun with this database support)</a>
 		<a href="https://github.com/jeffthekillerz/beatrun" class="button">Beatrun Source Code</a>
 	</div>
 
