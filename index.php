@@ -33,7 +33,7 @@ foreach ($files as $file) {
 <html>
 
 <head>
-	<meta property="og:title" content="Unofficial Beatrun Courses Database">
+	<title>Unofficial Beatrun Courses Database</title>
 </head>
 
 <body>
@@ -96,6 +96,11 @@ foreach ($files as $file) {
 </html>
 
 <style>
+	@font-face {
+		font-family: "HeadUpDaisy";
+		src: url("fonts/x14y24pxHeadUpDaisy.ttf") format("truetype");
+	}
+
 	body {
 		font-family: "HeadUpDaisy";
 		background-color: #171717;
