@@ -37,8 +37,8 @@ foreach ($files as $file) {
 	<script type="text/javascript" src="particles.js"></script>
 	<script type="text/javascript" src="app.js"></script>
 
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<link rel="icon" href="/avicon.ico" type="image/x-icon">
+	<link rel="shortcut icon" href="favicon_static.ico" type="image/x-icon">
+	<link rel="icon" href="/favicon.ico" type="image/x-icon">
 
 	<div class="panel">
 		<h1>Beatrun | Unofficial Course Database | Supported by Jonny_Bro</h1>
