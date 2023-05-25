@@ -55,7 +55,16 @@ foreach ($files as $file) {
 		<tbody>
 			<?php foreach ($data as $row): ?>
 				<tr>
-					<td><div class="square"><?php echo str_replace("gm", "gm_", $row[0]); ?></div></td>
+					<?php
+						$find = array(
+							"gm" => "gm_",
+							"br" => "br_",
+							"rp" => "rp_",
+							"catalyst" => "catalyst_",
+							"gpk" => "gpk_"
+						)
+					?>
+					<td><div class="square"><?php echo strtr($row[0], $find); ?></div></td>
 					<td><div class="square"><?php echo $row[1]; ?></div></td>
 				</tr>
 			<?php endforeach; ?>
