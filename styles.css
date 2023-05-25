@@ -63,3 +63,8 @@ table {
 	height: 100%;
 	z-index: -1;
 }
+
+::selection {
+		background-color: #121212;
+		color: #7a7a7a;
+}
