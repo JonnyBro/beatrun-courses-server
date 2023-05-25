@@ -85,9 +85,9 @@ foreach ($files as $file) {
 		</div>
 	</div>
 
-	<div class="footer">
+	<footer>
 		<p>France lost | Coperight @ [relaxtakenotes / el1s1on / jonny_bro]</p>
-	</div>
+	</footer>
 </body>
 
 </html>
