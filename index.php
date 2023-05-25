@@ -3,7 +3,8 @@ $coursesDir = "courses";
 $files = scandir($coursesDir);
 $data = array();
 
-function print_to_console($data) {
+function print_to_console($data)
+{
 	$output = $data;
 	if (is_array($output))
 		$output = implode(',', $output);
@@ -32,26 +33,21 @@ foreach ($files as $file) {
 <link rel="stylesheet" href="styles.css">
 <html>
 
-<head>
+<body>
 	<div id="particles-js"></div>
 	<script type="text/javascript" src="particles.js"></script>
 	<script type="text/javascript" src="app.js"></script>
 
-	<link rel="shortcut icon" href="favicon_static.ico" type="image/x-icon">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
-
-	<div class="panel">
-		<h1>Beatrun | Unofficial Course Database | by Jonny_Bro</h1>
-	</div>
-</head>
-
-<body>
 	<div class="wrapper">
+		<div class="panel">
+			<h1>Beatrun Crack | Course Database</h1>
+		</div>
+
 		<div class="content">
 			<div class="body-info">
 				<p>
-				Welcome to my custom Beatrun Course Database <br>
-				Here you can download Beatrun and upload courses for any available map <br><br>
+					Welcome to my custom Beatrun Course Database <br>
+					Here you can download Beatrun and upload courses for any available map <br><br>
 				</p>
 
 				<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
@@ -67,7 +63,7 @@ foreach ($files as $file) {
 					</tr>
 				</thead>
 				<tbody>
-					<?php foreach ($data as $row): ?>
+				<?php foreach ($data as $row): ?>
 						<tr>
 							<?php
 								$find = array(
