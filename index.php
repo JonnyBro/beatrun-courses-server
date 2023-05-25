@@ -70,6 +70,7 @@ foreach ($files as $file) {
 							"gm" => "gm_",
 							"br" => "br_",
 							"rp" => "rp_",
+							"dm" => "dm_",
 							"catalyst" => "catalyst_",
 							"gpk" => "gpk_"
 						)
