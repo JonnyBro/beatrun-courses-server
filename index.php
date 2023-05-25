@@ -32,6 +32,10 @@ foreach ($files as $file) {
 <!DOCTYPE html>
 <html>
 
+<head>
+	<meta property="og:title" content="Unofficial Beatrun Courses Database">
+</head>
+
 <body>
 	<div id="particles-js"></div>
 	<script type="text/javascript" src="particles.js"></script>
