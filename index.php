@@ -47,7 +47,7 @@ foreach ($files as $file) {
 		<p>
 		Welcome to my custom Beatrun Course Database <br>
 		Here you can download Beatrun and upload courses for any available map <br><br>
-		In out Discord you can get latest version of Beatrun with this database support!
+		In our Discord you can get latest version of Beatrun with support for this database!
 		</p>
 
 		<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
