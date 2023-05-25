@@ -1,5 +1,3 @@
-particlesJS.load("particles-js");
-
 particlesJS("particles-js", {
 	"particles": {
 		"number": {

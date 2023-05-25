@@ -3,6 +3,14 @@ $coursesDir = "courses";
 $files = scandir($coursesDir);
 $data = array();
 
+function print_to_console($data) {
+	$output = $data;
+	if (is_array($output))
+		$output = implode(',', $output);
+
+	echo "<script>console.log('" . $output . "');</script>";
+}
+
 foreach ($files as $file) {
 	if ($file != "." && $file != "..") {
 		if (is_dir($coursesDir . "/" . $file)) {
@@ -10,9 +18,10 @@ foreach ($files as $file) {
 
 			foreach ($mapFiles as $mapFile) {
 				$mapName = $file;
+				$courseName = array_filter(json_decode(file_get_contents($mapFile)), "is_string")[4];
 				$shareCode = basename($mapFile, ".txt");
 
-				$data[] = array($mapName, $shareCode);
+				$data[] = array($mapName, $courseName, $shareCode);
 			}
 		}
 	}
@@ -49,6 +58,7 @@ foreach ($files as $file) {
 		<thead>
 			<tr>
 				<td><div class="square">Map</div></td>
+				<td><div class="square">Course Name</div></td>
 				<td><div class="square">Code</div></td>
 			</tr>
 		</thead>
@@ -64,8 +74,9 @@ foreach ($files as $file) {
 							"gpk" => "gpk_"
 						)
 					?>
-					<td><div class="square"><?php echo strtr($row[0], $find); ?></div></td>
-					<td><div class="square"><?php echo $row[1]; ?></div></td>
+					<td><div class="square"> <?php echo strtr($row[0], $find); ?> </div></td>
+					<td><div class="square"> <?php echo $row[1]; ?> </div></td>
+					<td><div class="square"> <?php echo $row[2]; ?> </div></td>
 				</tr>
 			<?php endforeach; ?>
 		</tbody>
