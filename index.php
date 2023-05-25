@@ -46,45 +46,47 @@ foreach ($files as $file) {
 </head>
 
 <body>
-	<div class="content">
-		<div class="body-info">
-			<p>
-			Welcome to my custom Beatrun Course Database <br>
-			Here you can download Beatrun and upload courses for any available map <br><br>
-			</p>
+	<div class="wrapper">
+		<div class="content">
+			<div class="body-info">
+				<p>
+				Welcome to my custom Beatrun Course Database <br>
+				Here you can download Beatrun and upload courses for any available map <br><br>
+				</p>
 
-			<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
-			<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
-		</div>
+				<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
+				<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
+			</div>
 
-		<table>
-			<thead>
-				<tr>
-					<td><div class="square">Map</div></td>
-					<td><div class="square">Course Name</div></td>
-					<td><div class="square">Code</div></td>
-				</tr>
-			</thead>
-			<tbody>
-				<?php foreach ($data as $row): ?>
+			<table>
+				<thead>
 					<tr>
-						<?php
-							$find = array(
-								"gm" => "gm_",
-								"br" => "br_",
-								"rp" => "rp_",
-								"dm" => "dm_",
-								"catalyst" => "catalyst_",
-								"gpk" => "gpk_"
-							)
-						?>
-						<td><div class="square"> <?php echo strtr($row[0], $find); ?> </div></td>
-						<td><div class="square"> <?php echo $row[1]; ?> </div></td>
-						<td><div class="square"> <?php echo $row[2]; ?> </div></td>
+						<td><div class="square">Map</div></td>
+						<td><div class="square">Course Name</div></td>
+						<td><div class="square">Code</div></td>
 					</tr>
-				<?php endforeach; ?>
-			</tbody>
-		</table>
+				</thead>
+				<tbody>
+					<?php foreach ($data as $row): ?>
+						<tr>
+							<?php
+								$find = array(
+									"gm" => "gm_",
+									"br" => "br_",
+									"rp" => "rp_",
+									"dm" => "dm_",
+									"catalyst" => "catalyst_",
+									"gpk" => "gpk_"
+								)
+							?>
+							<td><div class="square"> <?php echo strtr($row[0], $find); ?> </div></td>
+							<td><div class="square"> <?php echo $row[1]; ?> </div></td>
+							<td><div class="square"> <?php echo $row[2]; ?> </div></td>
+						</tr>
+					<?php endforeach; ?>
+				</tbody>
+			</table>
+		</div>
 	</div>
 
 	<div class="footer">
