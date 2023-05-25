@@ -132,7 +132,6 @@ foreach ($files as $file) {
 
 	.square {
 		width: auto;
-		max-width: 200px;
 		height: 35px;
 		background-color: #292929;
 		border: 1px solid #ffffff;
