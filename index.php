@@ -85,9 +85,19 @@ foreach ($files as $file) {
 		</div>
 	</div>
 
-	<footer>
+	<div class="footer">
 		<p>France lost | Coperight @ [relaxtakenotes / el1s1on / jonny_bro]</p>
-	</footer>
+	</div>
 </body>
 
 </html>
+
+<style>
+	.footer {
+		position: fixed;
+		left: 0;
+		bottom: 0;
+		width: 100%;
+		text-align: center;
+	}
+</style>
