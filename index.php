@@ -41,7 +41,8 @@ foreach ($files as $file) {
 	<link rel="icon" href="favicon.ico" type="image/x-icon">
 
 	<div class="panel">
-		<h1>Beatrun | Unofficial Course Database | Supported by Jonny_Bro</h1>
+		<h1>Beatrun | Unofficial Course Database | by Jonny_Bro</h1>
+		<h1 id="smaller"><strong>Design made by El1s1on and Jonny_Bro</strong></h1>
 	</div>
 </head>
 
@@ -50,11 +51,10 @@ foreach ($files as $file) {
 		<p>
 		Welcome to my custom Beatrun Course Database <br>
 		Here you can download Beatrun and upload courses for any available map <br><br>
-		In our Discord you can get latest version of Beatrun with support for this database!
 		</p>
 
 		<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
-		<a href="https://github.com/jeffthekillerz/beatrun" class="button">Beatrun Source Code</a>
+		<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
 	</div>
 
 	<table>
