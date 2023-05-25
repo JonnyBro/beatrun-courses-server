@@ -55,7 +55,7 @@ foreach ($files as $file) {
 		<tbody>
 			<?php foreach ($data as $row): ?>
 				<tr>
-					<td><div class="square"><?php echo $row[0]; ?></div></td>
+					<td><div class="square"><?php echo str_replace("gm", "gm_", $row[0]); ?></div></td>
 					<td><div class="square"><?php echo $row[1]; ?></div></td>
 				</tr>
 			<?php endforeach; ?>
