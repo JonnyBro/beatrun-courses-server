@@ -30,7 +30,6 @@ foreach ($files as $file) {
 ?>
 
 <!DOCTYPE html>
-<link rel="stylesheet" href="styles.css">
 <html>
 
 <body>
@@ -93,11 +92,5 @@ foreach ($files as $file) {
 </html>
 
 <style>
-	.footer {
-		position: fixed;
-		left: 0;
-		bottom: 0;
-		width: 100%;
-		text-align: center;
-	}
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </style>
