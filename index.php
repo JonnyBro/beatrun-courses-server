@@ -34,6 +34,7 @@ foreach ($files as $file) {
 
 <head>
 	<meta property="og:title" content="Unofficial Beatrun Courses Database">
+	<link rel="stylesheet" type="text/css" href="styles.css">
 </head>
 
 <body>
@@ -94,7 +95,3 @@ foreach ($files as $file) {
 </body>
 
 </html>
-
-<style>
-	<link rel="stylesheet" type="text/css" href="styles.css">
-</style>
