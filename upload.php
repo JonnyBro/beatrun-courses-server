@@ -75,7 +75,7 @@ if (
 	$_SERVER['REQUEST_METHOD'] != "POST" ||
 	$headers["Content-Type"] != "text/plain" ||
 	$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-	$headers["accept-encoding"] != "gzip, deflate"
+	$headers["Accept-Encoding"] != "gzip, deflate"
 ) {
 	print("no headers.\n");
 	return;

@@ -39,7 +39,7 @@ function is_ratelimited() {
 
 function sanitize($string, $force_lowercase = true, $anal = false) {
 	$strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*",
-				"(", ")", "=", "+", "[", "{", "]", "}", "\\",
+				"(", ")", "_", "=", "+", "[", "{", "]", "}", "\\",
 				"|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;",
 				"&#8212;", "â€”", "â€“", ",", "<", ".", ">", "/", "?"
 	);
@@ -77,7 +77,7 @@ $headers = getallheaders();
 if (
 	$_SERVER['REQUEST_METHOD'] != "GET" ||
 	$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-	$headers["accept-encoding"] != "gzip, deflate"
+	$headers["Accept-Encoding"] != "gzip, deflate"
 ) {
 	print("no headers\n");
 	return;
