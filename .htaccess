@@ -1,11 +1,11 @@
-<Files "_internal.json">
+<FilesMatch "^.">
 	order deny,allow
 	deny from all
 	allow from 127.0.0.1
-</Files>
+</FilesMatch>
 
-<Files "_ratelimit.json">
+<FilesMatch "^_">
 	order deny,allow
 	deny from all
 	allow from 127.0.0.1
-</Files>
+</FilesMatch>
