@@ -98,7 +98,7 @@ foreach ($files as $file) {
 <style>
 	@font-face {
 		font-family: "HeadUpDaisy";
-		src: url("fonts/x14y24pxHeadUpDaisy.ttf") format("truetype");
+		src: url("fonts/HeadUpDaisy.ttf") format("truetype");
 	}
 
 	body {
