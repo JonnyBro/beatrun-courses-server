@@ -75,9 +75,9 @@ function is_allowed($key) {
 $headers = getallheaders();
 
 if (
-	$_SERVER['REQUEST_METHOD'] != "GET" ||
+	$_SERVER["REQUEST_METHOD"] != "GET" ||
 	$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-	$headers["Accept-Encoding"] != "gzip, deflate"
+	$headers["Accept-Encoding"] != "gzip"
 ) {
 	print("no headers\n");
 	return;
