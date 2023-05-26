@@ -68,17 +68,7 @@ foreach ($files as $file) {
 				<tbody>
 				<?php foreach ($data as $row): ?>
 						<tr>
-							<?php
-								$find = array(
-									"gm" => "gm_",
-									"br" => "br_",
-									"rp" => "rp_",
-									"dm" => "dm_",
-									"catalyst" => "catalyst_",
-									"gpk" => "gpk_"
-								)
-							?>
-							<td><div class="square"> <?php echo strtr($row[0], $find); ?> </div></td>
+							<td><div class="square"> <?php echo $row[0]; ?> </div></td>
 							<td><div class="square"> <?php echo $row[1]; ?> </div></td>
 							<td><div class="square"> <?php echo $row[2]; ?> </div></td>
 						</tr>
