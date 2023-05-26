@@ -1,17 +1,27 @@
 <?php
 
-$requester_ip = $_SERVER['REMOTE_ADDR'];
-$ratelimit_period = 30;
+$ratelimit_period = 5;
 $upload_ratelimit_dir = "_ratelimit.json";
 $upload_keys = "_internal.json";
+$log_dir = "_logs.log";
+
+$headers = getallheaders();
+$authkey = sanitize($headers["Authorization"], true, true);
+$map = sanitize($headers["Game-Map"], true, true);
+$requester_ip = $_SERVER["REMOTE_ADDR"];
+
+function _log($text) {
+	global $log_dir, $authkey, $map, $requester_ip;
+	file_put_contents($log_dir, date("D M j G:i:s T Y") . " - upload.php - " . $text . " (" . $authkey . ", " . $map . ", " . $requester_ip . ")\n", FILE_APPEND);
+}
 
 function is_ratelimited() {
 	global $requester_ip, $upload_ratelimit_dir, $ratelimit_period;
 	$ratelimit_array = json_decode(file_get_contents($upload_ratelimit_dir), $associative = true);
 
 	if ($ratelimit_array[$requester_ip] === -1) {
-		return true; // shadow ban 8)
-	}
+		return true;
+	} // you can shadowban ip's like that!
 
 	if (time() - $ratelimit_array[$requester_ip] <= $ratelimit_period) {
 		return true;
@@ -26,8 +36,8 @@ function is_ratelimited() {
 	$ratelimit_array[$requester_ip] = time();
 
 	$ratelimit_json = json_encode($ratelimit_array, JSON_PRETTY_PRINT);
-	$fp = fopen($upload_ratelimit_dir, 'w');
 
+	$fp = fopen($upload_ratelimit_dir, "w");
 	fwrite($fp, $ratelimit_json);
 	fclose($fp);
 
@@ -35,19 +45,15 @@ function is_ratelimited() {
 }
 
 function sanitize($string, $force_lowercase = true, $anal = false) {
-	$strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*",
-				"(", ")", "=", "+", "[", "{", "]", "}", "\\",
-				"|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;",
-				"&#8212;", "â€”", "â€“", ",", "<", ".", ">", "/", "?"
-	);
+	$strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;", "â€”", "â€“", ",", "<", ".", ">", "/", "?");
 
 	$clean = trim(str_replace($strip, "", strip_tags($string)));
-	$clean = preg_replace('/\s+/', "-", $clean);
-	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9]/", "", $clean) : $clean;
+	$clean = preg_replace("/\s+/", "-", $clean);
+	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9_]/", "", $clean) : $clean;
 
 	return ($force_lowercase) ?
-		(function_exists('mb_strtolower')) ?
-		mb_strtolower($clean, 'UTF-8') :
+		(function_exists("mb_strtolower")) ?
+		mb_strtolower($clean, "UTF-8") :
 		strtolower($clean) :
 		$clean;
 }
@@ -60,41 +66,84 @@ function is_allowed($key) {
 		return true;
 	}
 
-	$key_sanitized = sanitize($key, true, true);
-
-	if ($key_array[$key_sanitized]) {
+	if ($key_array[$key]) {
 		return true;
 	}
 
 	return false;
 }
 
-$headers = getallheaders();
-
-if (
-	$_SERVER['REQUEST_METHOD'] != "POST" ||
-	$headers["Content-Type"] != "text/plain" ||
-	$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-	$headers["Accept-Encoding"] != "gzip, deflate"
-) {
-	print("no headers.\n");
-	return;
+function headers_are_valid($headers) {
+	if (
+		$_SERVER["REQUEST_METHOD"] != "POST" ||
+		$headers["Content-Type"] != "text/plain" ||
+		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
+		$headers["accept-encoding"] != "gzip"
+	) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
-if (is_ratelimited()) { print("Ratelimited.\n"); return; }
-if (!is_allowed($headers["Authorization"])) { print("Not valid key"); return; }
+function body_is_valid($body) {
+	if (count($body) != 6) {
+		return false;
+	}
 
-$body = file_get_contents('php://input');
+	if (
+		!is_array($body[0]) ||
+		!is_array($body[1]) ||
+		!is_string($body[2]) ||
+		!is_float($body[3]) ||
+		!is_string($body[4]) ||
+		!is_array($body[5])
+	) {
+		return false;
+	}
+
+	return true;
+}
+
+if (!headers_are_valid($headers)) {
+	_log("Invalid headers.");
+	var_dump($headers);
+	print("Invalid headers");
+	return http_response_code(400);
+}
+
+if (is_ratelimited()) {
+	_log("Ratelimited.");
+	print("Ratelimited");
+	return http_response_code(400);
+}
+
+if (!is_allowed($authkey)) {
+	_log("Not valid key.");
+	print("Not valid key");
+	return http_response_code(400);
+}
+
+$body = file_get_contents("php://input");
 $decoded_body = json_decode($body, true);
-if (!$decoded_body) { print("no body.\n"); return; }
+if (!$decoded_body) {
+	_log("Couldn't decode.");
+	print("Rejected");
+	return http_response_code(400);
+}
 
-// print("Accepted.\n");
+if (!body_is_valid($decoded_body)) {
+	_log("Invalid course.");
+	print("Invalid course");
+	return http_response_code(400);
+}
 
-$sanitized_map = sanitize($headers["Game-Map"], true, true);
-$path = "courses/".$sanitized_map."/";
+print("Accepted\n");
+
+$path = "courses/" . $map . "/";
 
 $course_id = rand(1, 9999999);
-$file = $path.$course_id.".txt";
+$file = $path . $course_id . ".txt";
 
 $iter_limit = 500;
 $iter = 0;
@@ -102,8 +151,9 @@ $iter = 0;
 while (file_exists($file)) {
 	if ($iter > $iter_limit) {
 		print("Too many courses for this map. Try again or increase iter_limit.\n");
-		return;
+		return http_response_code(400);
 	}
+
 	$course_id = rand(1, 9999999);
 	$file = $path . $course_id . ".txt";
 	$iter++;
@@ -111,8 +161,10 @@ while (file_exists($file)) {
 
 if (!is_dir($path)) { mkdir($path, 0755, true); }
 
-file_put_contents($path.$course_id.".txt", $body);
+file_put_contents($file, $body);
 
-print($course_id);
+_log("Uploaded a course: " . $course_id . " (name: " . sanitize($decoded_body[4], true, true) . ")");
+
+print("Uploaded under the ID (Share Code): " . $course_id . "\n");
 
 ?>

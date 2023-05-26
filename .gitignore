@@ -1,5 +1,8 @@
-# Ignore _internal
+# Ignore internal
 _internal.json
 
-# Ingore _ratelimit
+# Ignore ratelimit
 _ratelimit.json
+
+# Ignore logs
+_logs.log
