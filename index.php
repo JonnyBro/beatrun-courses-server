@@ -49,13 +49,13 @@ foreach ($files as $file) {
 		<div class="content">
 			<div class="body-info">
 				<p>
-					Welcome to my custom Beatrun Course Database <br>
-					Here you can download Beatrun and upload courses for any available map <br><br>
+					Welcome to my custom Beatrun Courses Database<br>
+					Here you can download Beatrun, get an API key and upload courses for any map! And everything is free 🤯!<br><br>
 				</p>
 
-				<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
 				<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
 				<a href="/register.php" class="button">Get an API key</a>
+				<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
 			</div>
 
 			<table>
