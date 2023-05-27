@@ -1,7 +1,7 @@
 # Ignore settings
-_ratelimit.json
-_internal.json
-_logs.log
+data/_ratelimit.json
+data/_internal.json
+data/_logs.log
 steamauth/SteamConfig.php
 
 # Ignore courses
