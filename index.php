@@ -43,9 +43,6 @@ foreach ($files as $file) {
 
 	<div class="wrapper">
 		<div class="panel">
-			<a href="/register.php?login"">
-				<img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png" align="right">
-			</a>
 			<h1>Beatrun | Unofficial Courses Database</h1>
 		</div>
 
@@ -58,6 +55,7 @@ foreach ($files as $file) {
 
 				<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
 				<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
+				<a href="/register.php" class="button">Get an API key</a>
 			</div>
 
 			<table>
