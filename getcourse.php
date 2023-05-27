@@ -6,14 +6,22 @@ $upload_keys = "_internal.json";
 $log_dir = "_logs.log";
 
 $headers = getallheaders();
-$authkey = sanitize($_GET["key"], true, true);
-$map = sanitize($_GET["map"], true, true);
-$code = sanitize($_GET["sharecode"], true, true);
+$authkey = sanitize($_GET["key"], false, true);
+$map = sanitize($_GET["map"], false, true);
+$code = sanitize($_GET["sharecode"], false, true);
 $requester_ip = $_SERVER["REMOTE_ADDR"];
 
 function _log($text) {
 	global $log_dir, $authkey, $map, $requester_ip, $code;
 	file_put_contents($log_dir, date("D M j G:i:s T Y") . " - getcourse.php - " . $text . " (" . $authkey . ", " . $map . ", " . $code . ", " . $requester_ip . ")\n", FILE_APPEND);
+}
+
+function _error($reason) {
+	print($reason);
+	http_response_code(400);
+	_log($reason);
+
+	exit;
 }
 
 function is_ratelimited() {
@@ -50,7 +58,7 @@ function sanitize($string, $force_lowercase = true, $anal = false) {
 
 	$clean = trim(str_replace($strip, "", strip_tags($string)));
 	$clean = preg_replace("/\s+/", "-", $clean);
-	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9_]/", "", $clean) : $clean;
+	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9_\-]/", "", $clean) : $clean;
 
 	return ($force_lowercase) ?
 		(function_exists("mb_strtolower")) ?
@@ -105,23 +113,9 @@ function body_is_valid($body) {
 	return true;
 }
 
-if (!headers_are_valid($headers)) {
-	_log("Invalid headers.");
-	print("Invalid headers");
-	return http_response_code(400);
-}
-
-if (is_ratelimited()) {
-	_log("Ratelimited.");
-	print("Ratelimited");
-	return http_response_code(400);
-}
-
-if (!is_allowed($authkey)) {
-	_log("Invalid authkey.");
-	print("Not valid key");
-	return http_response_code(400);
-}
+if (!headers_are_valid($headers)) { _error("Invalid headers."); }
+if (is_ratelimited()) { _error("Ratelimited."); }
+if (!is_allowed($authkey)) { _error("Invalid key."); }
 
 $path = "courses/" . $map . "/" . $code . ".txt";
 
@@ -134,20 +128,11 @@ if (!file_exists($path)) {
 $body = file_get_contents($path);
 $decoded_body = json_decode($body, true);
 
-if (!$decoded_body) {
-	_log("Bad code.");
-	print("Bad code");
-	return http_response_code(400);
-}
-
-if (!body_is_valid($decoded_body)) {
-	_log("Invalid course.");
-	print("Invalid course");
-	return http_response_code(400);
-}
+if (!$decoded_body) {_error("Invalid course (not json)"); }
+if (!body_is_valid($decoded_body)) { _error("Invalid course (invalid signature)"); }
 
 print($body);
 
-_log("Loaded a course under the name: " . sanitize($decoded_body[4], true, true));
+_log("Loaded a course under the name: " . sanitize($decoded_body[4], false, true));
 
 ?>

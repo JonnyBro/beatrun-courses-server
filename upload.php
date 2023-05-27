@@ -6,13 +6,21 @@ $upload_keys = "_internal.json";
 $log_dir = "_logs.log";
 
 $headers = getallheaders();
-$authkey = sanitize($headers["Authorization"], true, true);
-$map = sanitize($headers["Game-Map"], true, true);
+$authkey = sanitize($headers["Authorization"], false, true);
+$map = sanitize($headers["Game-Map"], false, true);
 $requester_ip = $_SERVER["REMOTE_ADDR"];
 
 function _log($text) {
 	global $log_dir, $authkey, $map, $requester_ip;
 	file_put_contents($log_dir, date("D M j G:i:s T Y") . " - upload.php - " . $text . " (" . $authkey . ", " . $map . ", " . $requester_ip . ")\n", FILE_APPEND);
+}
+
+function _error($reason) {
+	print($reason);
+	http_response_code(400);
+	_log($reason);
+
+	exit;
 }
 
 function is_ratelimited() {
@@ -49,7 +57,7 @@ function sanitize($string, $force_lowercase = true, $anal = false) {
 
 	$clean = trim(str_replace($strip, "", strip_tags($string)));
 	$clean = preg_replace("/\s+/", "-", $clean);
-	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9_]/", "", $clean) : $clean;
+	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9_\-]/", "", $clean) : $clean;
 
 	return ($force_lowercase) ?
 		(function_exists("mb_strtolower")) ?
@@ -105,56 +113,41 @@ function body_is_valid($body) {
 	return true;
 }
 
-if (!headers_are_valid($headers)) {
-	_log("Invalid headers.");
-	var_dump($headers);
-	print("Invalid headers");
-	return http_response_code(400);
+function generate_code() {
+	$code = "";
+	for ($i = 0; $i < 3; $i++) {
+		$code .= substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", mt_rand(1, 10))), 1, 4);
+
+		if ($i == 0 || $i == 1) { $code .= "-"; }
+	}
+
+	return strtoupper($code);
 }
 
-if (is_ratelimited()) {
-	_log("Ratelimited.");
-	print("Ratelimited");
-	return http_response_code(400);
-}
-
-if (!is_allowed($authkey)) {
-	_log("Not valid key.");
-	print("Not valid key");
-	return http_response_code(400);
-}
+if (!headers_are_valid($headers)) { _error("Invalid headers."); }
+if (is_ratelimited()) { _error("Ratelimited."); }
+if (!is_allowed($authkey)) { _error("Invalid key."); }
 
 $body = file_get_contents("php://input");
 $decoded_body = json_decode($body, true);
-if (!$decoded_body) {
-	_log("Couldn't decode.");
-	print("Rejected");
-	return http_response_code(400);
-}
 
-if (!body_is_valid($decoded_body)) {
-	_log("Invalid course.");
-	print("Invalid course");
-	return http_response_code(400);
-}
+if (!$decoded_body) { _error("Invalid course (not json)"); }
+if (!body_is_valid($decoded_body)) { _error("Invalid course (invalid signature)"); }
 
 print("Accepted\n");
 
 $path = "courses/" . $map . "/";
 
-$course_id = rand(1, 9999999);
+$course_id = generate_code();
 $file = $path . $course_id . ".txt";
 
 $iter_limit = 500;
 $iter = 0;
 
 while (file_exists($file)) {
-	if ($iter > $iter_limit) {
-		print("Too many courses for this map. Try again or increase iter_limit.\n");
-		return http_response_code(400);
-	}
+	if ($iter > $iter_limit) { _error("Hit the iter_limit while looking for a free slot. Try again."); }
 
-	$course_id = rand(1, 9999999);
+	$course_id = generate_code();
 	$file = $path . $course_id . ".txt";
 	$iter++;
 }
@@ -163,7 +156,7 @@ if (!is_dir($path)) { mkdir($path, 0755, true); }
 
 file_put_contents($file, $body);
 
-_log("Uploaded a course: " . $course_id . " (name: " . sanitize($decoded_body[4], true, true) . ")");
+_log("Uploaded a course: " . $course_id . " (name: " . sanitize($decoded_body[4], false, true) . ")");
 
 print("Uploaded under the ID (Share Code): " . $course_id . "\n");
 
