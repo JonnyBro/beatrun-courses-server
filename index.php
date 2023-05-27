@@ -43,7 +43,10 @@ foreach ($files as $file) {
 
 	<div class="wrapper">
 		<div class="panel">
-			<h1>Beatrun Crack | Course Database</h1>
+			<a href="/register.php?login"">
+				<img src="https://steamcommunity-a.akamaihd.net/public/images/signinthroughsteam/sits_01.png" align="right">
+			</a>
+			<h1>Beatrun | Unofficial Courses Database</h1>
 		</div>
 
 		<div class="content">
