@@ -86,7 +86,7 @@ function headers_are_valid($headers) {
 	if (
 		$_SERVER["REQUEST_METHOD"] != "GET" ||
 		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-		$headers["accept-encoding"] != "gzip"
+		$headers["Accept-Encoding"] != "gzip"
 	) {
 		return false;
 	} else {

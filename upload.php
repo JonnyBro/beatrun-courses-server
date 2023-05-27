@@ -86,7 +86,7 @@ function headers_are_valid($headers) {
 		$_SERVER["REQUEST_METHOD"] != "POST" ||
 		$headers["Content-Type"] != "text/plain" ||
 		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-		$headers["accept-encoding"] != "gzip"
+		$headers["Accept-Encoding"] != "gzip"
 	) {
 		return false;
 	} else {
