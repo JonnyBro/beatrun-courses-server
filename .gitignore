@@ -1,8 +1,9 @@
-# Ignore internal
-_internal.json
-
-# Ignore ratelimit
+# Ignore settings
 _ratelimit.json
-
-# Ignore logs
+_internal.json
 _logs.log
+steamauth/SteamConfig.php
+
+# Ignore courses
+courses/*
+!courses/.htaccess
