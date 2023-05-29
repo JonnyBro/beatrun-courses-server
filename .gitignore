@@ -1,6 +1,9 @@
 # Ignore settings
+data/_admins.json
+data/_keys.json
+data/_locked.json
 data/_ratelimit.json
-data/_internal.json
+data/_record.json
 data/_logs.log
 steamauth/SteamConfig.php
 
