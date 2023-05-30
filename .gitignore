@@ -1,5 +1,6 @@
 # Ignore settings
 data/_admins.json
+data/_courses.json
 data/_keys.json
 data/_locked.json
 data/_ratelimit.json
