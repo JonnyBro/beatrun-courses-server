@@ -15,14 +15,17 @@ function print_to_console($data)
 foreach ($files as $file) {
 	if ($file != "." && $file != "..") {
 		if (is_dir($coursesDir . "/" . $file)) {
+			$coursesIDs = json_decode(file_get_contents("data/_courses.json"), true);
 			$mapFiles = glob($coursesDir . "/" . $file . "/*.txt");
 
 			foreach ($mapFiles as $mapFile) {
-				$mapName = $file;
+
 				$courseName = array_filter(json_decode(file_get_contents($mapFile)), "is_string")[4];
+				if (!$coursesIDs[$shareCode]) { $creatorID = $coursesIDs[$shareCode]; } else { $creatorID = "Unknown"; }
+				$mapName = $file;
 				$shareCode = basename($mapFile, ".txt");
 
-				$data[] = array($mapName, $courseName, $shareCode);
+				$data[] = array($courseName, $creatorID, $mapName, $shareCode);
 			}
 		}
 	}
@@ -61,8 +64,9 @@ foreach ($files as $file) {
 			<table>
 				<thead>
 					<tr>
-						<td><div class="square">Map</div></td>
 						<td><div class="square">Course Name</div></td>
+						<td><div class="square">Creator</div></td>
+						<td><div class="square">Map</div></td>
 						<td><div class="square">Code</div></td>
 					</tr>
 				</thead>
@@ -72,6 +76,7 @@ foreach ($files as $file) {
 							<td><div class="square"> <?php echo $row[0]; ?> </div></td>
 							<td><div class="square"> <?php echo $row[1]; ?> </div></td>
 							<td><div class="square"> <?php echo $row[2]; ?> </div></td>
+							<td><div class="square"> <?php echo $row[3]; ?> </div></td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
