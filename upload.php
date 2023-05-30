@@ -34,6 +34,8 @@ if (!is_dir($path)) { mkdir($path, 0755, true); }
 
 file_put_contents($file, $body);
 
+
+
 _log("Uploaded a course: ".$course_id." (name: ".sanitize($decoded_body[4], false, true).")");
 print("Uploaded under the ID: ".$course_id."\n");
 
