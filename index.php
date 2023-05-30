@@ -21,9 +21,9 @@ foreach ($files as $file) {
 			foreach ($mapFiles as $mapFile) {
 
 				$courseName = array_filter(json_decode(file_get_contents($mapFile)), "is_string")[4];
-				if (!isset($coursesIDs[$shareCode])) { $creatorID = $coursesIDs[$shareCode]; } else { $creatorID = "Unknown"; }
 				$mapName = $file;
 				$shareCode = basename($mapFile, ".txt");
+				if (!isset($coursesIDs[$shareCode])) { $creatorID = $coursesIDs[$shareCode]; } else { $creatorID = "Unknown"; }
 
 				$data[] = array($courseName, $creatorID, $mapName, $shareCode);
 			}
