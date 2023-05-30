@@ -216,7 +216,7 @@ function get_userid_from_authkey($authkey) {
 
 	if (count($key_array) <= 0) { return ""; }
 
-	if (!isset($key_array[$authkey])) { return ""; }
+	if (!isset($key_array[$authkey])) { return "No key"; }
 
 	return $key_array[$authkey];
 }
@@ -313,49 +313,51 @@ function register_steam_account($userid, $timecreated) {
 }
 
 function _log_webhook($text) {
-    global $webhook_url;
+	global $webhook_url;
 
-    if (strlen($webhook_url) <= 0) { return; }
+	if (strlen($webhook_url) <= 0) {
+		return;
+	}
 
-    $json_data = json_encode(["content" => $text], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-    $ch = curl_init($webhook_url);
-    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
-    curl_setopt($ch, CURLOPT_POST, 1);
-    curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-    print(curl_exec($ch));
-    curl_close($ch);
+	$json_data = json_encode(["content" => $text], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+	$ch = curl_init($webhook_url);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
+	curl_setopt($ch, CURLOPT_POST, 1);
+	curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
+	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	print(curl_exec($ch));
+	curl_close($ch);
 }
 
 function _log_browser($content) {
-    global $log_dir, $authkey, $map, $ip;
+	global $log_dir, $authkey, $map, $ip;
 
-    $text = date("D M j G:i:s T Y");
-    $text .= " - ";
-    $text .= $content;
-    $text .= " (";
-    $text .= "IP: ".$ip.")\n";
+	$text = date("D M j G:i:s T Y");
+	$text .= " - ";
+	$text .= $content;
+	$text .= " (";
+	$text .= "IP: " . $ip . ")\n";
 
-    _log_webhook($text);
-    file_put_contents($log_dir, $text, FILE_APPEND);
+	_log_webhook($text);
+	file_put_contents($log_dir, $text, FILE_APPEND);
 }
 
 function _log($content) {
-    global $log_dir, $authkey, $map, $ip;
+	global $log_dir, $authkey, $map, $ip;
 
-    $text = date("D M j G:i:s T Y");
-    $text .= " - ";
-    $text .= $content;
-    $text .= " (";
-    $text .= "Authkey: ".$authkey.", ";
-    $text .= "Map: ".$map.", ";
-    $text .= "IP: ".$ip.", ";
-    $text .= "UserID: ".get_userid_from_authkey($authkey).")\n";
+	$text = date("D M j G:i:s T Y");
+	$text .= " - ";
+	$text .= $content;
+	$text .= " (";
+	$text .= "Authkey: " . $authkey . ", ";
+	$text .= "Map: " . $map . ", ";
+	$text .= "IP: " . $ip . ", ";
+	$text .= "UserID: " . get_userid_from_authkey($authkey) . ")\n";
 
-    _log_webhook($text);
-    file_put_contents($log_dir, $text, FILE_APPEND);
+	_log_webhook($text);
+	file_put_contents($log_dir, $text, FILE_APPEND);
 }
 
 function _error($reason) {
