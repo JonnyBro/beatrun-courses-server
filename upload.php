@@ -15,9 +15,9 @@ $decoded_body = json_decode($body, true);
 if (!$decoded_body) { _error("upload.php - Invalid course (not json)"); }
 if (!body_is_valid($decoded_body)) { _error("upload.php - Invalid course (invalid signature)"); }
 
-$path = "courses/".$map."/";
+$path = "courses/" . $map . "/";
 $course_id = generate_code();
-$file = $path.$course_id.".txt";
+$file = $path . $course_id . ".txt";
 
 $iter_limit = 500;
 $iter = 0;
@@ -34,9 +34,14 @@ if (!is_dir($path)) { mkdir($path, 0755, true); }
 
 file_put_contents($file, $body);
 
+$courses = json_decode(file_get_contents("data/_courses.json"), true);
+$id = get_userid_from_authkey($authkey);
 
+$courses[$course_id] = $id;
 
-_log("Uploaded a course: ".$course_id." (name: ".sanitize($decoded_body[4], false, true).")");
-print("Uploaded under the ID: ".$course_id."\n");
+file_put_contents("data/_courses.json", json_encode($courses, JSON_PRETTY_PRINT));
+
+_log("Uploaded a course: " . $course_id . " (name: " . sanitize($decoded_body[4], false, true) . ")");
+print("Uploaded under the ID: " . $course_id . "\n");
 
 ?>
