@@ -3,7 +3,7 @@
 Pretty advanced beatrun course server recreation.<br><br>
 
 
-How to use:
+# How to use:
 1. Hide **steamauth** and **data** from public. Don't let people access them and the files inside.
 	- Remove `register.php` to disallow public registration using steam accounts, then add authkeys manually to *data/_keys.json*.
 	- OR
