@@ -59,7 +59,7 @@ foreach ($files as $file) {
 
 				<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
 				<a href="/register.php" class="button">Get an API key</a>
-				<a href="https://discord.gg/xBHdyVupx7" class="button">Our Discord</a>
+				<a href="https://discord.gg/93Psubbgsg" class="button">Our Discord</a>
 			</div>
 
 			<table>
