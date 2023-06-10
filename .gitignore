@@ -1,3 +1,6 @@
+# Ignore VSCode Settings
+.vscode
+
 # Ignore settings
 data/_admins.json
 data/_courses.json

@@ -83,50 +83,59 @@ if (array_key_exists("_bcs_rm_course", $_POST)) {
 
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<link rel="stylesheet" href="css/main.css">
-	</head>
-	<body>
-		<section>
-			<div>
-				<form method="post">
-					<input type="submit" name="_bcs_addkey" class="button" value="Add Key"/>
-					<input type="text" class="button" name="_bcs_addkey_target">
-					SteamID64
-					<br><br>
-					<input type="submit" name="_bcs_rmkey" class="button" value="Remove Key"/>
-					<input type="text" class="button" name="_bcs_rmkey_target">
-					SteamID64
-					<br><br>
-					<input type="submit" name="_bcs_lock" class="button" value="Lock"/>
-					<input type="text" class="button" name="_bcs_lock_target">
-					Authkey, SteamID64, IP
-					<br><br>
-					<input type="submit" name="_bcs_unlock" class="button" value="Unlock"/>
-					<input type="text" class="button" name="_bcs_unlock_target">
-					Authkey, SteamID64, IP
-					<br><br>
-					<input type="submit" name="_bcs_rm_course" class="button" value="Remove Course"/>
-					<input type="text" class="button" name="_bcs_rm_course_map">
-					<input type="text" class="button" name="_bcs_rm_course_code">
-					Course Map, Code
-					<br><br>
-					<input type="submit" name="_bcs_logs" class="button" value="Show logs"/>
-					<input type="submit" name="_bcs_records" class="button" value="Show records"/>
-					<input type="submit" name="_bcs_bans" class="button" value="Show bans"/>
-				</form>
-				<br>
-				Server response:<br><br>
-				<code><?php echo $response ?></code>
-			</div>
-		</section>
-	</body>
-	<script>
-		if ( window.history.replaceState ) {
-		  window.history.replaceState( null, null, window.location.href );
-		}
-	</script>
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="css/main.css">
+</head>
+
+<body>
+	<section>
+		<div>
+			<form method="post">
+				<input type="submit" name="_bcs_addkey" class="button" value="Add Key" />
+				<input type="text" class="button" name="_bcs_addkey_target">
+				SteamID64
+				<br><br>
+				<input type="submit" name="_bcs_rmkey" class="button" value="Remove Key" />
+				<input type="text" class="button" name="_bcs_rmkey_target">
+				SteamID64
+				<br><br>
+				<input type="submit" name="_bcs_lock" class="button" value="Lock" />
+				<input type="text" class="button" name="_bcs_lock_target">
+				Authkey, SteamID64, IP
+				<br><br>
+				<input type="submit" name="_bcs_unlock" class="button" value="Unlock" />
+				<input type="text" class="button" name="_bcs_unlock_target">
+				Authkey, SteamID64, IP
+				<br><br>
+				<input type="submit" name="_bcs_rm_course" class="button" value="Remove Course" />
+				<input type="text" class="button" name="_bcs_rm_course_map">
+				<input type="text" class="button" name="_bcs_rm_course_code">
+				Course Map, Code
+				<br><br>
+				<input type="submit" name="_bcs_logs" class="button" value="Show logs" />
+				<input type="submit" name="_bcs_records" class="button" value="Show records" />
+				<input type="submit" name="_bcs_bans" class="button" value="Show bans" />
+			</form>
+			<br>
+			Server response:<br><br>
+			<code><?php echo $response ?></code>
+		</div>
+	</section>
+</body>
+<script>
+	if (window.history.replaceState) {
+		window.history.replaceState(null, null, window.location.href);
+	}
+</script>
+
 </html>
+
+<style>
+	body {
+		margin: 25px;
+	}
+</style>

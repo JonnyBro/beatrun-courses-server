@@ -7,8 +7,7 @@ body {
 	font-family: "HeadUpDaisy";
 	background-color: #171717;
 	color: #ffffff;
-	margin: 1%;
-	padding: 1%;
+	margin: auto;
 }
 
 code {
@@ -31,7 +30,6 @@ table {
 
 .panel h1 {
 	font-size: 24px;
-	font-weight: bold;
 	padding-left: 10px;
 }
 
@@ -44,16 +42,15 @@ table {
 	width: auto;
 	height: 35px;
 	background-color: #292929;
-	border: 1px solid #ffffff;
+	border: 1px solid #FFFFFF;
 	text-align: center;
 	line-height: 35px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	font-family: HeadUpDaisy;
 	font-size: 20px;
-	padding-right: 30px;
-	padding-left: 30px;
+	padding-right: 25px;
+	padding-left: 25px;
 }
 
 .button {
@@ -65,11 +62,15 @@ table {
 	text-align: center;
 	text-decoration: none;
 	display: inline-block;
-	font-size: 16px;
+	font-size: 18px;
+}
+
+.button:hover {
+	background-color: #7A7A7A;
 }
 
 .footer {
-	position: fixed;
+	position: relative;
 	left: 0;
 	bottom: 0;
 	width: 100%;
@@ -78,5 +79,14 @@ table {
 
 ::selection {
 	background-color: #121212;
-	color: #7a7a7a;
+	color: #7A7A7A;
+}
+
+#particles-js {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	z-index: -1;
 }
