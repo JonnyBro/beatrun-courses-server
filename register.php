@@ -48,3 +48,9 @@ require("util.php");
 </body>
 
 </html>
+
+<style>
+	body {
+		margin: 25px;
+	}
+</style>
