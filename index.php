@@ -67,7 +67,7 @@ foreach ($files as $file) {
 				<thead>
 					<tr>
 						<td><div class="square">Course Name</div></td>
-						<td><div class="square">Creator</div></td>
+						<td><div class="square">Uploaded By</div></td>
 						<td><div class="square">Map</div></td>
 						<td><div class="square">Code</div></td>
 					</tr>
