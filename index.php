@@ -94,6 +94,10 @@ foreach ($files as $file) {
 </html>
 
 <style>
+	body {
+		margin: 0;
+	}
+
 	#particles-js {
 		position: fixed;
 		top: 0;
