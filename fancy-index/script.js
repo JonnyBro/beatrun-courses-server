@@ -50,7 +50,7 @@
 		if (path) {
 			const parts = path.split("/");
 			path = parts[parts.length - 1];
-			titleText = titleize(path).replace(/-|_/g, " ");
+			titleText = titleize(path);
 		} else {
 			titleText = window.location.host;
 		}
