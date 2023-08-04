@@ -6,6 +6,7 @@ $ratelimit_dir = "data/_ratelimit.json";
 $account_record_dir = "data/_record.json";
 $lock_dir = "data/_locked.json";
 $admins_dir = "data/_admins.json";
+$rating_dir = "data/_rating.json";
 $webhook_url = "https://discord.com/api/webhooks/1112687906616774676/IZAwl9kDwKaxyLza4qARNFckJd6KFBuUqTdxaTJViiBGPw3nOgPfGav4y6okd9Nkw1iG"; // discord webhook logging url
 
 $ratelimit_period = 5;
@@ -19,15 +20,14 @@ $headers = getallheaders();
 
 function sanitize($string, $force_lowercase = true, $anal = false) {
 	$strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "=", "+", "[", "{", "]",
-				"}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
-				"â€”", "â€“", ",", "<", ".", ">", "/", "?");
+					"}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;",
+					"â€”", "â€“", ",", "<", ".", ">", "/", "?");
 	$clean = trim(str_replace($strip, "", strip_tags($string)));
 	$clean = preg_replace("/\s+/", "-", $clean);
 	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9_\-]/", "", $clean) : $clean ;
-
 	return ($force_lowercase) ?
-		(function_exists('mb_strtolower')) ?
-			mb_strtolower($clean, 'UTF-8') :
+		(function_exists("mb_strtolower")) ?
+			mb_strtolower($clean, "UTF-8") :
 			strtolower($clean) :
 		$clean;
 }
@@ -105,14 +105,14 @@ function body_is_valid($body) {
 function generate_code() {
 	$code = "";
 	for ($i = 0; $i < 3; $i++) {
-		$code .= substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", mt_rand(1,10))), 1, 4);
+		$code .= substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', mt_rand(1,10))), 1, 4);
 		if ($i == 0 || $i == 1) {$code .= "-";}
 	}
 	return strtoupper($code);
 }
 
 function generateRandomString($length = 32) {
-	return substr(str_shuffle(str_repeat($x="0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", ceil($length/strlen($x)) )),1,$length);
+	return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
 }
 
 function debug_to_console($data) {
@@ -126,7 +126,7 @@ function debug_to_console($data) {
 function account_owns_gmod($userid) {
 	require("steamauth/SteamConfig.php"); // here cuz of scope bullshit
 
-	$url = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=".$steamauth['apikey']."&steamid=".$userid."&format=json");
+	$url = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=".$steamauth["apikey"]."&steamid=".$userid."&format=json");
 	$content = json_decode($url, true);
 
 	if (!$content["response"]) { return false; }
@@ -339,7 +339,7 @@ function _log_browser($content) {
 	$text = "$date - $content (IP: $ip)";
 
 	_log_webhook($text);
-	file_put_contents($log_dir, $text . "\n", FILE_APPEND);
+	file_put_contents($log_dir, $text."\n", FILE_APPEND);
 }
 
 function _log($content) {
@@ -411,6 +411,87 @@ function register_steam_account($userid, $timecreated) {
 	_log_browser("util.php - New user: ".$userid." ".$timecreated." ".$key);
 
 	return $key;
+}
+
+function get_course_rating($map, $code, $raw = False) {
+	global $rating_dir;
+
+	$path = "courses/" . $map . "/" . $code . ".txt";
+	$body = file_get_contents($path);
+	$decoded_body = json_decode($body, true);
+	if (!$decoded_body) { echo "Invalid course (not json)"; }
+	if (!body_is_valid($decoded_body)) { echo "getcourse.php - Invalid course (invalid signature)"; }
+
+	$rating = json_decode(file_get_contents($rating_dir), true);
+
+	if (!isset($rating[$map])) { return "unknown"; }
+	if (!isset($rating[$map][$code])) { return "unknown"; }
+
+	$like_count = 0;
+	$dislike_count = 0;
+	$rate_count = count($rating[$map][$code]);
+	foreach ($rating[$map][$code] as $key => $value) {
+		if ($value) { $like_count += 1; }
+		if (!$value) { $dislike_count += 1; }
+	}
+
+	if ($raw) {
+		return [$like_count, $dislike_count];
+	}
+
+	if ($dislike_count <= 0 && $like_count > 0) {
+		return "100% ($rate_count)";
+	}
+
+	return strval(($like_count / $dislike_count) * 100) . "% ($rate_count)";
+}
+
+function like_course($map, $code) {
+	global $rating_dir;
+
+	$steamid = $_SESSION["steamid"];
+
+	if (!$steamid) { return "not logged in"; }
+
+	$path = "courses/" . $map . "/" . $code . ".txt";
+	$body = file_get_contents($path);
+	$decoded_body = json_decode($body, true);
+	if (!$decoded_body) { echo "Invalid course (not json)"; }
+	if (!body_is_valid($decoded_body)) { echo "util.php - Invalid course (invalid signature)"; }
+
+	$rating = json_decode(file_get_contents($rating_dir), true);
+
+	if (!isset($rating[$map])) { $rating[$map] = []; }
+	if (!isset($rating[$map][$code])) { $rating[$map][$code] = []; }
+	$rating[$map][$code][$steamid] = true;
+
+	file_put_contents($rating_dir, json_encode($rating, JSON_PRETTY_PRINT));
+
+	return "rated";
+}
+
+function dislike_course($map, $code) {
+	global $rating_dir;
+
+	$steamid = $_SESSION["steamid"];
+
+	if (!$steamid) { return "not logged in"; }
+
+	$path = "courses/" . $map . "/" . $code . ".txt";
+	$body = file_get_contents($path);
+	$decoded_body = json_decode($body, true);
+	if (!$decoded_body) { echo "Invalid course (not json)"; }
+	if (!body_is_valid($decoded_body)) { echo "util.php - Invalid course (invalid signature)"; }
+
+	$rating = json_decode(file_get_contents($rating_dir), true);
+
+	if (!isset($rating[$map])) { $rating[$map] = []; }
+	if (!isset($rating[$map][$code])) { $rating[$map][$code] = []; }
+	$rating[$map][$code][$steamid] = false;
+
+	file_put_contents($rating_dir, json_encode($rating, JSON_PRETTY_PRINT));
+
+	return "rated";
 }
 
 ?>

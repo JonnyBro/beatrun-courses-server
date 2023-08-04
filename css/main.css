@@ -6,13 +6,15 @@
 body {
 	font-family: "HeadUpDaisy";
 	background-color: #171717;
-	color: #ffffff;
+	color: #FFFFFF;
+	margin: 1%;
+	padding: 1%;
 }
 
 code {
 	font-family: "HeadUpDaisy";
 	background-color: #111111;
-	color: #a0a0a0;
+	color: #A0A0A0;
 	padding: 0.5%;
 	font-size: 12px;
 }
@@ -29,6 +31,7 @@ table {
 
 .panel h1 {
 	font-size: 24px;
+	font-weight: bold;
 	padding-left: 10px;
 }
 
@@ -47,9 +50,28 @@ table {
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-family: HeadUpDaisy;
 	font-size: 20px;
-	padding-right: 25px;
-	padding-left: 25px;
+	padding-right: 30px;
+	padding-left: 30px;
+}
+
+.rate_button {
+	width: auto;
+	height: 35px;
+	background-color: #292929;
+	border: 1px solid #FFFFFF;
+	text-align: center;
+	line-height: 35px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-family: HeadUpDaisy;
+	font-size: 20px;
+	padding-right: 30px;
+	padding-left: 30px;
+	color: white !important;
+	display: inline-block;
 }
 
 .button {
@@ -61,15 +83,11 @@ table {
 	text-align: center;
 	text-decoration: none;
 	display: inline-block;
-	font-size: 18px;
-}
-
-.button:hover {
-	background-color: #7A7A7A;
+	font-size: 16px;
 }
 
 .footer {
-	position: relative;
+	position: fixed;
 	left: 0;
 	bottom: 0;
 	width: 100%;

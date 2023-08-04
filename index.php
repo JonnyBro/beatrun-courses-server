@@ -1,36 +1,41 @@
 <?php
-$coursesDir = "courses";
-$files = scandir($coursesDir);
-$data = array();
+	require ("util.php");
 
-function print_to_console($data)
-{
-	$output = $data;
-	if (is_array($output))
-		$output = implode(',', $output);
+	$coursesDir = "courses";
+	$files = scandir($coursesDir);
+	$data = array();
 
-	echo "<script>console.log('" . $output . "');</script>";
-}
+	$rating_response = "";
 
-foreach ($files as $file) {
-	if ($file != "." && $file != "..") {
-		if (is_dir($coursesDir . "/" . $file)) {
-			$coursesIDs = json_decode(file_get_contents("data/_courses.json"), true);
-			$mapFiles = glob($coursesDir . "/" . $file . "/*.txt");
+	function print_to_console($data)
+	{
+		$output = $data;
+		if (is_array($output))
+			$output = implode(",", $output);
 
-			foreach ($mapFiles as $mapFile) {
-				$courseName = array_filter(json_decode(file_get_contents($mapFile)), "is_string")[4];
-				$mapName = $file;
-				$shareCode = basename($mapFile, ".txt");
+		echo "<script>console.log('" . $output . "');</script>";
+	}
 
-				$creatorID = "Unknown";
-				if (isset($coursesIDs[$shareCode])) { $creatorID = $coursesIDs[$shareCode]; }
+	foreach ($files as $file) {
+		if ($file != "." && $file != "..") {
+			if (is_dir($coursesDir . "/" . $file)) {
+				$coursesIDs = json_decode(file_get_contents("data/_courses.json"), true);
+				$mapFiles = glob($coursesDir . "/" . $file . "/*.txt");
 
-				$data[] = array($courseName, $creatorID, $mapName, $shareCode);
+				foreach ($mapFiles as $mapFile) {
+					$courseName = array_filter(json_decode(file_get_contents($mapFile)), "is_string")[4];
+					$mapName = $file;
+					$shareCode = basename($mapFile, ".txt");
+					$rating = get_course_rating($mapName, $shareCode);
+
+					$creatorID = "Unknown";
+					if (isset($coursesIDs[$shareCode])) { $creatorID = $coursesIDs[$shareCode]; }
+
+					$data[] = array($courseName, $creatorID, $mapName, $shareCode, $rating);
+				}
 			}
 		}
 	}
-}
 ?>
 
 <!DOCTYPE html>
@@ -39,6 +44,7 @@ foreach ($files as $file) {
 <head>
 	<title>Unofficial Beatrun Courses Database</title>
 	<link rel="stylesheet" href="css/main.css">
+	 <script src="https://unpkg.com/htmx.org@1.9.4"></script>
 </head>
 
 <body>
@@ -63,7 +69,7 @@ foreach ($files as $file) {
 				<a href="https://discord.gg/93Psubbgsg" class="button">Our Discord</a>
 				<a href="/courses" class="button">Courses list for download</a>
 			</div>
-
+			<?php echo $rating_response; ?>
 			<table>
 				<thead>
 					<tr>
@@ -71,15 +77,25 @@ foreach ($files as $file) {
 						<td><div class="square">Uploaded By</div></td>
 						<td><div class="square">Map</div></td>
 						<td><div class="square">Code</div></td>
+						<td><div class="square">Rating</div></td>
 					</tr>
 				</thead>
 				<tbody>
 				<?php foreach ($data as $row): ?>
 						<tr>
-							<td><div class="square"> <?php echo $row[0]; ?> </div></td>
-							<td><div class="square"> <?php echo $row[1]; ?> </div></td>
-							<td><div class="square"> <?php echo $row[2]; ?> </div></td>
-							<td><div class="square"> <?php echo $row[3]; ?> </div></td>
+							<td><div class="square"> <?php echo $row[0]; ?> </div></td> <!-- coursename -->
+							<td><div class="square"> <?php echo $row[1]; ?> </div></td> <!-- creator id-->
+							<td><div class="square"> <?php echo $row[2]; ?> </div></td> <!-- map name -->
+							<td><div class="square"> <?php echo $row[3]; ?> </div></td> <!-- share code -->
+							<td><div class="square"> <?php echo $row[4]; ?> </div></td> <!-- rating -->
+							<td>
+								<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=like" hx-swap="innerHTML">
+									Like
+								</button>
+								<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=dislike" hx-swap="innerHTML">
+									Dislike
+								</button>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
