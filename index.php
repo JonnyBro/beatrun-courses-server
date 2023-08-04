@@ -115,6 +115,7 @@
 <style>
 	body {
 		margin: 0;
+		padding: 0;
 	}
 
 	#particles-js {
