@@ -48,14 +48,16 @@ function upload_set_params() {
 function upload_headers_are_valid() {
 	global $headers;
 	if ($_SERVER["REQUEST_METHOD"] != "POST" ||
-		$headers["Content-Type"] != "text/plain" /*||
-		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)"*/) { return false; } else { return true; }
+		$headers["Content-Type"] != "text/plain" ||
+		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
+		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 GMod/13") { return false; } else { return true; }
 }
 
 function getcourse_headers_are_valid() {
 	global $headers;
-	if ($_SERVER["REQUEST_METHOD"] != "GET" /*||
-		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)"*/) { return false; } else { return true; }
+	if ($_SERVER["REQUEST_METHOD"] != "GET" ||
+		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
+		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 GMod/13") { return false; } else { return true; }
 }
 
 function is_ratelimited() {
