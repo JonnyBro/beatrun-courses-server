@@ -64,10 +64,11 @@
 					Here you can download Beatrun, get an API key and upload courses for any map! And everything is free 🤯!<br><br>
 				</p>
 
-				<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
-				<a href="/register.php" class="button">Get an API key</a>
-				<a href="https://discord.gg/93Psubbgsg" class="button">Our Discord</a>
 				<a href="/register.php?login" class="button">Log-in</a>
+				<a href="/register.php" class="button">Get an API key</a><br><br>
+
+				<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
+				<a href="https://discord.gg/93Psubbgsg" class="button">Our Discord</a>
 				<a href="/courses" class="button">Courses list for download</a>
 			</div>
 			<?php echo $rating_response; ?>
