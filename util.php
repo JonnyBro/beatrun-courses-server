@@ -65,6 +65,8 @@ function is_ratelimited() {
 
 	$ratelimit_array = json_decode(file_get_contents($ratelimit_dir), true);
 
+	if (!$ratelimit_array[$ip]) { return false; }
+
 	if (time() - $ratelimit_array[$ip] <= $ratelimit_period) { return true; }
 
 	foreach ($ratelimit_array as $uid => $time) {
