@@ -25,14 +25,8 @@
 		$uid = "...";
 		if (isset($courses[$map][$code])) { $uid = $courses[$map][$code]; }
 
-		[$like_count, $rate_count] = get_course_rating($map, $code, true);
-		// maybe we can sort this by importance somehow? :-)
-		if ($rate_count <= 0) {
-			$rating = "unknown";
-		} else {
-			$rating = strval(($like_count / $rate_count) * 100)."% ($rate_count)";
-		}
-
+		$rating = get_course_rating($map, $code);
+		// maybe we can sort this by importance somehow? :-
 
 		$data[] = array($name, $uid, $map, $code, $rating);
 	}

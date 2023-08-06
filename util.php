@@ -420,8 +420,8 @@ function get_course_rating($map, $code, $raw = False) {
 	$path = "courses/" . $map . "/" . $code . ".txt";
 	$body = file_get_contents($path);
 	$decoded_body = json_decode($body, true);
-	if (!$decoded_body) { echo "Invalid course (not json)"; }
-	if (!body_is_valid($decoded_body)) { echo "getcourse.php - Invalid course (invalid signature)"; }
+	if (!$decoded_body) { return "Invalid course (not json)"; }
+	if (!body_is_valid($decoded_body)) { return "getcourse.php - Invalid course (invalid signature)"; }
 
 	$rating = json_decode(file_get_contents($rating_dir), true);
 
