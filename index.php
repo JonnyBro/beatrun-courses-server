@@ -206,7 +206,7 @@
 								<td>
 									<div>
 										<?php
-											echo $row[3][0] . "<br><a href='" . $row[3][1] . " download'>Download</a>";
+											echo $row[3][0] . "<br><a href='" . $row[3][1] . "' download>Download</a>";
 										?>
 									</div>
 								</td> <!-- share code -->
