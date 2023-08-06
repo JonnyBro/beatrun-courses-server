@@ -23,7 +23,11 @@
 		$map = explode("/", $path)[1];
 
 		$uid = "...";
-		if (isset($courses[$map][$code])) { $uid = $courses[$map][$code]; }
+		if (isset($courses[$map][$code])) {
+			$uid = $courses[$map][$code];
+		} elseif (isset($courses[$code])) {
+			$uid = $courses[$code]; // backwards compatibility with courses.beatrun.ru
+		}
 
 		$rating = get_course_rating($map, $code);
 		// maybe we can sort this by importance somehow? :-
