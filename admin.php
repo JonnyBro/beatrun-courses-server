@@ -22,7 +22,7 @@ if (array_key_exists("_bcs_addkey", $_POST)) {
 		$response = "No input.";
 	} else {
 		$response = gen_key(str_replace(" ", "", $_POST["_bcs_addkey_target"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " generated a key for user " . $_POST["_bcs_addkey_target"].": ".$response);
+		_log_browser("Admin " . $_SESSION["steamid"] . " generated a key for user " . $_POST["_bcs_addkey_target"] . ": " . $response);
 	}
 }
 
@@ -42,7 +42,7 @@ if (array_key_exists("_bcs_lock", $_POST)) {
 		$response = "No input.";
 	} else {
 		$response = lock_account(str_replace(" ", "", $_POST["_bcs_lock_target"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " locked a user with the ID " . $_POST["_bcs_lock_target"].": ".$response);
+		_log_browser("Admin " . $_SESSION["steamid"] . " locked a user with the ID " . $_POST["_bcs_lock_target"] . ": " . $response);
 	}
 
 }
@@ -53,7 +53,7 @@ if (array_key_exists("_bcs_unlock", $_POST)) {
 	} else {
 
 		$response = unlock_account(str_replace(" ", "", $_POST["_bcs_unlock_target"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " unlocked a user with the ID " . $_POST["_bcs_unlock_target"].": ".$response);
+		_log_browser("Admin " . $_SESSION["steamid"] . " unlocked a user with the ID " . $_POST["_bcs_unlock_target"] . ": " . $response);
 	}
 
 }
@@ -75,7 +75,7 @@ if (array_key_exists("_bcs_rm_course", $_POST)) {
 		$response = "No input.";
 	} else {
 		$response = rm_course(str_replace(" ", "", $_POST["_bcs_rm_course_map"]), str_replace(" ", "", $_POST["_bcs_rm_course_code"]));
-		_log_browser("Admin " . $_SESSION["steamid"]." removed a course on the map " . $_POST["_bcs_rm_course_map"]." with the code " . $_POST["_bcs_rm_course_code"].": ".$response);
+		_log_browser("Admin " . $_SESSION["steamid"] . " removed a course on the map " . $_POST["_bcs_rm_course_map"] . " with the code " . $_POST["_bcs_rm_course_code"] . ": " . $response);
 	}
 }
 
@@ -92,31 +92,32 @@ if (array_key_exists("_bcs_rm_course", $_POST)) {
 	</head>
 	<body>
 		<article>
-			<form method="post" style="width: auto">
-				<input type="submit" name="_bcs_addkey" class="button" role="button" value="Add Key"/>
-				<input type="text" class="button" name="_bcs_addkey_target">
+			<form method="post">
+				<!-- Don't let me near HTML and CSS ever again // relaxtakenotes @ 2023 -->
+				<input type="submit" name="_bcs_addkey" class="button" role="button" style="width: auto" value="Add Key"/>
+				<input type="text" class="button" style="width: auto" name="_bcs_addkey_target">
 				SteamID64 (this returns the existing authkey, if it exists)
 				<br><br>
-				<input type="submit" name="_bcs_rmkey" class="button" role="button" role="button"value="Remove Key"/>
+				<input type="submit" name="_bcs_rmkey" class="button" role="button" style="width: auto" role="button"value="Remove Key"/>
 				<input type="text" class="button" name="_bcs_rmkey_target" style="width: auto">
 				SteamID64
 				<br><br>
-				<input type="submit" name="_bcs_lock" class="button" role="button"value="Lock"/>
+				<input type="submit" name="_bcs_lock" class="button" role="button" style="width: auto" value="Lock"/>
 				<input type="text" class="button" name="_bcs_lock_target" style="width: auto">
 				Authkey, SteamID64, IP
 				<br><br>
-				<input type="submit" name="_bcs_unlock" class="button" role="button" value="Unlock"/>
+				<input type="submit" name="_bcs_unlock" class="button" style="width: auto" role="button" value="Unlock"/>
 				<input type="text" class="button" name="_bcs_unlock_target" style="width: auto">
 				Authkey, SteamID64, IP
 				<br><br>
-				<input type="submit" name="_bcs_rm_course" class="button" role="button"value="Remove Course"/>
-				<input type="text"name="_bcs_rm_course_map">
-				<input type="text"name="_bcs_rm_course_code">
+				<input type="submit" name="_bcs_rm_course" class="button" style="width: auto" role="button"value="Remove Course"/>
+				<input type="text"name="_bcs_rm_course_map" style="width: auto">
+				<input type="text"name="_bcs_rm_course_code" style="width: auto">
 				Course Map, Code
 				<br><br>
-				<input type="submit" name="_bcs_logs" class="button" role="button" value="Show logs"/>
-				<input type="submit" name="_bcs_records" class="button" role="button" value="Show records"/>
-				<input type="submit" name="_bcs_bans" class="button" role="button" value="Show locks"/>
+				<input type="submit" name="_bcs_logs" class="button" role="button" style="width: auto" value="Show logs"/>
+				<input type="submit" name="_bcs_records" class="button" role="button" style="width: auto" value="Show records"/>
+				<input type="submit" name="_bcs_bans" class="button" role="button" style="width: auto" value="Show locks"/>
 			</form>
 			<br>
 			Server response:<br><br>

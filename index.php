@@ -206,7 +206,10 @@
 								<td>
 									<div>
 										<?php
-											echo $row[3][0] . "<br><a href='" . $row[3][1] . "' download>Download</a>";
+											$code = $row[3][0];
+											$path = $row[3][1];
+											$jsplz = "navigator.clipboard.writeText(\"$code\"); return false";
+											echo "$code<br><a href='$path'>Download</a> <a href='#' onclick='$jsplz'>Copy</a>";
 										?>
 									</div>
 								</td> <!-- share code -->
