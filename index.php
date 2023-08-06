@@ -20,7 +20,7 @@
 
 		$name = $decoded_body[4];
 		$code = basename($path, ".txt");
-		$map = explode("\\", $path)[1];
+		$map = explode("/", $path)[1];
 
 		$uid = "...";
 		if (isset($courses[$map][$code])) { $uid = $courses[$map][$code]; }
@@ -49,10 +49,10 @@
 			<li><strong>Jonny_Bro's Courses Database</strong></li>
 		</ul>
 		<ul>
-			<li><a href="register.php" role="button">Get an API key/a></li><br><br>
-			<li><a target="_blank" href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a></li>
-			<li><a target="_blank" href="https://discord.gg/93Psubbgsg" class="button">Our Discord</a></li>
-			<li><a href="/courses" class="button">Courses list for download</a></li>
+			<li><a href="register.php" role="button">Get an API key</a></li>
+			<li><a target="_blank" href="https://github.com/JonnyBro/beatrun" role="button">My Beatrun Patch</a></li>
+			<li><a target="_blank" href="https://discord.gg/93Psubbgsg" role="button">Our Discord</a></li>
+			<li><a href="/courses" role="button">Courses list for download</a></li>
 		</ul>
 	</nav>
 
