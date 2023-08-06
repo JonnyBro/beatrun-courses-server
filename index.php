@@ -38,7 +38,7 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Courses DB</title>
+		<title>Jonny_Bro's Courses DB</title>
 		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
 		<link rel="stylesheet" type="text/css" href="css/main.css"/>
 		<script src="https://unpkg.com/htmx.org@1.9.4"></script>
@@ -50,7 +50,7 @@
 		</ul>
 		<ul>
 			<li><a href="register.php" role="button">Get an API key</a></li>
-			<li><a target="_blank" href="https://github.com/JonnyBro/beatrun" role="button">My Beatrun Patch</a></li>
+			<li><a target="_blank" href="https://github.com/JonnyBro/beatrun" role="button">Jonny's Beatrun Patch</a></li>
 			<li><a target="_blank" href="https://discord.gg/93Psubbgsg" role="button">Our Discord</a></li>
 			<li><a href="/courses" role="button">Courses list for download</a></li>
 		</ul>
