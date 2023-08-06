@@ -9,7 +9,6 @@
 
 	foreach ($iterator as $file) {
 		$path = $file->getPathname();
-		echo $path;
 		$ext = pathinfo($path, PATHINFO_EXTENSION);
 		if ($file->isDir()) { continue; }
 		if ($ext != "txt") { continue; }
