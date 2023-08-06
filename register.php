@@ -16,7 +16,7 @@
 
 	<nav style="margin-left: 1%; margin-right: 1%;">
 		<ul>
-			<li><strong>epic courses</strong></li>
+		<li><strong>Jonny_Bro's Courses Database</strong></li>
 		</ul>
 		<ul>
 			<li><a href="/" role="button">Main Page</a></li>
