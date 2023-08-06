@@ -19,18 +19,29 @@
 		if (!body_is_valid($decoded_body)) { continue; }
 
 		$name = $decoded_body[4];
-		$code = basename($path, ".txt");
+		$code = array();
+		$code[0] = basename($path, ".txt");
+		$code[1] = $path;
 		$map = explode("/", $path)[1];
 
 		$uid = "...";
-		if (isset($courses[$map][$code])) {
-			$uid = $courses[$map][$code];
-		} elseif (isset($courses[$code])) {
-			$uid = $courses[$code]; // backwards compatibility with courses.beatrun.ru
+		if (isset($courses[$map][$code[0]])) {
+			$uid = $courses[$map][$code[0]];
+		} elseif (isset($courses[$code[0]])) {
+			$uid = $courses[$code[0]]; // backwards compatibility with courses.beatrun.ru
 		}
 
-		$rating = get_course_rating($map, $code);
-		// maybe we can sort this by importance somehow? :-
+		$rating = array();
+		$rating[0] = get_course_rating($map, $code[0]);
+
+		if ($rating[0] == "unknown") {
+			$rating[1] = 0;
+		} else {
+			[$likes, $rates] = get_course_rating($map, $code[0], true);
+			$dislikes = ($rates - $likes);
+			$score = $rates + $likes - $dislikes;
+			$rating[1] = intval($score);
+		}
 
 		$data[] = array($name, $uid, $map, $code, $rating);
 	}
@@ -190,18 +201,24 @@
 				<tbody>
 					<?php foreach ($data as $row) { ?>
 							<tr>
-								<td><div class="square"> <?php echo $row[0]; ?> </div></td> <!-- coursename -->
-								<td><div class="square"> <?php echo $row[1]; ?> </div></td> <!-- creator id-->
-								<td><div class="square"> <?php echo $row[2]; ?> </div></td> <!-- map name -->
-								<td><div class="square"> <?php echo $row[3]; ?> </div></td> <!-- share code -->
-								<td id=<?php if ($row[4] === "unknown") { echo 0; } else { echo intval(str_replace("%", "", $row[4])); } ?>>
-									<div style="text-align: center"><?php echo $row[4]; ?></div>
+								<td> <?php echo $row[0]; ?> </div></td> <!-- coursename -->
+								<td> <?php echo $row[1]; ?> </div></td> <!-- creator id-->
+								<td> <?php echo $row[2]; ?> </div></td> <!-- map name -->
+								<td>
+									<div>
+										<?php
+											echo $row[3][0]."<br><a href='".$row[3][1]."'>Download</a>";
+										?>
+									</div>
+								</td> <!-- share code -->
+								<td id=<?php echo $row[4][1]; ?>>
+									<div style="text-align: center"><?php echo $row[4][0]; ?></div>
 
-									<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=like" hx-swap="innerHTML">
+									<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3][0]; ?>&map=<?php echo $row[2]; ?>&action=like" hx-swap="innerHTML">
 										Like
 									</button>
 
-									<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=dislike" hx-swap="innerHTML">
+									<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3][0]; ?>&map=<?php echo $row[2]; ?>&action=dislike" hx-swap="innerHTML">
 										Dislike
 									</button>
 								</td> <!-- rating -->
