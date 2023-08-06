@@ -182,7 +182,6 @@
 			<li><a href="register.php" role="button">Get an API key</a></li>
 			<li><a target="_blank" href="https://github.com/JonnyBro/beatrun" role="button">Jonny's Beatrun Patch</a></li>
 			<li><a target="_blank" href="https://discord.gg/93Psubbgsg" role="button">Our Discord</a></li>
-			<li><a href="/courses" role="button">Courses list for download</a></li>
 		</ul>
 	</nav>
 

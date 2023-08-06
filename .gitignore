@@ -14,4 +14,3 @@ steamauth/SteamConfig.php
 
 # Ignore courses
 courses/*
-!courses/.htaccess
