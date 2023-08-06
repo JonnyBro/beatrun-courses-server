@@ -442,7 +442,7 @@ function get_course_rating($map, $code, $raw = False) {
 		return "unknown";
 	}
 
-	return strval(($like_count / $rate_count) * 100) . "% ($rate_count)";
+	return strval(round(($like_count / $rate_count) * 100, 2)) . "% ($rate_count)";
 }
 
 function like_course($map, $code) {
