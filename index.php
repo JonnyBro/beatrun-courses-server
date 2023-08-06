@@ -209,7 +209,7 @@
 											$code = $row[3][0];
 											$path = $row[3][1];
 											$jsplz = "navigator.clipboard.writeText(\"$code\"); return false";
-											echo "<a href='#' onclick='$jsplz'>$code</a><br><a href='$path'>Download</a>";
+											echo "<a title='Click to copy' href='#' onclick='$jsplz'>$code</a><br><a href='$path'>Download</a>";
 										?>
 									</div>
 								</td> <!-- share code -->
