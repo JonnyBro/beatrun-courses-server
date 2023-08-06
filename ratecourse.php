@@ -3,7 +3,7 @@
 	require ("util.php");
 
 	if (!isset($_SESSION["steamid"])) {
-		echo "Not Authoized";
+		echo "Not Authorized";
 		return;
 	}
 

@@ -7,6 +7,7 @@ $account_record_dir = "data/_record.json";
 $lock_dir = "data/_locked.json";
 $admins_dir = "data/_admins.json";
 $rating_dir = "data/_rating.json";
+$courses_uid_dir = "data/_courses.json";
 $webhook_url = "https://discord.com/api/webhooks/1112687906616774676/IZAwl9kDwKaxyLza4qARNFckJd6KFBuUqTdxaTJViiBGPw3nOgPfGav4y6okd9Nkw1iG"; // discord webhook logging url
 
 $ratelimit_period = 5;
@@ -48,16 +49,16 @@ function upload_set_params() {
 function upload_headers_are_valid() {
 	global $headers;
 	if ($_SERVER["REQUEST_METHOD"] != "POST" ||
-		$headers["Content-Type"] != "text/plain" /*||
-		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 GMod/13"*/) { return false; } else { return true; }
+		$headers["Content-Type"] != "text/plain" ||
+		($headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" &&
+		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 GMod/13")) { return false; } else { return true; }
 }
 
 function getcourse_headers_are_valid() {
 	global $headers;
-	if ($_SERVER["REQUEST_METHOD"] != "GET" /*||
-		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" ||
-		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 GMod/13"*/) { return false; } else { return true; }
+	if ($_SERVER["REQUEST_METHOD"] != "GET" ||
+		($headers["user-agent"] != "Valve/Steam HTTP Client 1.0 (4000)" &&
+		$headers["user-agent"] != "Valve/Steam HTTP Client 1.0 GMod/13")) { return false; } else { return true; }
 }
 
 function is_ratelimited() {
@@ -65,9 +66,7 @@ function is_ratelimited() {
 
 	$ratelimit_array = json_decode(file_get_contents($ratelimit_dir), true);
 
-	if (!$ratelimit_array[$ip]) { return false; }
-
-	if (time() - $ratelimit_array[$ip] <= $ratelimit_period) { return true; }
+	if (isset($ratelimit_array[$ip]) && time() - $ratelimit_array[$ip] <= $ratelimit_period) { return true; }
 
 	foreach ($ratelimit_array as $uid => $time) {
 		if (time() - $ratelimit_array[$uid] > $ratelimit_period) {
@@ -109,14 +108,14 @@ function body_is_valid($body) {
 function generate_code() {
 	$code = "";
 	for ($i = 0; $i < 3; $i++) {
-		$code .= substr(str_shuffle(str_repeat('0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', mt_rand(1,10))), 1, 4);
+		$code .= substr(str_shuffle(str_repeat("0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", mt_rand(1,10))), 1, 4);
 		if ($i == 0 || $i == 1) {$code .= "-";}
 	}
 	return strtoupper($code);
 }
 
-function generateRandomString($length = 32) {
-	return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', ceil($length/strlen($x)) )),1,$length);
+function generateRandomString($length = 64) {
+	return substr(str_shuffle(str_repeat($x = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", ceil($length/strlen($x)) )),1,$length);
 }
 
 function debug_to_console($data) {
@@ -128,9 +127,9 @@ function debug_to_console($data) {
 }
 
 function account_owns_gmod($userid) {
-	require("steamauth/SteamConfig.php"); // here cuz of scope bullshit
+	require ("steamauth/SteamConfig.php"); // here cuz of scope bullshit
 
-	$url = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=".$steamauth["apikey"]."&steamid=".$userid."&format=json");
+	$url = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=".$steamauth['apikey']."&steamid=".$userid."&format=json");
 	$content = json_decode($url, true);
 
 	if (!$content["response"]) { return false; }
@@ -220,7 +219,7 @@ function unlock_account($id) {
 	_unlock_account($_steamid);
 	_unlock_account($_authkey);
 
-	return "Unlocked. $_steamid, $_authkey";
+	return "Unlocked: $_steamid, $_authkey";
 }
 
 function is_locked($id) {
@@ -251,7 +250,6 @@ function gen_key($userid) {
 	while (isset($keys[$key])) {
 		$key = generateRandomString(64);
 	}
-
 	$keys[$key] = $userid;
 
 	file_put_contents($authkeys_dir, json_encode($keys, JSON_PRETTY_PRINT));
@@ -273,10 +271,9 @@ function rm_key($userid) {
 }
 
 function rm_course($map, $code) {
-	$path = "courses/".$map."/".$code.".txt";
+	$path = "courses/" . $map . "/" . $code . ".txt";
 	$body = file_get_contents($path);
 	$decoded_body = json_decode($body, true);
-
 	if (!$decoded_body) { echo "Invalid course (not json)"; }
 	if (!body_is_valid($decoded_body)) { echo "getcourse.php - Invalid course (invalid signature)"; }
 
@@ -326,7 +323,7 @@ function _log_webhook($text) {
 
 	$json_data = json_encode(["content" => $text], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 	$ch = curl_init($webhook_url);
-	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-type: application/json"));
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, $json_data);
 	curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
@@ -343,7 +340,7 @@ function _log_browser($content) {
 	$text = "$date - $content (IP: $ip)";
 
 	_log_webhook($text);
-	file_put_contents($log_dir, $text."\n", FILE_APPEND);
+	file_put_contents($log_dir, $text . "\n", FILE_APPEND);
 }
 
 function _log($content) {
@@ -387,22 +384,22 @@ function register_steam_account($userid, $timecreated) {
 
 	$ragh = "(SteamID: $userid, TimeCreated: $timecreated)";
 
-	if (is_multiaccount($userid)) { _log_browser("util.php - Account locked. ".$ragh); return "Your account is locked. Contact site administration."; }
+	if (is_multiaccount($userid)) { _log_browser("util.php - Account locked. " . $ragh); return "Your account is locked. Contact site administration."; }
 
 	$keys = json_decode(file_get_contents($authkeys_dir), true);
 	foreach ($keys as $akey => $value) {
 		if ($value === $userid) {
 			$ragh = "(";
-			$ragh .= "UserID: ".$userid.", ";
-			$ragh .= "timecreated: ".$timecreated.", ";
-			$ragh .= "key: ".$akey.")";
-			_log_browser("util.php - Existing user logged back in ".$ragh);
+			$ragh .= "UserID: " . $userid . ", ";
+			$ragh .= "timecreated: " . $timecreated . ", ";
+			$ragh .= "key: " . $akey . ")";
+			_log_browser("util.php - Existing user logged back in " . $ragh);
 			return $akey;
 		}
 	}
 
-	if (time() - $timecreated < 7890000) { _log_browser("util.php - Too young of an account ".$ragh); return "Account too young. Needs to be at least 3 months old."; }
-	if (!account_owns_gmod($userid)) { _log_browser("util.php - GMOD not found ".$ragh); return "Account doesn't have Garry's mod. Make sure your game details are public if you think this is wrong."; }
+	if (time() - $timecreated < 7890000) { _log_browser("util.php - Too young of an account " . $ragh); return "Account too young. Needs to be at least 3 months old."; }
+	if (!account_owns_gmod($userid)) { _log_browser("util.php - GMOD not found " . $ragh); return "Account doesn't have Garry's mod. Make sure your game details are public if you think this is wrong."; }
 
 	$key = generateRandomString(64);
 	while (isset($keys[$key])) {
@@ -412,7 +409,7 @@ function register_steam_account($userid, $timecreated) {
 
 	file_put_contents($authkeys_dir, json_encode($keys, JSON_PRETTY_PRINT));
 
-	_log_browser("util.php - New user: ".$userid." ".$timecreated." ".$key);
+	_log_browser("util.php - New user: " . $userid . " " . $timecreated . " " . $key);
 
 	return $key;
 }
@@ -432,22 +429,20 @@ function get_course_rating($map, $code, $raw = False) {
 	if (!isset($rating[$map][$code])) { return "unknown"; }
 
 	$like_count = 0;
-	$dislike_count = 0;
 	$rate_count = count($rating[$map][$code]);
 	foreach ($rating[$map][$code] as $key => $value) {
 		if ($value) { $like_count += 1; }
-		if (!$value) { $dislike_count += 1; }
 	}
 
 	if ($raw) {
-		return [$like_count, $dislike_count];
+		return [$like_count, $rate_count];
 	}
 
-	if ($dislike_count <= 0 && $like_count > 0) {
-		return "100% ($rate_count)";
+	if ($rate_count <= 0) {
+		return "unknown";
 	}
 
-	return strval(($like_count / $dislike_count) * 100) . "% ($rate_count)";
+	return strval(($like_count / $rate_count) * 100) . "% ($rate_count)";
 }
 
 function like_course($map, $code) {

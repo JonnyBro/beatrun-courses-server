@@ -1,129 +1,101 @@
 <?php
 	require ("util.php");
 
-	$coursesDir = "courses";
-	$files = scandir($coursesDir);
+	$courses = json_decode(file_get_contents($courses_uid_dir), true);
+	$courses_dir = "courses";
+	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($courses_dir));
+
 	$data = array();
 
-	$rating_response = "";
+	foreach ($iterator as $file) {
+		$path = $file->getPathname();
+		$ext = pathinfo($path, PATHINFO_EXTENSION);
+		if ($file->isDir()) { continue; }
+		if ($ext != "txt") { continue; }
 
-	function print_to_console($data)
-	{
-		$output = $data;
-		if (is_array($output))
-			$output = implode(",", $output);
+		$body = file_get_contents($path);
+		$decoded_body = json_decode($body, true);
+		if (!$decoded_body) { continue; }
+		if (!body_is_valid($decoded_body)) { continue; }
 
-		echo "<script>console.log('" . $output . "');</script>";
-	}
+		$name = $decoded_body[4];
+		$code = basename($path, ".txt");
+		$map = explode("\\", $path)[1];
 
-	foreach ($files as $file) {
-		if ($file != "." && $file != "..") {
-			if (is_dir($coursesDir . "/" . $file)) {
-				$coursesIDs = json_decode(file_get_contents("data/_courses.json"), true);
-				$mapFiles = glob($coursesDir . "/" . $file . "/*.txt");
+		$uid = "...";
+		if (isset($courses[$map][$code])) { $uid = $courses[$map][$code]; }
 
-				foreach ($mapFiles as $mapFile) {
-					$courseName = array_filter(json_decode(file_get_contents($mapFile)), "is_string")[4];
-					$mapName = $file;
-					$shareCode = basename($mapFile, ".txt");
-					$rating = get_course_rating($mapName, $shareCode);
-
-					$creatorID = "Unknown";
-					if (isset($coursesIDs[$shareCode])) { $creatorID = $coursesIDs[$shareCode]; }
-
-					$data[] = array($courseName, $creatorID, $mapName, $shareCode, $rating);
-				}
-			}
+		[$like_count, $rate_count] = get_course_rating($map, $code, true);
+		// maybe we can sort this by importance somehow? :-)
+		if ($rate_count <= 0) {
+			$rating = "unknown";
+		} else {
+			$rating = strval(($like_count / $rate_count) * 100)."% ($rate_count)";
 		}
+
+
+		$data[] = array($name, $uid, $map, $code, $rating);
 	}
 ?>
 
 <!DOCTYPE html>
-<html>
+<html lang="en" data-theme="dark" class="container">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Courses DB</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+		<link rel="stylesheet" type="text/css" href="css/main.css"/>
+		<script src="https://unpkg.com/htmx.org@1.9.4"></script>
+	</head>
 
-<head>
-	<title>Unofficial Beatrun Courses Database</title>
-	<link rel="stylesheet" href="css/main.css">
-	 <script src="https://unpkg.com/htmx.org@1.9.4"></script>
-</head>
+	<nav style="margin-left: 1%; margin-right: 1%;">
+		<ul>
+			<li><strong>Jonny_Bro's Courses Database</strong></li>
+		</ul>
+		<ul>
+			<li><a href="register.php" role="button">Get an API key/a></li><br><br>
+			<li><a target="_blank" href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a></li>
+			<li><a target="_blank" href="https://discord.gg/93Psubbgsg" class="button">Our Discord</a></li>
+			<li><a href="/courses" class="button">Courses list for download</a></li>
+		</ul>
+	</nav>
 
-<body>
-	<div id="particles-js"></div>
-	<script type="text/javascript" src="particles.js"></script>
-	<script type="text/javascript" src="app.js"></script>
-
-	<div class="wrapper">
-		<div class="panel">
-			<h1>Beatrun | Unofficial Courses Database</h1>
-		</div>
-
-		<div class="content">
-			<div class="body-info">
-				<p>
-					Welcome to my custom Beatrun Courses Database.<br>
-					Here you can download Beatrun, get an API key and upload courses for any map! And everything is free 🤯!<br><br>
-				</p>
-
-				<a href="/register.php?login" class="button">Log-in</a>
-				<a href="/register.php" class="button">Get an API key</a><br><br>
-
-				<a href="https://github.com/JonnyBro/beatrun" class="button">My Beatrun Patch</a>
-				<a href="https://discord.gg/93Psubbgsg" class="button">Our Discord</a>
-				<a href="/courses" class="button">Courses list for download</a>
-			</div>
-			<?php echo $rating_response; ?>
-			<table>
+	<body>
+		<main>
+			<table role="grid" style="column-width: 100ch;">
 				<thead>
 					<tr>
-						<td><div class="square">Course Name</div></td>
-						<td><div class="square">Uploaded By</div></td>
-						<td><div class="square">Map</div></td>
-						<td><div class="square">Code</div></td>
-						<td><div class="square">Rating</div></td>
+						<th scope="col" style="width:20%">Name</th>
+						<th scope="col" style="width:20%">Uploader</th>
+						<th scope="col" style="width:20%">Map</th>
+						<th scope="col" style="width:20%">Code</th>
+						<th scope="col" style="width:10%">Rating</th>
 					</tr>
 				</thead>
 				<tbody>
-				<?php foreach ($data as $row): ?>
-						<tr>
-							<td><div class="square"> <?php echo $row[0]; ?> </div></td> <!-- coursename -->
-							<td><div class="square"> <?php echo $row[1]; ?> </div></td> <!-- creator id-->
-							<td><div class="square"> <?php echo $row[2]; ?> </div></td> <!-- map name -->
-							<td><div class="square"> <?php echo $row[3]; ?> </div></td> <!-- share code -->
-							<td><div class="square"> <?php echo $row[4]; ?> </div></td> <!-- rating -->
-							<td>
-								<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=like" hx-swap="innerHTML">
-									Like
-								</button>
-								<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=dislike" hx-swap="innerHTML">
-									Dislike
-								</button>
-							</td>
-						</tr>
-					<?php endforeach; ?>
+					<?php foreach ($data as $row) { ?>
+							<tr>
+								<td><div class="square"> <?php echo $row[0]; ?> </div></td> <!-- coursename -->
+								<td><div class="square"> <?php echo $row[1]; ?> </div></td> <!-- creator id-->
+								<td><div class="square"> <?php echo $row[2]; ?> </div></td> <!-- map name -->
+								<td><div class="square"> <?php echo $row[3]; ?> </div></td> <!-- share code -->
+								<td>
+									<div style="text-align: center"><?php echo $row[4]; ?></div>
+
+									<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=like" hx-swap="innerHTML">
+										Like
+									</button>
+
+									<button class="rate_button" hx-post="/ratecourse.php?code=<?php echo $row[3]; ?>&map=<?php echo $row[2]; ?>&action=dislike" hx-swap="innerHTML">
+										Dislike
+									</button>
+								</td> <!-- rating -->
+							</tr>
+					<?php } ?>
 				</tbody>
 			</table>
-		</div>
-	</div>
-
-	<div class="footer">
-		<p>France lost | Coperight @ [relaxtakenotes / el1s1on / jonny_bro]</p>
-	</div>
-</body>
-
+		</main>
+	</body>
 </html>
-
-<style>
-	body {
-		margin: 0;
-		padding: 0;
-	}
-
-	#particles-js {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		z-index: -1;
-	}
-</style>

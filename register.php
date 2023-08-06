@@ -1,33 +1,37 @@
 <?php
-
-require("steamauth/steamauth.php");
-require("util.php");
-
+	require ("steamauth/steamauth.php");
+	require ("util.php");
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark" class="container">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Steam Auth</title>
+		<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+		<link rel="stylesheet" href="css/main.css">
+	</head>
 
-<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<link rel="stylesheet" href="css/main.css">
-</head>
+	<nav style="margin-left: 1%; margin-right: 1%;">
+		<ul>
+			<li><strong>epic courses</strong></li>
+		</ul>
+		<ul>
+			<li><a href="/" role="button">Main Page</a></li>
+		</ul>
+	</nav>
 
-<body>
-	<section>
-		<div>
-			<!-- Login process start -->
-			<?php if (!isset($_SESSION["steamid"])) { ?>
-				<a href="?login">
-					<button class="button" type="submit">Log-in</button>
-				</a>
-				<p>
-					Log-in with Steam to register an account and receive the API key for the course system.<br>
-					Make sure to set your profile and game details to public.<br>
-					Remember that you NEED to own garry's mod and have a sufficiently old account.
-				</p>
+	<body>
+		<main class="container">
+			<article>
+				<div>
+				<!-- Login process start -->
+				<?php if (!isset($_SESSION["steamid"])) { ?>
+					<a href="?login">
+						<button class="button" type="submit">Log-in with Steam</button>
+					</a>
 					<p>
 						Terms of use:<br>
 						1) Don't share your API key with anyone.<br>
@@ -35,37 +39,28 @@ require("util.php");
 						3) Don't spam the servers with garbage courses.<br>
 						Failure to obide by these terms will result in API key termination.
 					</p>
-				<?php return;
-			} ?>
-			<!-- Login process end -->
+				<?php return; } ?>
+				<!-- Login process end -->
 
-			<!-- After login. Gives you your apikey here. -->
-			<form action="" method="get">
-				<button class="button" name="logout" type="submit">Logout</button>
-			</form>
-			<p>Your apikey is:
-				<b>
-					<?php
-					include("steamauth/userInfo.php");
+				<!-- After login. Gives you your apikey here. -->
+				<form action="" method="get">
+					<button class="button" name="logout" type="submit">Logout</button>
+				</form>
+				Your apikey is: <b>
+				<?php
+					include ("steamauth/userInfo.php");
 					echo register_steam_account($steamprofile["steamid"], $steamprofile["timecreated"]);
-					?>
+				?>
 				</b>
-			</p>
-			<p>
-				Terms of use:<br>
-				1) Don't share your API key with anyone.<br>
-				2) Don't post courses with names that are deemed offensive.<br>
-				3) Don't spam the servers with garbage courses.<br>
-				Failure to obide by these terms will result in API key termination.
-			</p>
-		</div>
-	</section>
-</body>
-
+				<p>
+					Terms of use:<br>
+					1) Don't share your API key with anyone.<br>
+					2) Don't post courses with names that are deemed offensive.<br>
+					3) Don't spam the servers with garbage courses.<br>
+					Failure to obide by these terms will result in API key termination.
+				</p>
+				</div>
+			</article>
+		</main>
+	</body>
 </html>
-
-<style>
-	body {
-		margin: 25px;
-	}
-</style>
