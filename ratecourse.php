@@ -3,12 +3,12 @@
 	require ("util.php");
 
 	if (!isset($_SESSION["steamid"])) {
-		echo "Not Authorized";
+		echo "_-1";
 		return;
 	}
 
 	if (is_ratelimited()) {
-		echo "Ratelimited";
+		echo "_-2";
 		return;
 	}
 
@@ -18,13 +18,13 @@
 
 	if ($action === "like") {
 		like_course($map, $code);
-		echo "Liked!";
+		echo "_0";
 		return;
 	}
 
 	if ($action === "dislike") {
 		dislike_course($map, $code);
-		echo "Disliked!";
+		echo "_1";
 		return;
 	}
 ?>

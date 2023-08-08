@@ -111,7 +111,48 @@
 }
 
 .rate_button {
-	padding: 0.2rem;
-	margin: 0.2rem;
-	width: 14ch;
+	padding: 0.1%;
+	margin: 0.1%;
+	width: 2ch;
+}
+
+article {
+	padding-top: var(--block-spacing-horizontal);
+	padding-bottom: var(--block-spacing-horizontal);
+}
+
+.container {
+	max-width: 80vw;
+}
+
+.notification {
+	position: fixed;
+	top: 0;
+	right: 0;
+	margin: 1%;
+	padding: calc(var(--block-spacing-horizontal) / 1.7);
+	border-radius: var(--border-radius);
+	box-shadow: var(--card-box-shadow);
+	transition: opacity 0.3s !important;
+	transition: background-color 0.1s !important;
+	opacity: 0;
+}
+
+.notification_bad {
+	background-color: rgba(40, 20, 20, 0.5);
+	color: rgba(255, 160, 160, 0.9);
+}
+
+.notification_good {
+	background-color: rgba(20, 40, 20, 0.5);
+	color: rgba(160, 255, 160, 0.9);
+}
+
+.notification_neutral {
+	background-color: rgba(20, 20, 20, 0.5);
+	color: rgba(255, 255, 255, 0.9);
+}
+
+.notification_flash {
+	background-color: rgba(128, 128, 128, 0.2) !important;
 }

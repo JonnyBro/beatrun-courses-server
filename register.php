@@ -25,7 +25,7 @@
 
 	<body>
 		<main class="container">
-			<article>
+			<article style="margin: 0;">
 				<div>
 				<!-- Login process start -->
 				<?php if (!isset($_SESSION["steamid"])) { ?>
