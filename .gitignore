@@ -1,14 +1,6 @@
-# Ignore VSCode Settings
-.vscode
-
 # Ignore settings
-data/_admins.json
-data/_courses.json
-data/_keys.json
-data/_locked.json
-data/_ratelimit.json
-data/_record.json
-data/_logs.log
+data/*
+!data/.htaccess
 
 steamauth/SteamConfig.php
 
