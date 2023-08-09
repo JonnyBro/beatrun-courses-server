@@ -43,7 +43,7 @@ function getcourse_set_params() {
 function upload_set_params() {
 	global $headers, $authkey, $map;
 	$authkey = sanitize($headers["authorization"], false, true);
-	$map = sanitize($headers["Game-Map"], false, true);
+	$map = sanitize($headers["game-Map"], false, true);
 }
 
 function upload_headers_are_valid() {

@@ -19,7 +19,7 @@ if (!body_is_valid($decoded_body)) { _error("upload.php - Invalid course (invali
 $path = "courses/" . $map . "/";
 
 $course_id = generate_code();
-$file = $path.$course_id.".txt";
+$file = $path . $course_id . ".txt";
 
 $iter_limit = 500;
 $iter = 0;
