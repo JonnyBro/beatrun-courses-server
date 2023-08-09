@@ -42,19 +42,19 @@ function getcourse_set_params() {
 
 function upload_set_params() {
 	global $headers, $authkey, $map;
-	$authkey = sanitize($headers["Authorization"], false, true);
+	$authkey = sanitize($headers["authorization"], false, true);
 	$map = sanitize($headers["Game-Map"], false, true);
 }
 
 function upload_headers_are_valid() {
 	global $headers;
-	if ($_SERVER['REQUEST_METHOD'] != "POST" ||
+	if ($_SERVER["REQUEST_METHOD"] != "POST" ||
 		$headers["Content-Type"] != "text/plain") { return false; } else { return true; }
 }
 
 function getcourse_headers_are_valid() {
 	global $headers;
-	if ($_SERVER['REQUEST_METHOD'] != "GET") { return false; } else { return true; }
+	if ($_SERVER["REQUEST_METHOD"] != "GET") { return false; } else { return true; }
 }
 
 function is_ratelimited() {
@@ -367,7 +367,7 @@ function get_records() {
 	foreach ($record as $steamid => $data) {
 		$ips = [];
 		foreach ($data["ips"] as $ip => $boolleaaann) { array_push($ips, $ip); }
-		$s_ips = implode(', ', $ips);
+		$s_ips = implode(", ", $ips);
 		$lastchanged = $data["lastchanged"];
 		$output .= "$steamid - IP's: $s_ips; LastChanged: $lastchanged\n";
 	}

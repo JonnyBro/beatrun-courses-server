@@ -8,7 +8,7 @@ if (is_ratelimited()) { _error("getcourse.php - Ratelimited."); }
 if (!is_authkey_valid($authkey)) { _error("getcourse.php - Invalid key."); }
 if (is_multiaccount(get_userid_from_authkey($authkey))) { _error("getcourse.php - Your account is locked. Contact site administration."); }
 
-$path = "courses/".$map."/".$code.".txt";
+$path = "courses/" . $map . "/" . $code . ".txt";
 $body = file_get_contents($path);
 $decoded_body = json_decode($body, true);
 

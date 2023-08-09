@@ -1,6 +1,6 @@
 <?php
 
-require ('util.php');
+require("util.php");
 
 upload_set_params();
 if (!upload_headers_are_valid()) { _error("upload.php - Invalid headers."); }
@@ -11,12 +11,12 @@ if (is_multiaccount($uid)) {
 	_error("upload.php - Your account is locked. Contact site administration.");
 }
 
-$body = file_get_contents('php://input');
+$body = file_get_contents("php://input");
 $decoded_body = json_decode($body, true);
 if (!$decoded_body) { _error("upload.php - Invalid course (not json)"); }
 if (!body_is_valid($decoded_body)) { _error("upload.php - Invalid course (invalid signature)"); }
 
-$path = "courses/".$map."/";
+$path = "courses/" . $map . "/";
 
 $course_id = generate_code();
 $file = $path.$course_id.".txt";
@@ -26,7 +26,7 @@ $iter = 0;
 while (file_exists($file)) {
 	if ($iter > $iter_limit) { _error("Hit the iter_limit while looking for a free slot. Try again."); }
 	$course_id = generate_code();
-	$file = $path.$course_id.".txt";
+	$file = $path . $course_id . ".txt";
 	$iter++;
 }
 
@@ -37,8 +37,7 @@ $courses = json_decode(file_get_contents($courses_uid_dir), true);
 $courses[$map][$course_id] = $uid;
 file_put_contents($courses_uid_dir, json_encode($courses));
 
-_log("Uploaded a course: ".$course_id." (name: ".sanitize($decoded_body[4], false, true).")");
-print("Uploaded under the ID: ".$course_id."\n");
-
+_log("Uploaded a course: " . $course_id . " (name: " . sanitize($decoded_body[4], false, true) . ")");
+print("Uploaded under the ID: " . $course_id . "\n");
 
 ?>
