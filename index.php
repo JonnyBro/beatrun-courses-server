@@ -2,7 +2,7 @@
 	require ("util.php");
 
 	$courses = json_decode(file_get_contents($courses_uid_dir), true);
-	$courses_dir = "courses";
+	$courses_dir = "courses/";
 	$iterator = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($courses_dir));
 
 	$data = array();
@@ -22,7 +22,7 @@
 		$code = array();
 		$code[0] = basename($path, ".txt");
 		$code[1] = $path;
-		$map = explode("/", $path)[1];
+		$map = explode("/", $path)[1]; // this seems to be different on different systems. switch around between \\ and /
 
 		$uid = "...";
 		if (isset($courses[$map][$code[0]])) {
@@ -98,8 +98,7 @@
 											<?php
 												$code = $row[3][0];
 												$path = $row[3][1];
-												$jsplz = "copy_contents(\"$code\")";
-												echo "<a title='Click to copy' href='#' onclick='$jsplz'>$code</a><br><a href='$path'>Download</a>";
+												echo "<a title='Click to copy' href='#' onclick='copy_contents(\"$code\")'>$code</a><br><a href='$path'>Download</a>";
 											?>
 										</div>
 									</td> <!-- share code -->

@@ -34,27 +34,29 @@ function sanitize($string, $force_lowercase = true, $anal = false) {
 }
 
 function getcourse_set_params() {
-	global $headers, $authkey, $map, $code;
+	global $authkey, $map, $code;
 	$authkey = sanitize($_GET["key"], false, true);
 	$map = sanitize($_GET["map"], false, true);
 	$code = sanitize($_GET["sharecode"], false, true);
 }
 
 function upload_set_params() {
-	global $headers, $authkey, $map;
-	$authkey = sanitize($headers["authorization"], false, true);
-	$map = sanitize($headers["game-map"], false, true);
+	global $authkey, $map;
+
+	$authkey = sanitize($_POST["key"], false, true);
+	$map = sanitize($_POST["map"], false, true);
 }
 
 function upload_headers_are_valid() {
-	global $headers;
-	if ($_SERVER["REQUEST_METHOD"] != "POST" ||
-		$headers["Content-Type"] != "text/plain") { return false; } else { return true; }
+	//global $headers;
+	return $_SERVER["REQUEST_METHOD"] == "POST";
+	//if () { return false; } else { return true; }
 }
 
 function getcourse_headers_are_valid() {
-	global $headers;
-	if ($_SERVER["REQUEST_METHOD"] != "GET") { return false; } else { return true; }
+	//global $headers;
+	return $_SERVER["REQUEST_METHOD"] == "GET";
+	//if () { return false; } else { return true; }
 }
 
 function is_ratelimited() {

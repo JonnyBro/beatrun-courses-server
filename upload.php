@@ -11,7 +11,7 @@ if (is_multiaccount($uid)) {
 	_error("upload.php - Your account is locked. Contact site administration.");
 }
 
-$body = file_get_contents("php://input");
+$body = base64_decode($_POST["course_data"], true);
 $decoded_body = json_decode($body, true);
 if (!$decoded_body) { _error("upload.php - Invalid course (not json)"); }
 if (!body_is_valid($decoded_body)) { _error("upload.php - Invalid course (invalid signature)"); }
