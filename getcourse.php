@@ -12,6 +12,8 @@ if (is_multiaccount(get_userid_from_authkey($authkey))) { _error("getcourse.php 
 $path = "courses/" . $map . "/" . $code . ".txt";
 $body = file_get_contents($path);
 
+if (!$body) { _error("getcourse.php - Invalid map (check the map)"); }
+
 $decoded_body = json_decode($body, true);
 if (!$decoded_body) {_error("getcourse.php - Invalid course (not json)"); }
 if (!body_is_valid($decoded_body)) { _error("getcourse.php - Invalid course (invalid signature)"); }
