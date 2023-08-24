@@ -85,7 +85,7 @@ function is_authkey_valid($key) {
 
 	if (count($key_array) <= 0) { return true; }
 
-	if ($key_array[$key]) { return true; }
+	if (isset($key_array[$key])) { return true; }
 
 	return false;
 }

@@ -7,9 +7,7 @@ if (!upload_headers_are_valid()) { _error("upload.php - Invalid headers."); }
 if (is_ratelimited()) { _error("upload.php - Ratelimited."); }
 if (!is_authkey_valid($authkey)) { _error("upload.php - Invalid key."); }
 $uid = get_userid_from_authkey($authkey);
-if (is_multiaccount($uid)) {
-	_error("upload.php - Your account is locked. Contact site administration.");
-}
+if (is_multiaccount($uid)) { _error("upload.php - Your account is locked. Contact site administration."); }
 
 $body = base64_decode($_POST["course_data"], true);
 $decoded_body = json_decode($body, true);
