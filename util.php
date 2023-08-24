@@ -407,7 +407,11 @@ function register_steam_account($userid, $timecreated) {
 
 	file_put_contents($authkeys_dir, json_encode($keys, JSON_PRETTY_PRINT));
 
-	_log_browser("util.php - New user: " . $userid . " " . $timecreated . " " . $key);
+	$ragh = "(";
+	$ragh .= "UserID: " . $userid . ", ";
+	$ragh .= "timecreated: " . $timecreated . ", ";
+	$ragh .= "key: " . $key . ")";
+	_log_browser("util.php - New user: " . $ragh);
 
 	return $key;
 }
