@@ -382,7 +382,7 @@ function register_steam_account($userid, $timecreated) {
 
 	$ragh = "(SteamID: $userid, TimeCreated: $timecreated)";
 
-	if (is_multiaccount($userid)) { _log_browser("util.php - Account locked. " . $ragh); return "Your account is locked. Contact site administration."; }
+	if (is_multiaccount($userid)) { _log_browser("util.php - Account locked: " . $ragh); return "Your account is locked. Contact site administration."; }
 
 	$keys = json_decode(file_get_contents($authkeys_dir), true);
 	foreach ($keys as $akey => $value) {
@@ -391,13 +391,13 @@ function register_steam_account($userid, $timecreated) {
 			$ragh .= "UserID: " . $userid . ", ";
 			$ragh .= "timecreated: " . $timecreated . ", ";
 			$ragh .= "key: " . $akey . ")";
-			_log_browser("util.php - Existing user logged back in " . $ragh);
+			_log_browser("util.php - Existing user logged back in: " . $ragh);
 			return $akey;
 		}
 	}
 
-	if (time() - $timecreated < 7890000) { _log_browser("util.php - Too young of an account " . $ragh); return "Account too young. Needs to be at least 3 months old."; }
-	if (!account_owns_gmod($userid)) { _log_browser("util.php - GMOD not found " . $ragh); return "Account doesn't have Garry's mod. Make sure your game details are public if you think this is wrong."; }
+	if (time() - $timecreated < 7890000) { _log_browser("util.php - Too young of an account: " . $ragh); return "Account too young. Needs to be at least 3 months old."; }
+	if (!account_owns_gmod($userid)) { _log_browser("util.php - GMOD not found: " . $ragh); return "Account doesn't have Garry's mod. Make sure your game details are public if you think this is wrong."; }
 
 	$key = generateRandomString(64);
 	while (isset($keys[$key])) {
