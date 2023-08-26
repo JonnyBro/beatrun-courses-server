@@ -212,10 +212,21 @@ function _unlock_account($id) {
 }
 
 function unlock_account($id) {
+	global $account_record_dir;
 	[$_steamid, $_authkey] = get_relevant_info($id);
 
 	_unlock_account($_steamid);
 	_unlock_account($_authkey);
+
+	// get rid of the ip's if we were locked automatically
+	$record = json_decode(file_get_contents($account_record_dir), true);
+
+	if (!isset($record[$_steamid])) { $record[$_steamid] = []; }
+
+	$record[$_steamid]["ips"] = [];
+	$record[$_steamid]["lastchanged"] = time();
+
+	file_put_contents($account_record_dir, json_encode($record, JSON_PRETTY_PRINT));
 
 	return "Unlocked: $_steamid, $_authkey";
 }
