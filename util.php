@@ -357,7 +357,7 @@ function _log($content) {
 
 	$date = date("D M j G:i:s T Y");
 	$steamid = get_userid_from_authkey($authkey);
-	$text = "$date - $content (Authkey: $authkey, Map: $map, IP: $ip, SteamID: $steamid)";
+	$text = "$date - $content: (Authkey: $authkey, Map: $map, IP: $ip, SteamID: $steamid)";
 
 	_log_webhook($text);
 	file_put_contents($log_dir, $text . "\n", FILE_APPEND);
