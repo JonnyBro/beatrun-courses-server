@@ -4,7 +4,7 @@
 // we can accidentally have two same codes but on two different maps, therefore we can also override the wrong course.
 // it's an edge case and a half, but still, keep that in mind.
 
-require ('util.php');
+require("util.php");
 
 upload_set_params();
 if (!upload_headers_are_valid()) { _error("updatecourse.php - Invalid headers."); }
@@ -28,12 +28,11 @@ $uid_updatee = $courses[$map][$code];
 
 if ($uid !== $uid_updatee) { _error("updatecourse.php - Not the owner of this course, can't update!"); }
 
-$file = "courses/".$map."/".$code.".txt";
+$file = "courses/" . $map . "/" . $code . ".txt";
 
 file_put_contents($file, $body);
 
-_log("Updated a course: ".$code." (name: ".sanitize($decoded_body[4], false, true).")");
-print("Updated the course under ID: ".$code."\n");
-
+_log("Updated a course: " . $code . " (name: " . sanitize($decoded_body[4], false, true) . ")");
+print("Updated the course under ID: " . $code . "\n");
 
 ?>
