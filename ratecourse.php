@@ -1,30 +1,48 @@
 <?php
-	require ("steamauth/steamauth.php");
-	require ("util.php");
 
-	if (!isset($_SESSION["steamid"])) {
-		echo "_-1";
-		return;
+require('steamauth/steamauth.php');
+require('util.php');
+
+$likediv = file_get_contents("components/like_div.html");
+
+$code = sanitize($_GET["code"], false, true);
+$action = sanitize($_GET["action"], false, true);
+
+function get_return_div() {
+	global $code, $likediv;
+
+	[$likes, $rates] = get_course_rating($code, true);
+	$dislikes = ($rates - $likes);
+
+	if (!$rates || $rates <= 0) {
+		$dislikes = 0;
+		$likes = 0;
+		$rates = 0;
 	}
 
-	if (is_ratelimited()) {
-		echo "_-2";
-		return;
-	}
+	$div = $likediv;
+	$div = str_replace("{coursecode}", $code, $div);
+	$div = str_replace("{likecount}", $likes, $div);
+	$div = str_replace("{dislikecount}", $dislikes, $div);
 
-	$map = sanitize($_GET["map"], false, true);
-	$code = sanitize($_GET["code"], false, true);
-	$action = sanitize($_GET["action"], false, true);
+	return $div;
+}
 
-	if ($action === "like") {
-		like_course($map, $code);
-		echo "_0";
-		return;
-	}
+if (!isset($_SESSION['steamid']) || !get_authkey_from_userid($_SESSION['steamid'])) {
+	echo get_return_div();
 
-	if ($action === "dislike") {
-		dislike_course($map, $code);
-		echo "_1";
-		return;
-	}
+	return;
+}
+
+if (is_ratelimited()) {
+	echo get_return_div();
+
+	return;
+}
+
+if ($action === "like") { like_course($code); }
+if ($action === "dislike") { dislike_course($code); }
+
+echo get_return_div();
+
 ?>

@@ -1,8 +1,9 @@
 <?php
-require ("steamauth/steamauth.php");
-require ("util.php");
 
-if (!isset($_SESSION["steamid"])) {
+require('steamauth/steamauth.php');
+require('util.php');
+
+if (!isset($_SESSION['steamid'])) {
 	echo '
 	<a href="?login">
 		<button class="button" type="submit">Log-in</button>
@@ -11,71 +12,69 @@ if (!isset($_SESSION["steamid"])) {
 	return;
 }
 $admins = json_decode(file_get_contents($admins_dir), true);
-if (!isset($admins[$_SESSION["steamid"]])) { _error("Not admin."); }
+
+if (!isset($admins[$_SESSION['steamid']])) { _error("Not admin."); }
 
 $response = "...";
 
 // yo yanderedev u need to hire me fr
 
-if (array_key_exists("_bcs_addkey", $_POST)) {
+if (array_key_exists('_bcs_addkey', $_POST)) {
 	if (strlen($_POST["_bcs_addkey_target"]) <= 0) {
 		$response = "No input.";
 	} else {
 		$response = gen_key(str_replace(" ", "", $_POST["_bcs_addkey_target"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " generated a key for user " . $_POST["_bcs_addkey_target"] . ": " . $response);
+		_log_browser("Admin " . $_SESSION['steamid'] . " generated a key for user " . $_POST["_bcs_addkey_target"] . ": " . $response);
 	}
 }
 
-if (array_key_exists("_bcs_rmkey", $_POST)) {
+if (array_key_exists('_bcs_rmkey', $_POST)) {
 	if (strlen($_POST["_bcs_rmkey_target"]) <= 0) {
 		$response = "No input.";
 	} else {
 
 		$response = rm_key(str_replace(" ", "", $_POST["_bcs_rmkey_target"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " removed a key from user " . $_POST["_bcs_rmkey_target"]);
+		_log_browser("Admin " . $_SESSION['steamid'] . " removed a key from user " . $_POST["_bcs_rmkey_target"]);
 	}
-
 }
 
-if (array_key_exists("_bcs_lock", $_POST)) {
+if (array_key_exists('_bcs_lock', $_POST)) {
 	if (strlen($_POST["_bcs_lock_target"]) <= 0) {
 		$response = "No input.";
 	} else {
 		$response = lock_account(str_replace(" ", "", $_POST["_bcs_lock_target"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " locked a user with the ID " . $_POST["_bcs_lock_target"] . ": " . $response);
+		_log_browser("Admin " . $_SESSION['steamid'] . " locked a user with the ID " . $_POST["_bcs_lock_target"] . ": " . $response);
 	}
-
 }
 
-if (array_key_exists("_bcs_unlock", $_POST)) {
+if (array_key_exists('_bcs_unlock', $_POST)) {
 	if (strlen($_POST["_bcs_unlock_target"]) <= 0) {
 		$response = "No input.";
 	} else {
 
 		$response = unlock_account(str_replace(" ", "", $_POST["_bcs_unlock_target"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " unlocked a user with the ID " . $_POST["_bcs_unlock_target"] . ": " . $response);
+		_log_browser("Admin " . $_SESSION['steamid'] . " unlocked a user with the ID " . $_POST["_bcs_unlock_target"] . ": " . $response);
 	}
-
 }
 
-if (array_key_exists("_bcs_logs", $_POST)) {
+if (array_key_exists('_bcs_logs', $_POST)) {
 	$response = str_replace("\n", "<br>", file_get_contents($log_dir));
 }
 
-if (array_key_exists("_bcs_records", $_POST)) {
+if (array_key_exists('_bcs_records', $_POST)) {
 	$response = str_replace("\n", "<br>", get_records());
 }
 
-if (array_key_exists("_bcs_bans", $_POST)) {
+if (array_key_exists('_bcs_bans', $_POST)) {
 	$response = str_replace("\n", "<br>", file_get_contents($lock_dir));
 }
 
-if (array_key_exists("_bcs_rm_course", $_POST)) {
+if (array_key_exists('_bcs_rm_course', $_POST)) {
 	if (strlen($_POST["_bcs_rm_course_map"]) <= 0 || strlen($_POST["_bcs_rm_course_code"]) <= 0) {
 		$response = "No input.";
 	} else {
 		$response = rm_course(str_replace(" ", "", $_POST["_bcs_rm_course_map"]), str_replace(" ", "", $_POST["_bcs_rm_course_code"]));
-		_log_browser("Admin " . $_SESSION["steamid"] . " removed a course on the map " . $_POST["_bcs_rm_course_map"] . " with the code " . $_POST["_bcs_rm_course_code"] . ": " . $response);
+		_log_browser("Admin " . $_SESSION['steamid'] . " removed a course on the map " . $_POST["_bcs_rm_course_map"] . " with the code " . $_POST["_bcs_rm_course_code"] . ": " . $response);
 	}
 }
 
@@ -93,7 +92,7 @@ if (array_key_exists("_bcs_rm_course", $_POST)) {
 	<body>
 		<article>
 			<form method="post">
-				<!-- Don't let me near HTML and CSS ever again // relaxtakenotes @ 2023 -->
+				<!-- Don't let me near HTML and CSS ever again -->
 				<input type="submit" name="_bcs_addkey" class="button" role="button" style="width: auto" value="Add Key"/>
 				<input type="text" class="button" style="width: auto" name="_bcs_addkey_target">
 				SteamID64 (this returns the existing authkey, if it exists)
@@ -110,9 +109,9 @@ if (array_key_exists("_bcs_rm_course", $_POST)) {
 				<input type="text" class="button" name="_bcs_unlock_target" style="width: auto">
 				Authkey, SteamID64, IP
 				<br><br>
-				<input type="submit" name="_bcs_rm_course" class="button" style="width: auto" role="button"value="Remove Course"/>
-				<input type="text"name="_bcs_rm_course_map" style="width: auto">
-				<input type="text"name="_bcs_rm_course_code" style="width: auto">
+				<input type="submit" name="_bcs_rm_course" class="button" style="width: auto" role="button" value="Remove Course"/>
+				<input type="text" name="_bcs_rm_course_map" style="width: auto">
+				<input type="text" name="_bcs_rm_course_code" style="width: auto">
 				Course Map, Code
 				<br><br>
 				<input type="submit" name="_bcs_logs" class="button" role="button" style="width: auto" value="Show logs"/>
@@ -125,7 +124,7 @@ if (array_key_exists("_bcs_rm_course", $_POST)) {
 		</article>
 	</body>
 	<script>
-		if ( window.history.replaceState ) {
+		if (window.history.replaceState) {
 			window.history.replaceState(null, null, window.location.href);
 		}
 	</script>
