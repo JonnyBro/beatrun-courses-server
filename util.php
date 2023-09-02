@@ -400,13 +400,17 @@ function rm_key($userid) {
 	return "Removed.";
 }
 
-function rm_course($map, $code) {
-	$path = "courses/".$map."/".$code.".txt";
+function rm_course($code) {
+	$courses = get_courses_data();
+
+	if (!isset($courses[$code])) { return "Not found!"; }
+
+	$path = $courses[$code]["path"];
 	$body = file_get_contents($path);
 	$decoded_body = json_decode($body, true);
 
 	if (!$decoded_body) { echo "Invalid course (not json)"; }
-	if (!body_is_valid($decoded_body)) { echo "getcourse.php - Invalid course (invalid signature)"; }
+	if (!body_is_valid($decoded_body)) { echo "Invalid course (invalid signature)"; }
 
 	if (!unlink($path)) {
 		return "Failed to delete. Check validity of the input.";

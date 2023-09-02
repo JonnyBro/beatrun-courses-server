@@ -70,11 +70,11 @@ if (array_key_exists('_bcs_bans', $_POST)) {
 }
 
 if (array_key_exists('_bcs_rm_course', $_POST)) {
-	if (strlen($_POST["_bcs_rm_course_map"]) <= 0 || strlen($_POST["_bcs_rm_course_code"]) <= 0) {
+	if (strlen($_POST["_bcs_rm_course_code"]) <= 0) {
 		$response = "No input.";
 	} else {
-		$response = rm_course(str_replace(" ", "", $_POST["_bcs_rm_course_map"]), str_replace(" ", "", $_POST["_bcs_rm_course_code"]));
-		_log_browser("Admin " . $_SESSION['steamid'] . " removed a course on the map " . $_POST["_bcs_rm_course_map"] . " with the code " . $_POST["_bcs_rm_course_code"] . ": " . $response);
+		$response = rm_course(str_replace(" ", "", $_POST["_bcs_rm_course_code"]));
+		_log_browser("Admin " . $_SESSION['steamid'] . " removed a course with the code " . $_POST["_bcs_rm_course_code"] . ": " . $response);
 	}
 }
 
