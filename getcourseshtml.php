@@ -103,7 +103,7 @@ $sortkeys = [
 if (!isset($sortkeys[$sorttype])) { $sorttype = "date"; }
 $courses = array_msort($courses, array($sortkeys[$sorttype][0] => $sortkeys[$sorttype][1]));
 
-$page = 0;
+$page = 1;
 if (isset($_GET["page"])) { $page = intval(sanitize($_GET["page"], true, false)); }
 if ($page * 20 > count($courses)) { $page = 0; }
 
