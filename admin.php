@@ -103,16 +103,15 @@ if (array_key_exists('_bcs_rm_course', $_POST)) {
 				<br><br>
 				<input type="submit" name="_bcs_lock" class="button" role="button" style="width: auto" value="Lock"/>
 				<input type="text" class="button" name="_bcs_lock_target" style="width: auto">
-				Authkey, SteamID64, IP
+				Authkey/SteamID64/IP
 				<br><br>
 				<input type="submit" name="_bcs_unlock" class="button" style="width: auto" role="button" value="Unlock"/>
 				<input type="text" class="button" name="_bcs_unlock_target" style="width: auto">
-				Authkey, SteamID64, IP
+				Authkey/SteamID64/IP
 				<br><br>
 				<input type="submit" name="_bcs_rm_course" class="button" style="width: auto" role="button" value="Remove Course"/>
-				<input type="text" name="_bcs_rm_course_map" style="width: auto">
 				<input type="text" name="_bcs_rm_course_code" style="width: auto">
-				Course Map, Code
+				Course Code
 				<br><br>
 				<input type="submit" name="_bcs_logs" class="button" role="button" style="width: auto" value="Show logs"/>
 				<input type="submit" name="_bcs_records" class="button" role="button" style="width: auto" value="Show records"/>
