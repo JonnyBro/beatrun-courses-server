@@ -75,7 +75,7 @@ require ('util.php');
 						<div class="pb-2 text-base text-left">
 							Great! Welcome to our little community.
 							<br>
-							To get started, make sure you're using <a class="hover:text-yellow-200 transition-all text-red-300" href="https://github.com/JonnyBro/beatrun">this version of beatrun</a>, or have <a class="hover:text-yellow-200 transition-all text-red-300" href="https://github.com/relaxtakenotes/beatrun-courses-server/blob/main/README.md">updated the OnlineCourse.lua file</a>
+							To get started, make sure you're using <a class="hover:text-yellow-200 transition-all text-red-300" href="https://github.com/JonnyBro/beatrun">this version of beatrun</a>, or have <a class="hover:text-yellow-200 transition-all text-red-300" href="https://github.com/JonnyBro/beatrun/blob/master/beatrun/gamemodes/beatrun/gamemode/cl/OnlineCourse.lua">updated the OnlineCourse.lua file</a>
 							<br>
 							After that, you can copy the authkey below and then enter this command in console:
 							<br>
