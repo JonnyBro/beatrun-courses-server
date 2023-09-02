@@ -7,10 +7,10 @@ $dropdown = file_get_contents("components/page_dropdown.html");
 
 $page_count = floor(max(count($courses) / 20, 0));
 
-$options = "<option value=\"0\">0</option>";
+$options = "";
 
-for ($i = 1; $i <= $page_count; $i++) {
-	$options .= "<option value=\"$i\">$i</option>";
+for ($i = 0; $i <= $page_count; $i++) {
+	$options .= "<option value=\"$i\">" . $i + 1 . "</option>";
 }
 
 $dropdown = str_replace("{options}", $options, $dropdown);
