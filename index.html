@@ -70,18 +70,19 @@
 					</div>
 
 					<div class="p-2">
-						<div class="pb-1 text-sm opacity-50">Sorting: </div>
+						<div class="pb-1 text-sm opacity-50">Sorting:</div>
 						<select name="sorttype" hx-include="[name='searchquery'], [name='page']" hx-get="getcourseshtml.php" hx-target="#courses" class="text-sm rounded-lg focus:ring-yellow-200 focus:border-yellow-300 block w-fit p-2.5 bg-stone-700 border-stone-600 placeholder-stone-400 text-white">
 							<option value="date">Date</option>
 							<option value="ratesmart">Rating (Smart)</option>
 							<option value="ratedumb">Rating (Dumb)</option>
 							<option value="coursename">Course Name</option>
+							<option value="elementcount">Element count</option>
 							<option value="mapname">Map Name</option>
 						</select>
 					</div>
 
 					<div class="p-2">
-						<div class="pb-1 text-sm opacity-50">Search: </div>
+						<div class="pb-1 text-sm opacity-50">Search:</div>
 						<input hx-include="[name='page'], [name='sorttype']" hx-get="getcourseshtml.php" hx-target="#courses" hx-trigger="keyup[keyCode==13]" name="searchquery" class="text-sm rounded-lg focus:ring-yellow-200 focus:border-yellow-300 block w-fit p-2.5 bg-stone-700 border-stone-600 placeholder-stone-400 text-white"></input>
 					</div>
 

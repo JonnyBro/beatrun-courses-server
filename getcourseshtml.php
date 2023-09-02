@@ -96,6 +96,7 @@ $sortkeys = [
 	"date" => ["time", SORT_DESC],
 	"ratesmart" => ["scoresmart", SORT_DESC],
 	"ratedumb" => ["scoredumb", SORT_DESC],
+	"elementcount" => ["elements", SORT_DESC],
 	"coursename" => ["name", SORT_STRING],
 	"mapname" => ["map", SORT_STRING],
 ];
