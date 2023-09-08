@@ -126,6 +126,7 @@ foreach ($courses as $data) {
 	$output = str_replace("{mapimagesrc}", $data["mapimg"], $output);
 	$output = str_replace("{mapwid}", $data["mapwid"], $output);
 	$output = str_replace("{elementcount}", $data["elements"] . " elements", $output);
+	$output = str_replace("{fdate}", date("d.m.y", $data["time"]), $output);
 
 	echo $output;
 }

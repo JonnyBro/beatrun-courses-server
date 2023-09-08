@@ -22,7 +22,7 @@
 	<div class="flex w-96 ml-2">
 		<div class="relative w-full">
 			<div class="h-full w-full grid grid-rows-3 grid-cols-1">
-				<div class="flex flex-col justify-center text-lg font-bold" style="overflow:hidden;">{coursename}</div>
+				<div class="flex flex-col justify-center text-lg font-bold w-11/12"><p class="truncate">{coursename}</p></div>
 				<div class="flex flex-col justify-center">
 					<div>
 						<i class="fa-solid fa-file w-4 translate-x-0.5"></i>
@@ -31,12 +31,14 @@
 					</div>
 				</div>
 				<div class="flex flex-col justify-center">
-					<div style="overflow:hidden;">
+					<div class="truncate w-9/12" style="overflow:hidden;">
 						<i class="fa-solid fa-upload"></i>
 						<a id="u_{coursecode}" href="#" onclick="event.preventDefault(); switch_user('u_{coursecode}', '{uploadername}', '{uploaderuid}')">{uploadername}</a>
 					</div>
 				</div>
-				<div id="r{coursecode}rate" class="absolute bottom-0 right-0">
+				<div id="r{coursecode}rate" class="text-center absolute bottom-0 right-0">
+					<span class="font-bold">{fdate}</span>
+					<br>
 					<span class="font-bold">{likecount}</span>
 					<a href="#" hx-post="ratecourse.php?code={coursecode}&action=like" hx-target="#r{coursecode}rate"> <i class="hover:text-yellow-200 transition-all fa-solid fa-thumbs-up"></i></a>
 					&nbsp;
