@@ -412,6 +412,9 @@ function rm_course($code) {
 	if (!$decoded_body) { echo "Invalid course (not json)"; }
 	if (!body_is_valid($decoded_body)) { echo "Invalid course (invalid signature)"; }
 
+	unset($courses[$code]);
+	write_courses_data($courses);
+
 	if (!unlink($path)) {
 		return "Failed to delete. Check validity of the input.";
 	} else {
