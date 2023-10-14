@@ -582,7 +582,7 @@ function like_course($code) {
 	$steamid = $_SESSION['steamid'];
 
 	if (!$steamid) { return "not logged in"; }
-	if (!get_authkey_from_userid($steamid)) { return "invalid account"; }
+	if (!get_authkey_from_userid($steamid)) { return "get a key first"; }
 
 	$rating = get_ratings();
 
@@ -591,7 +591,7 @@ function like_course($code) {
 
 	write_ratings($rating);
 
-	return "rated";
+	return "liked";
 }
 
 function dislike_course($code) {
@@ -600,7 +600,7 @@ function dislike_course($code) {
 	$steamid = $_SESSION['steamid'];
 
 	if (!$steamid) { return "not logged in"; }
-	if (!get_authkey_from_userid($steamid)) { return "invalid account"; }
+	if (!get_authkey_from_userid($steamid)) { return "get a key first"; }
 
 	$rating = get_ratings();
 
@@ -609,7 +609,7 @@ function dislike_course($code) {
 
 	write_ratings($rating);
 
-	return "rated";
+	return "disliked";
 }
 
 function array_msort($array, $cols) {
