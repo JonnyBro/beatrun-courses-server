@@ -36,9 +36,12 @@
 						<a id="u_{coursecode}" href="#" onclick="event.preventDefault(); switch_user('u_{coursecode}', '{uploadername}', '{uploaderuid}')">{uploadername}</a>
 					</div>
 				</div>
-				<div id="r{coursecode}rate" class="text-center absolute bottom-0 right-0">
+				<div class="text-center absolute bottom-0 right-0">
 					<span class="font-bold">{fdate}</span>
 					<br>
+					<span>&nbsp;</span>
+				</div>
+				<div id="r{coursecode}rate" class="text-center absolute bottom-0 right-0">
 					<span class="font-bold">{likecount}</span>
 					<a href="#" hx-post="ratecourse.php?code={coursecode}&action=like" hx-target="#r{coursecode}rate"> <i class="hover:text-yellow-200 transition-all fa-solid fa-thumbs-up"></i></a>
 					&nbsp;
