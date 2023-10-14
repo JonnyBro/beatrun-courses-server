@@ -1,7 +1,6 @@
 <?php
 
 // arse
-// TODO: search
 require ('util.php');
 
 $_courses = get_courses_data();
@@ -13,6 +12,7 @@ $searchquery = "";
 if (isset($_GET["searchquery"])) { $searchquery = sanitize($_GET["searchquery"], true, false); }
 
 foreach ($_courses as $c_code => $c_data) {
+	// maybe todo?: implement caching so u dont have to go through all of this garbage everytime someone goes on the index page
 	$body = file_get_contents($c_data["path"]);
 	if (!$body) { continue; }
 
@@ -108,7 +108,7 @@ $page = 0;
 if (isset($_GET["page"])) { $page = intval(sanitize($_GET["page"], true, false)); }
 if ($page * 20 > count($courses)) { $page = 0; }
 
-$courses = array_splice($courses, $page * 20, $page * 20 + 20);
+$courses = array_splice($courses, max($page * 20 - 1, 0), max($page * 20 - 1, 0) + 20);
 
 foreach ($courses as $data) {
 	$output = $coursecard;
