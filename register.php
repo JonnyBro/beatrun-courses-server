@@ -1,6 +1,10 @@
 <?php
-require ('steamauth/steamauth.php');
-require ('util.php');
+require('steamauth/steamauth.php');
+require('util.php');
+include('steamauth/userInfo.php');
+
+$register_key = register_steam_account($steamprofile['steamid'], $steamprofile['timecreated']);
+
 ?>
 
 <!DOCTYPE html>
@@ -54,17 +58,17 @@ require ('util.php');
 					</div>
 					<?php if (!isset($_SESSION['steamid'])) { ?>
 						<div class="pb-2 text-base text-left">
-							In order to receive your authkey, you must authorize with steam. By doing so, you agree to follow these rules:
+							In order to receive your API Key, you must authorize with your Steam account. By doing so, you agree to follow these rules:
 							<br>
-							&emsp;1) Don't share your authkey with anyone (using it on different accounts, but on the same network is allowed)<br>
+							&emsp;1) Don't share your API Key with anyone (using it on different accounts, but on the same network is allowed)<br>
 							&emsp;2) Don't post courses with offensive content (name, map, block placement, whatever).<br>
 							&emsp;3) Don't upload garbage courses with intent to spam.<br>
-							Failure to obide by these rules will result in your authkey and steamid being blacklisted.<br>
+							Failure to obide by these rules will result in your API Key and SteamID being blacklisted.<br>
 							<br>
 							As for us, we promise to:<br>
 							&emsp;1) Never disclose a person's location, IP or any other private data they might share with us in the future.<br>
-							&emsp;2) Store only the necessary data. Currently, We store 2 last IPs that used the authkey and wipe them every 3 hours,<br>
-							SteamID and Steam username used to create the authkey.
+							&emsp;2) Store only the necessary data. Currently, We store 2 last IPs that used the API Key and wipe them every 3 hours,<br>
+							SteamID and Steam username used to create the API Key.
 						</div>
 						<div class="pt-2 flex justify-center">
 							<a class="justify-center" href="?login">
@@ -75,24 +79,25 @@ require ('util.php');
 						<div class="pb-2 text-base text-left">
 							Great! Welcome to our little community.
 							<br>
-							To get started, make sure you're using <a class="hover:text-yellow-200 transition-all text-red-300" href="https://github.com/JonnyBro/beatrun">this version of beatrun</a>, or have <a class="hover:text-yellow-200 transition-all text-red-300" href="https://github.com/JonnyBro/beatrun/blob/master/beatrun/gamemodes/beatrun/gamemode/cl/OnlineCourse.lua">updated the OnlineCourse.lua file</a>
+							To get started, make sure you're using <a class="hover:text-yellow-200 transition-all text-red-300" target="_blank" href="https://github.com/JonnyBro/beatrun">this version of beatrun</a>.
 							<br>
-							After that, you can copy the authkey below and then enter this command in console:
+							Use this command below in console to save your API key in-game:
 							<br>
-							<b>&emsp;beatrun_apikey %your_apikey%</b>
+							<b class="hover:text-yellow-200 transition-all">&emsp;beatrun_apikey <?php echo $register_key ?></b>
 							<br>
 							And you're done! You can now load any course you want, as seen on the main page!
 							<br>
-							<b>&emsp;beatrun_loadcode CODE-CODE-CODE</b>
+							<b class="hover:text-yellow-200 transition-all">&emsp;beatrun_loadcode CODE-CODE-CODE</b>
 							<br>
 							Have fun!
 						</div>
 						<div class="pb-2 text-base text-left">
-							Your authkey is: <b>
-							<?php
-								include('steamauth/userInfo.php');
-								echo register_steam_account($steamprofile['steamid'], $steamprofile['timecreated']);
-							?>
+							Your authkey is:
+							<b>
+								<a title="Click to copy" id="key" class="hover:text-yellow-200 transition-all text-red-300" href="#" onclick="event.preventDefault(); navigator.clipboard.writeText(this.innerText)">
+									<?php echo $register_key ?>
+								</a>
+							</b>
 						</div>
 						<div class="pt-2 flex justify-center">
 							<form action="" method="get">
