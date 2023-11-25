@@ -17,3 +17,6 @@ _keys.json contains authkeys.<br>
 _ratelimit.json is mostly internal, but it keeps track of ratelimiting... duh<br>
 _record.json is internal too, keeps track of ips used to log into an account.<br>
 _logs.log are obviously logs.
+
+> [!NOTE]
+> Original repo: https://github.com/relaxtakenotes/beatrun-courses-server
