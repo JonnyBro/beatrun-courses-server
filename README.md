@@ -1,19 +1,31 @@
-# beatrun course server
-Pretty advanced beatrun course server recreation.<br><br>
+# Beatrun Custom Course Server
 
-## How to use:
-1. Hide **steamauth** and **data** from public. Don't let people access them and the files inside.
-	- Remove `register.php` to disallow public registration using steam accounts, then add authkeys manually to *data/_keys.json*.
-	- OR
-	- Keep public registration and then do the following steps:
-		1. Go to steamauth,
-		2. Rename `steamconfig.php.example` to `steamconfig.php`,
-		3. Configure it.<br>
-2. Remove or keep `admin.php` to allow online administration. Be sure to put in SteamID64 id's into *data/_admins.json* beforehand.
-3. Put in a proper webhook into `util.php` if you need discord logging. Otherwise just leave it as an empty string.<br>
+Pretty advanced beatrun course server recreation with main page, course rating, registration and admin pages.\
+Jonny_Bro Edition
 
-_locked.json contains blocked identificators.<br>
-_keys.json contains authkeys.<br>
-_ratelimit.json is mostly internal, but it keeps track of ratelimiting... duh<br>
-_record.json is internal too, keeps track of ips used to log into an account.<br>
-_logs.log are obviously logs.
+## How to use
+
+> [!NOTE]
+> There are .htaccess files ready for your Apache2 server!
+
+1. *steamauth* and *data* folders should be hidden, make sure your Apache server is configured to use .htaccess files
+2. Make a desicion on what you want to do:
+   - Remove or rename `register.php` to disable public registration using a Steam account.
+   - **OR**
+   - Keep `register.php` file and do the following:
+     1. Go to *steamauth* folder;
+     2. Rename `SteamConfig.example.php` to `SteamConfig.php`;
+     3. Open it and configure.
+3. Keep or remove `admin.php`, this page is used to do administration. Be sure to put admin's SteamIDs in `data/_admins.json` beforehand.
+4. Configure those variables in `util.php`:
+   - webhook_url - Your Discord webhook for logging. Can be empty;
+   - ratelimit_period - How fast can someone make a request to the database;
+   - ip_list_refresh - How fast can someone change their IP on their account. Default is 3 hours;
+
+## Contains of *data* folder
+
+- _locked.json contains blocked identificators.\
+- _keys.json contains API Keys.\
+- _ratelimit.json is mostly internal, but it keeps track of ratelimiting... duh\
+- _record.json is internal too, keeps track of ips used to log into an account.\
+- _logs.log are obviously logs.

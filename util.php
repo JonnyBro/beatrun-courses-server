@@ -15,7 +15,7 @@ if (!is_dir("courses/")) { mkdir("courses/"); }
 if (!is_dir("data/")) { mkdir("data/"); }
 
 $ratelimit_period = 5;
-$ip_list_refresh = 10800; // how fast can a person change their ip on their account. this is 3 hours
+$ip_list_refresh = 10800; // 3 hours
 
 $authkey = "";
 $map = "";
