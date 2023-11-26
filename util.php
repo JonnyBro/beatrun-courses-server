@@ -9,7 +9,7 @@ $admins_dir = "data/_admins.json";
 $rating_dir = "data/_rating.json";
 $courses_data_dir = "data/_courses.json";
 $usernames_dir = "data/_usernames.json";
-$webhook_url = "https://discord.com/api/webhooks/1112687906616774676/IZAwl9kDwKaxyLza4qARNFckJd6KFBuUqTdxaTJViiBGPw3nOgPfGav4y6okd9Nkw1iG"; // discord webhook logging url
+$webhook_url = "";
 
 if (!is_dir("courses/")) { mkdir("courses/"); }
 if (!is_dir("data/")) { mkdir("data/"); }
