@@ -29,3 +29,5 @@ Jonny_Bro Edition
 - _ratelimit.json is mostly internal, but it keeps track of ratelimiting... duh\
 - _record.json is internal too, keeps track of ips used to log into an account.\
 - _logs.log are obviously logs.
+
+### Forked from [this](https://github.com/relaxtakenotes/beatrun-courses-server) repo
