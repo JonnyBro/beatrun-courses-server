@@ -326,6 +326,8 @@ function _lock_account($id) {
 function lock_account($id) {
 	[$_steamid, $_authkey] = get_relevant_info($id);
 
+	if (empty($_steamid) || empty($_authkey)) return false;
+
 	_lock_account($_steamid);
 	_lock_account($_authkey);
 
