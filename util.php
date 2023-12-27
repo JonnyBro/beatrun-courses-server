@@ -427,6 +427,7 @@ function rm_course($code) {
 function is_multiaccount($userid) {
 	global $ip_list_refresh, $ip;
 
+	if (!isset($ip_list_refresh) || !isset($ip)) { return false; }
 	if (is_locked($userid)) { return true; }
 
 	$record = get_account_records();
