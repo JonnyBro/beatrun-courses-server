@@ -7,9 +7,5 @@ src/steamauth/SteamConfig.php
 # Ignore courses
 src/courses/*
 
-# Tailwind things
-compile-tw.bat
-tailwind-files/
-
 # node_modules
 node_modules/

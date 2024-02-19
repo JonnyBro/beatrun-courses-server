@@ -1,0 +1,1 @@
+pnpm tailwindcss -i ./tailwind-files/input.css -o ./src/css/tailwind.css --watch
