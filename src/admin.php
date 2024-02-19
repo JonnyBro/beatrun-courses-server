@@ -11,6 +11,7 @@ if (!isset($_SESSION['steamid'])) {
 	';
 	return;
 }
+
 $admins = json_decode(file_get_contents($admins_dir), true);
 
 if (!isset($admins[$_SESSION['steamid']])) {

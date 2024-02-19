@@ -5,6 +5,7 @@ require('util.php');
 include('steamauth/userInfo.php');
 
 $register_key = register_steam_account($steamprofile['steamid'], $steamprofile['timecreated']);
+$admins = json_decode(file_get_contents($admins_dir), true);
 
 ?>
 
