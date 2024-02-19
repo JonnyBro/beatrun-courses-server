@@ -13,7 +13,9 @@ if (!isset($_SESSION['steamid'])) {
 }
 $admins = json_decode(file_get_contents($admins_dir), true);
 
-if (!isset($admins[$_SESSION['steamid']])) { _error("Not admin."); }
+if (!isset($admins[$_SESSION['steamid']])) {
+	_error("Not admin.");
+}
 
 $response = "...";
 
@@ -121,6 +123,7 @@ if (array_key_exists('_bcs_rm_course', $_POST)) {
 						<i class="fa-brands fa-discord"></i>
 					</a>
 				</div>
+
 				<div class="flex flex-col justify-center">
 					<a href="register.php" class="text-base text-white p-2 rounded-lg
 										hover:text-yellow-200 transition-all h-fit bg-opacity-10
@@ -128,6 +131,16 @@ if (array_key_exists('_bcs_rm_course', $_POST)) {
 						<i class="fa-solid fa-right-to-bracket"></i>
 					</a>
 				</div>
+
+				<?php if (isset($_SESSION['steamid']) && isset($admins[$_SESSION['steamid']])) { ?>
+					<div class="flex flex-col justify-center">
+						<a href="admin.php" class="text-base text-white p-2 rounded-lg
+									hover:text-yellow-200 transition-all h-fit bg-opacity-10
+									drop-shadow-[0_0px_6px_rgba(0,0,0,0.3)]">
+							<i class="fa-solid fa-user-tie"></i>
+						</a>
+					</div>
+				<?php } ?>
 			</div>
 		</nav>
 
@@ -142,6 +155,8 @@ if (array_key_exists('_bcs_rm_course', $_POST)) {
 
 					<div class="pb-2 text-base">
 						I admin'd all over the place
+						<br>
+						This page sucks
 					</div>
 				</div>
 
@@ -185,10 +200,10 @@ if (array_key_exists('_bcs_rm_course', $_POST)) {
 			</div>
 		</main>
 
-		<div class="bottom-0 p-4 text-white opacity-75 text-sm drop-shadow-[0_0px_6px_rgba(0,0,0,0.3)]">
-			Coperight @ Jonny_Bro & rlx 2077 | Full source code available
-			<a class="hover:text-yellow-200 transition-all text-red-300"
-				href="https://github.com/JonnyBro/beatrun-courses-server">here!</a>
+		<div class="text-center bottom-0 p-4 text-white opacity-75 text-sm drop-shadow-[0_0px_6px_rgba(0,0,0,0.3)]">
+			Coperight @ Jonny_Bro & rlx 2077
+			<br>
+			Full source code available <a class="hover:text-yellow-200 transition-all text-red-300" href="https://github.com/JonnyBro/beatrun-courses-server">here</a>!
 		</div>
 	</body>
 	<script>
