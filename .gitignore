@@ -1,8 +1,15 @@
 # Ignore settings
-data/*
-!data/.htaccess
+src/data/*
+src/!data/.htaccess
 
-steamauth/SteamConfig.php
+src/steamauth/SteamConfig.php
 
 # Ignore courses
-courses/*
+src/courses/*
+
+# Tailwind things
+compile-tw.bat
+tailwind-files/
+
+# node_modules
+node_modules/
