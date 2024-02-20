@@ -32,24 +32,25 @@
 				</div>
 				<div class="flex flex-col justify-center">
 					<div class="truncate w-9/12" style="overflow:hidden;">
-						<i class="fa-solid fa-upload"></i>
+						<i class="fa-solid fa-user"></i>
 						<a title="Click to see SteamID/Name" id="u_{coursecode}" href="#" onclick="event.preventDefault(); switch_user('u_{coursecode}', '{uploadername}', '{uploaderuid}')">{uploadername}</a>
 					</div>
 				</div>
-				<div class="text-center absolute bottom-0 right-0">
-					<span class="font-bold">{fdate}</span>
-					<br>
-					<span>&nbsp;</span>
+				<div class="flex flex-col justify-center">
+					<div class="truncate w-9/12" style="overflow:hidden;">
+						<i class="fa-solid fa-upload"></i>
+						<span>{fdate}</span>
+					</div>
 				</div>
 				<div id="r{coursecode}rate" class="text-center absolute bottom-0 right-0">
 					<span class="font-bold">{likecount}</span>
-					<a href="#" hx-post="ratecourse.php?code={coursecode}&action=like" hx-target="#r{coursecode}rate"> <i class="hover:text-yellow-200 transition-all fa-solid fa-thumbs-up"></i></a>
-					&nbsp;
+					<a title="Like" href="#" hx-post="ratecourse.php?code={coursecode}&action=like" hx-target="#r{coursecode}rate"> <i class="hover:text-yellow-200 transition-all fa-solid fa-thumbs-up"></i></a>
+					/
 					<span class="font-bold">{dislikecount}</span>
-					<a href="#" hx-post="ratecourse.php?code={coursecode}&action=dislike" hx-target="#r{coursecode}rate"><i class="hover:text-yellow-200 transition-all fa-solid fa-thumbs-down"></i></a>
+					<a title="Dislike" href="#" hx-post="ratecourse.php?code={coursecode}&action=dislike" hx-target="#r{coursecode}rate"><i class="hover:text-yellow-200 transition-all fa-solid fa-thumbs-down"></i></a>
 				</div>
 				<div class="absolute -top-1 right-0 hover:text-yellow-200 transition-all">
-					<a href="{coursedownload}" download><i class="fa-solid fa-download"></i></a>
+					<a title="Download course file" href="{coursedownload}" download><i class="fa-solid fa-download"></i></a>
 				</div>
 			</div>
 		</div>
