@@ -43,7 +43,7 @@ $admins = json_decode(file_get_contents($admins_dir), true);
 
 			<div class="flex flex-row flex-grow justify-end">
 				<div class="flex flex-col justify-center">
-					<a href="https://discord.com/invite/93Psubbgsg" class="text-base text-white p-2 rounded-lg
+					<a target="_blank" href="https://discord.com/invite/93Psubbgsg" class="text-base text-white p-2 rounded-lg
 								hover:text-yellow-200 transition-all h-fit bg-opacity-10
 								drop-shadow-[0_0px_6px_rgba(0,0,0,0.3)]">
 						<i class="fa-brands fa-discord"></i>
