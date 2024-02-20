@@ -1,7 +1,6 @@
 <?php
 
-// arse
-require ('util.php');
+require('util.php');
 
 $_courses = get_courses_data();
 $usernames = get_usernames();
@@ -130,5 +129,3 @@ foreach ($courses as $data) {
 
 	echo $output;
 }
-
-?>

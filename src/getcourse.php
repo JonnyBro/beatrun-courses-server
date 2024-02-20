@@ -23,5 +23,3 @@ if (!body_is_valid($decoded_body)) { _error("getcourse.php - Invalid course (inv
 print($body);
 
 _log("getcourse.php - Served a course under the name: " . sanitize($decoded_body[4], false, true));
-
-?>

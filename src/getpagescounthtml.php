@@ -1,5 +1,5 @@
 <?php
-// arse
+
 require('util.php');
 
 $courses = get_courses_data();
@@ -17,5 +17,3 @@ for ($i = 1; $i <= $page_count; $i++) {
 $dropdown = str_replace("{options}", $options, $dropdown);
 
 echo $dropdown;
-
-?>

@@ -26,14 +26,14 @@
 				<div class="flex flex-col justify-center">
 					<div>
 						<i class="fa-solid fa-file w-4 translate-x-0.5"></i>
-						<a onclick="event.preventDefault(); copy_course_id('{coursecode}')" class="hover:text-yellow-200 transition-all" href="#">{coursecode}</a>
+						<a title="Click to copy" onclick="event.preventDefault(); copy_course_id('{coursecode}')" class="hover:text-yellow-200 transition-all" href="#">{coursecode}</a>
 						<span id="{coursecode}" class="opacity-0 text-white">(Copied!)</span>
 					</div>
 				</div>
 				<div class="flex flex-col justify-center">
 					<div class="truncate w-9/12" style="overflow:hidden;">
 						<i class="fa-solid fa-upload"></i>
-						<a id="u_{coursecode}" href="#" onclick="event.preventDefault(); switch_user('u_{coursecode}', '{uploadername}', '{uploaderuid}')">{uploadername}</a>
+						<a title="Click to see SteamID/Name" id="u_{coursecode}" href="#" onclick="event.preventDefault(); switch_user('u_{coursecode}', '{uploadername}', '{uploaderuid}')">{uploadername}</a>
 					</div>
 				</div>
 				<div class="text-center absolute bottom-0 right-0">

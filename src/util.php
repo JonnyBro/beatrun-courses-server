@@ -638,5 +638,3 @@ function array_msort($array, $cols) {
 	}
 	return $ret;
 }
-
-?>

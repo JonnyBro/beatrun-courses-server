@@ -54,5 +54,3 @@ write_course_data($course_id, [
 
 _log("Uploaded a course: " . $course_id . " (name: " . sanitize($decoded_body[4], false, true) . ")");
 print("Uploaded under the ID: " . $course_id . "\n");
-
-?>
