@@ -4,7 +4,7 @@ require('steamauth/steamauth.php');
 require('util.php');
 include('steamauth/userInfo.php');
 
-$register_key = register_steam_account($steamprofile['steamid'], $steamprofile['timecreated']);
+$_SESSION["beatrun_apikey"] = register_steam_account($steamprofile['steamid'], $steamprofile['timecreated']);
 $admins = json_decode(file_get_contents($admins_dir), true);
 
 ?>
@@ -98,7 +98,7 @@ $admins = json_decode(file_get_contents($admins_dir), true);
 								<br><br>
 								Use this command below in console to save your API key in-game:
 								<br>
-								<b class="hover:text-yellow-200 transition-all">&emsp;beatrun_apikey <?php echo $register_key ?></b>
+								<b class="hover:text-yellow-200 transition-all">&emsp;beatrun_apikey <?php echo $_SESSION["beatrun_apikey"] ?></b>
 								<br>
 								And you're done!
 								<br><br>
@@ -113,7 +113,7 @@ $admins = json_decode(file_get_contents($admins_dir), true);
 								Your authkey is:
 								<b>
 									<a title="Click to copy" id="key" class="hover:text-yellow-200 transition-all text-red-300" href="#" onclick="event.preventDefault(); navigator.clipboard.writeText(this.innerText)">
-										<?php echo $register_key ?>
+										<?php echo $_SESSION["beatrun_apikey"] ?>
 									</a>
 								</b>
 							</div>

@@ -253,7 +253,7 @@ function debug_to_console($data) {
 }
 
 function account_owns_gmod($userid) {
-	require('steamauth/SteamConfig.php'); // here cuz of scope bullshit
+	require("steamauth/SteamConfig.php"); // here cuz of scope bullshit
 
 	$url = file_get_contents("http://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=" . $steamauth['apikey'] . "&steamid=" . $userid . "&format=json");
 	$content = json_decode($url, true);

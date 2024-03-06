@@ -81,7 +81,7 @@ $admins = json_decode(file_get_contents($admins_dir), true);
 						<?php if (!isset($_SESSION['steamid'])) { ?>
 							<a class="hover:text-yellow-200 transition-all text-red-300" href="register.php">Authorize with Steam</a> to load and upload these courses in-game!
 						<?php } else { ?>
-							Welcome, <b class="hover:text-yellow-200 transition-all"><?php echo $_SESSION['steam_personaname'] ?></b>!
+							Welcome, <b class="hover:text-yellow-200 transition-all"><?php echo sanitize($_SESSION['steam_personaname'], false, true) ?></b>!
 						<?php } ?>
 					</div>
 				</div>
