@@ -161,7 +161,7 @@ if (array_key_exists('_bcs_rm_course', $_POST)) {
 					</div>
 				</div>
 
-				<article>
+				<div>
 					<form method="post">
 						<div class="flex">
 							<input type="text" class="text-sm rounded-lg focus:ring-yellow-200 focus:border-yellow-300 block w-fit p-2.5 bg-stone-700 border-stone-600 placeholder-stone-400 text-white" style="width: auto" name="_bcs_addkey_target" placeholder="SteamID64">
@@ -197,7 +197,7 @@ if (array_key_exists('_bcs_rm_course', $_POST)) {
 					<br>
 					Server response:<br>
 					<code><?php echo $response ?></code>
-				</article>
+				</div>
 			</div>
 		</main>
 
