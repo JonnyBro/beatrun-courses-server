@@ -544,7 +544,7 @@ function register_steam_account($userid, $timecreated)
 	}
 
 	if (time() - $timecreated < 7890000) { _log_browser("util.php - Too young of an account " . $ragh); return "Account too young. Needs to be at least 3 months old."; }
-	if (!account_owns_gmod($userid)) { _log_browser("util.php - GMOD not found " . $ragh); return "Account doesn't have Garry's mod. Make sure your game details are public if you think this is wrong."; }
+	if (!account_owns_gmod($userid)) { _log_browser("util.php - Game not found " . $ragh); return "Account doesn't have Garry's mod. Make sure your game details are public if you think this is wrong."; }
 
 	$key = generateRandomString(32);
 	while (isset($keys[$key])) {
