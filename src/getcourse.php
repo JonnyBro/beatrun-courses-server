@@ -22,4 +22,4 @@ if (!body_is_valid($decoded_body)) { _error("getcourse.php - Invalid course (inv
 
 print($body);
 
-_log("getcourse.php - Served a course under the name (" . explode("\/", $path)[1] . "): " . sanitize($decoded_body[4], false, true));
+_log("getcourse.php - Served a course under the name (" . substr(explode("/", $path)[1], 0, -4) . "): " . sanitize($decoded_body[4], false, true));

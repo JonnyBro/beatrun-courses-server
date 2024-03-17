@@ -533,17 +533,14 @@ function register_steam_account($userid, $timecreated)
 	$keys = get_authkeys();
 	foreach ($keys as $akey => $value) {
 		if ($value === $userid) {
-			$ragh = "(";
-			$ragh .= "UserID: " . $userid . ", ";
-			$ragh .= "timecreated: " . $timecreated . ", ";
-			$ragh .= "key: " . $akey . ")";
+			$ragh = "(UserID: " . $userid . ", Timecreated: " . $timecreated . ", Key: " . $akey . ")";
 			_log_browser("util.php - Existing user logged back in " . $ragh);
 
 			return $akey;
 		}
 	}
 
-	if (time() - $timecreated < 7890000) { _log_browser("util.php - Too young of an account " . $ragh); return "Account too young. Needs to be at least 3 months old."; }
+	if (time() - $timecreated < 7890000) { _log_browser("util.php - Account too young " . $ragh); return "Account too young. Needs to be at least 3 months old."; }
 	if (!account_owns_gmod($userid)) { _log_browser("util.php - Game not found " . $ragh); return "Account doesn't have Garry's mod. Make sure your game details are public if you think this is wrong."; }
 
 	$key = generateRandomString(32);
@@ -554,7 +551,7 @@ function register_steam_account($userid, $timecreated)
 
 	write_authkeys($keys);
 
-	_log_browser("util.php - New user: " . $userid . " " . $timecreated . " " . $key);
+	_log_browser("util.php - New user: " . $userid . ", Timecreated: " . $timecreated . ", Key: " . $key);
 
 	return $key;
 }
