@@ -31,7 +31,7 @@ function sanitize($string, $force_lowercase = true, $anal = false) {
 
 	$clean = trim(str_replace($strip, "", strip_tags($string)));
 	$clean = preg_replace('/\s+/', "-", $clean);
-	$clean = ($anal) ? preg_replace("/[^a-zA-Z0-9_\-]/", "", $clean) : $clean ;
+	$clean = ($anal) ? preg_replace("/[^a-zA-Zа-яА-Я0-9_\-]/", "", $clean) : $clean;
 
 	return ($force_lowercase) ?
 		(function_exists('mb_strtolower')) ?
