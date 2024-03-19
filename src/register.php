@@ -1,10 +1,10 @@
 <?php
 
-require('steamauth/steamauth.php');
-require('util.php');
-include('steamauth/userInfo.php');
+require("steamauth/steamauth.php");
+require("util.php");
+include("steamauth/userInfo.php");
 
-$_SESSION["beatrun_apikey"] = register_steam_account($steamprofile['steamid'], $steamprofile['timecreated']);
+$_SESSION["beatrun_apikey"] = get_authkey_from_userid($steamprofile["steamid"]);
 $admins = json_decode(file_get_contents($admins_dir), true);
 
 ?>
@@ -104,7 +104,7 @@ $admins = json_decode(file_get_contents($admins_dir), true);
 								<br><br>
 								You can now load any course you want, as seen on the main page!
 								<br>
-								<b class="hover:text-yellow-200 transition-all">&emsp;beatrun_loadcode CODE-CODE-CODE</b>
+								<b class="hover:text-yellow-200 transition-all">&emsp;beatrun_loadcode ABCD-1234-XYZX</b>
 								<br>
 								Have fun!
 							</div>
@@ -113,7 +113,7 @@ $admins = json_decode(file_get_contents($admins_dir), true);
 								Your authkey is:
 								<b>
 									<a title="Click to copy" id="key" class="hover:text-yellow-200 transition-all text-red-300" href="#" onclick="event.preventDefault(); navigator.clipboard.writeText(this.innerText)">
-										<?php echo $_SESSION["beatrun_apikey"] ?>
+										<?php echo register_steam_account($steamprofile["steamid"], $steamprofile["timecreated"]) ?>
 									</a>
 								</b>
 							</div>

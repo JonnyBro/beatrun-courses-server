@@ -527,9 +527,10 @@ function register_steam_account($userid, $timecreated)
 
 	$usernames = get_usernames();
 	$usernames[$userid] = sanitize($_SESSION['steam_personaname'], false, true);
-	write_usernames($usernames); debug_to_console("clean username: " . $usernames[$userid]);
+	write_usernames($usernames);
+	debug_to_console("clean username: " . $usernames[$userid]);
 
-	if (is_multiaccount($userid)) { _log_browser("util.php - Account locked " . $ragh); return "Your account is locked. Contact site administration."; }
+	// if (is_multiaccount($userid)) { _log_browser("util.php - Account locked " . $ragh); return "Your account is locked. Contact site administration."; }
 
 	$keys = get_authkeys();
 	foreach ($keys as $akey => $value) {
