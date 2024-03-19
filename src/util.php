@@ -9,7 +9,7 @@ $admins_dir = "data/_admins.json";
 $rating_dir = "data/_rating.json";
 $courses_data_dir = "data/_courses.json";
 $usernames_dir = "data/_usernames.json";
-$webhook_url = "";
+$config_dir = "data/_config.json";
 
 if (!is_dir("courses/")) { mkdir("courses/"); }
 if (!is_dir("data/")) { mkdir("data/"); }
@@ -23,6 +23,7 @@ $code = "";
 $mapid = "";
 $ip = $_SERVER["HTTP_CF_CONNECTING_IP"] ?? $_SERVER["REMOTE_ADDR"];
 $headers = getallheaders();
+$config = json_decode(file_get_contents($config_dir), true);
 
 function sanitize($string, $force_lowercase = true, $anal = false) {
 	$strip = array("~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "=", "+", "[", "{", "]",
@@ -31,7 +32,7 @@ function sanitize($string, $force_lowercase = true, $anal = false) {
 
 	$clean = trim(str_replace($strip, "", strip_tags($string)));
 	$clean = preg_replace('/\s+/', "-", $clean);
-	$clean = ($anal) ? preg_replace("/[^a-zA-Zа-яА-Я0-9_\-]/", "", $clean) : $clean;
+	$clean = ($anal) ? preg_replace("/[^\w\d\s]/u", "", $clean) : $clean;
 
 	return ($force_lowercase) ?
 		(function_exists('mb_strtolower')) ?
@@ -249,7 +250,7 @@ function debug_to_console($data) {
 
 	if (is_array($output)) $output = implode(',', $output);
 
-	echo "<script>console.log('Debug Objects: " . $output . "' );</script>";
+	echo "<script>console.log('" .$output . "');</script>";
 }
 
 function account_owns_gmod($userid) {
@@ -458,12 +459,12 @@ function is_multiaccount($userid) {
 }
 
 function _log_webhook($text) {
-	global $webhook_url;
+	global $config;
 
-	if (strlen($webhook_url) <= 0) { return; }
+	if (strlen($config["webhook_url"]) <= 0) { return; }
 
 	$json_data = json_encode(["content" => $text], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
-	$ch = curl_init($webhook_url);
+	$ch = curl_init($config["webhook_url"]);
 
 	curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
 	curl_setopt($ch, CURLOPT_POST, 1);
@@ -526,7 +527,7 @@ function register_steam_account($userid, $timecreated)
 
 	$usernames = get_usernames();
 	$usernames[$userid] = sanitize($_SESSION['steam_personaname'], false, true);
-	write_usernames($usernames);
+	write_usernames($usernames); debug_to_console("clean username: " . $usernames[$userid]);
 
 	if (is_multiaccount($userid)) { _log_browser("util.php - Account locked " . $ragh); return "Your account is locked. Contact site administration."; }
 
