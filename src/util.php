@@ -32,13 +32,14 @@ function sanitize($string, $force_lowercase = true, $anal = false) {
 
 	$clean = trim(str_replace($strip, "", strip_tags($string)));
 	$clean = preg_replace('/\s+/', "-", $clean);
-	$clean = ($anal) ? preg_replace("/[^\w\d\s]/u", "", $clean) : $clean;
+	$clean = $anal ? preg_replace("/[^\w\d\s-]/u", "", $clean) : $clean;
 
-	return ($force_lowercase) ?
-		(function_exists('mb_strtolower')) ?
-			mb_strtolower($clean, 'UTF-8') :
-			strtolower($clean) :
-		$clean;
+	return $force_lowercase ?
+		((function_exists('mb_strtolower')) ?
+			mb_strtolower($clean, 'UTF-8')
+			: strtolower($clean)
+		)
+		: $clean;
 }
 
 function getcourse_set_params() {
