@@ -1,3 +1,5 @@
+# THIS PROJECT IS NO LONGER MAINTANED! FOR NEW VERSION LOOK [HERE](https://git.jonnybro.ru/jonny_bro/beatrun-courses-server-express/)
+
 # Beatrun Custom Course Server
 
 Pretty advanced beatrun course server recreation with main page, course rating, registration and admin pages.\
