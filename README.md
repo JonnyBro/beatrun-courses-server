@@ -1,4 +1,4 @@
-# THIS PROJECT IS NO LONGER MAINTANED! FOR NEW VERSION LOOK [HERE](https://git.jonnybro.ru/jonny_bro/beatrun-courses-server-express/)
+# THIS PROJECT IS NO LONGER MAINTAINED! FOR NEW VERSION LOOK [HERE](https://git.jonnybro.ru/jonny_bro/beatrun-courses-server-express/)
 
 # Beatrun Custom Course Server
 
