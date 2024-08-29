@@ -19,9 +19,11 @@ services:
       COOKIE: NO_COOKIE
       # Discord webhook url or leave empty
       WEBHOOK: ""
+    env_file:
+      - stack.env
     volumes:
-     - courses:/usr/src/app/public/courses
-     - data:/usr/src/app/data
+      - courses:/usr/src/app/public/courses
+      - data:/usr/src/app/data
     ports:
       - 6547:6547
 
