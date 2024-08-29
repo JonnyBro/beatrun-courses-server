@@ -26,7 +26,11 @@
 **/values.dev.yaml
 **/build
 **/dist
-public/css/*.css
-public/courses/*.txt
 LICENSE
 README.md
+
+data/main_db.json
+data/test_db.json
+stack.env
+public/css/*.css
+public/courses/*.txt

@@ -1,8 +1,9 @@
 # Custom
+stack.env
 public/css/*
 public/courses/*
 data/*
-!data/main_db.json
+!data/main_db.example.json
 
 # Logs
 logs

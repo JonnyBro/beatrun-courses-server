@@ -1,4 +1,6 @@
-require("dotenv").config();
+require("dotenv").config({
+	path: "stack.env",
+});
 
 module.exports = {
 	/* Set true for production database */
