@@ -2,23 +2,6 @@ services:
   server:
     build:
       context: .
-    environment:
-      # Set true for production database
-      PROD: true
-      # Your domain without / at the end
-      DOMAIN: http://localhost:6547
-      # Port for the server
-      PORT: 6547
-      # How often can user send request to API
-      RATELIMIT: 5000 # 5 seconds
-      # How often can user change IP address
-      IPCHANGETIME: 10800000 # 3 hours
-      # Your SteamAPI key
-      STEAMKEY: NO_KEY
-      # Secret for a cookie
-      COOKIE: NO_COOKIE
-      # Discord webhook url or leave empty
-      WEBHOOK: ""
     env_file:
       - stack.env
     volumes:
