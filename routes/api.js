@@ -122,7 +122,7 @@ router.post("/upload_site", isUser, async (req, res) => {
 	const form = formidable({ maxFileSize: 10 * 1024 * 1024 });
 
 	form.parse(req, async (err, fields, files) => {
-		if (err) return res.send("Error while uploading file. Please contact the administrator.");
+		if (err) return res.status(401).send("Error while uploading file. Please contact the administrator.");
 
 		const uploaded = fs.readFileSync(files.file.filepath);
 
@@ -133,7 +133,7 @@ router.post("/upload_site", isUser, async (req, res) => {
 			course = uploaded;
 		}
 
-		if (!isCourseFileValid(JSON.parse(course))) return res.status(401).json({ res: res.statusCode, message: "Invalid course file. Please provide a valid course." });
+		if (!isCourseFileValid(JSON.parse(course))) return res.status(401).send("Invalid course file. Please provide a valid course.");
 
 		let code = generateCode();
 		let file = `public/courses/${code}.txt`;
@@ -167,7 +167,7 @@ router.post("/upload_site", isUser, async (req, res) => {
 			`[UPLOAD] User uploaded a course from the site (Course: ${code}, SteamID: ${user.steamid}, Key ${user.authKey}).`,
 			`[UPLOAD] User uploaded a course from the site (Course: \`${code}\`, SteamID: \`${user.steamid}\`, Key \`${user.authKey}\`).`,
 		);
-		res.send({ res: res.statusCode, code: code });
+		res.send(`Uploaded successfully! Your code is ${code}`);
 	});
 });
 
