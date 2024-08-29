@@ -12,7 +12,7 @@ const { JsonDB, Config } = require("node-json-db"),
 const config = require("./config");
 const db = new JsonDB(new Config(`data/${config.production ? "main" : "test"}_db`, true, true, "/"));
 
-if (!config.cookieSecret || !config.steamKey) return console.log("Please check that you have filled steamKey and cookieSecret in config file");
+if (!config.cookieSecret || !config.steamKey || config.steamKey === "NO_KEY" || config.cookieSecret === "NO_COOKIE") return console.log("Please check that you have filled steamKey and cookieSecret in config file");
 if (!fs.existsSync("public/courses/")) fs.mkdirSync("public/courses/");
 
 // Express App

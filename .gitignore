@@ -2,7 +2,6 @@
 public/css/style.css
 public/courses/*
 data/*
-config.js
 !data/main_db.example.json
 
 # Logs
