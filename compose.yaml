@@ -1,5 +1,6 @@
 services:
   server:
+    user: root
     build:
       context: .
     env_file:
