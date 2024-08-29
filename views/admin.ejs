@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+	<title>beatrun.ru | Admin</title>
+
+	<link rel="stylesheet" type="text/css" href="css/style.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+	<style>
+		body::-webkit-scrollbar {
+			width: 0 !important
+		}
+
+		body {
+			overflow: -moz-scrollbars-none;
+		}
+
+		body {
+			-ms-overflow-style: none;
+		}
+	</style>
+
+	<script>
+		function sendAction(args) {
+			const { action } = args;
+			const responseBox = document.getElementById("responseBox");
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "/api/admin", false);
+			xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+			xhr.onload = function() {
+				const response = JSON.parse(this.responseText);
+
+				if (response.success) responseBox.innerText = response.message;
+				else if (!response.success) responseBox.innerText = response.message;
+			};
+			xhr.send(JSON.stringify({
+				action: action,
+				args: args
+			}));
+		}
+	</script>
+</head>
+
+<body class="w-screen font-mono">
+	<% include ../components/navbar.html %>
+
+	<div class="hero min-h-screen bg-base-200">
+		<div class="hero-content text-center">
+			<div class="text-center align-top w-full">
+				<div class="text-5xl font-bold font-mono mb-2">User submitted courses</div>
+				<div class="mb-4 font-mono">I admin'd all over the place</div>
+
+				<div class="flex">
+					<input class="input m-1" id="addKeyInput" type="text" placeholder="SteamID64" />
+					<input class="btn btn-primary m-1" type="submit" onclick="event.preventDefault(); sendAction({ action: 'addKey', target: document.getElementById('addKeyInput').value })" value="Add Key" />
+				</div>
+
+				<div class="flex">
+					<input class="input m-1" id="removeKeyInput" type="text" placeholder="SteamID64" />
+					<input class="btn btn-primary m-1" type="submit" onclick="event.preventDefault(); sendAction({ action: 'removeKey', target: document.getElementById('removeKeyInput').value })" value="Remove Key" />
+				</div>
+
+				<div class="flex">
+					<input class="input m-1" id="lockUserInput" type="text" placeholder="SteamID64" />
+					<input class="btn btn-primary m-1" type="submit" onclick="event.preventDefault(); sendAction({ action: 'lockUser', target: document.getElementById('lockUserInput').value })" value="Lock SteamID" />
+				</div>
+
+				<div class="flex">
+					<input class="input m-1" id="unlockUserInput" type="text" placeholder="SteamID64" />
+					<input class="btn btn-primary m-1" type="submit" onclick="event.preventDefault(); sendAction({ action: 'unlockUser', target: document.getElementById('unlockUserInput').value })" value="Unlock SteamID" />
+				</div>
+
+				<div class="flex">
+					<input class="input m-1" id="removeCourseInput" type="text" placeholder="Course Code" />
+					<input class="btn btn-primary m-1" type="submit" onclick="event.preventDefault(); sendAction({ action: 'removeCourse', target: document.getElementById('removeCourseInput').value })" value="Delete Course" />
+				</div>
+
+				<div class="flex">
+					<input class="btn btn-primary m-1" type="submit" id="showLogs" onclick="event.preventDefault(); sendAction({ action: 'showLogs' })" value="Show logs" />
+					<input class="btn btn-primary m-1" type="submit" id="showRecords" onclick="event.preventDefault(); sendAction({ action: 'showRecords' })" value="Show records" />
+					<input class="btn btn-primary m-1" type="submit" id="showLocks" onclick="event.preventDefault(); sendAction({ action: 'showLocks' })" value="Show locks" />
+				</div>
+
+				<br>
+
+				<div class="text-left">
+					Server response:<br>
+					<div class="mockup-window border border-base-300">
+						<div class="flex justify-center px-4 border-t border-base-300">
+							<code id="responseBox">
+								nothing...
+							</code>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<% include ../components/footer.html %>
+</body>
+
+</html>

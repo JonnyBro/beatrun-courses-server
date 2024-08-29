@@ -1,0 +1,115 @@
+{
+	"name": "beatrun-courses-server-express",
+	"version": "1.2.5",
+	"scripts": {
+		"build": "tailwindcss -i ./tailwind-files/input.css -o ./public/css/style.css",
+		"watch": "tailwindcss -i ./tailwind-files/input.css -o ./public/css/style.css --watch",
+		"start": "node ."
+	},
+	"dependencies": {
+		"daisyui": "^4.11.1",
+		"ejs": "^2.6.1",
+		"express": "^4.16.1",
+		"express-session": "^1.18.0",
+		"formidable": "^2.1.2",
+		"lzma": "^2.3.2",
+		"morgan": "^1.9.1",
+		"node-fetch": "^2.7.0",
+		"node-json-db": "^2.3.0",
+		"open-graph-scraper": "^6.5.0",
+		"passport": "^0.7.0",
+		"passport-steam": "^1.0.18"
+	},
+	"devDependencies": {
+		"eslint": "^8.57.0",
+		"prettier": "^3.2.5",
+		"tailwindcss": "^3.4.1"
+	},
+	"eslintConfig": {
+		"extends": "eslint:recommended",
+		"env": {
+			"commonjs": true,
+			"es6": true,
+			"es2020": true,
+			"node": true
+		},
+		"globals": {
+			"Atomics": "readonly",
+			"SharedArrayBuffer": "readonly"
+		},
+		"parserOptions": {
+			"ecmaVersion": 2020
+		},
+		"rules": {
+			"arrow-spacing": [
+				"warn",
+				{
+					"before": true,
+					"after": true
+				}
+			],
+			"comma-dangle": [
+				"error",
+				"always-multiline"
+			],
+			"comma-spacing": "error",
+			"comma-style": "error",
+			"dot-location": [
+				"error",
+				"property"
+			],
+			"handle-callback-err": "off",
+			"indent": [
+				"error",
+				"tab",
+				{
+					"SwitchCase": 1
+				}
+			],
+			"keyword-spacing": "error",
+			"max-nested-callbacks": [
+				"error",
+				{
+					"max": 4
+				}
+			],
+			"max-statements-per-line": [
+				"error",
+				{
+					"max": 2
+				}
+			],
+			"no-console": "off",
+			"no-multi-spaces": "error",
+			"no-multiple-empty-lines": [
+				"error",
+				{
+					"max": 2,
+					"maxEOF": 1,
+					"maxBOF": 0
+				}
+			],
+			"no-trailing-spaces": [
+				"error"
+			],
+			"no-var": "error",
+			"object-curly-spacing": [
+				"error",
+				"always"
+			],
+			"prefer-const": "error",
+			"quotes": [
+				"error",
+				"double"
+			],
+			"semi": [
+				"error",
+				"always"
+			],
+			"space-in-parens": "error",
+			"space-infix-ops": "error",
+			"space-unary-ops": "error",
+			"yoda": "error"
+		}
+	}
+}

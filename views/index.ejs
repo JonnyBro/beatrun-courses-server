@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<title>beatrun.ru | Courses</title>
+
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+	<style>
+		body::-webkit-scrollbar {
+			width: 0 !important
+		}
+
+		body {
+			overflow: -moz-scrollbars-none;
+		}
+
+		body {
+			-ms-overflow-style: none;
+		}
+	</style>
+
+	<script>
+		function update() {
+			const page = document.getElementById("pageSelect");
+			const sort = document.getElementById("sortValue");
+			const search = document.getElementById("searchQuery");
+
+			window.location.href = `/?page=${page.value}&sort=${sort.value}&search=${search.value}`;
+		}
+
+		<% if (user) { %>
+		function like(element) {
+			const id = element.getAttribute("id");
+			const likesElement = document.getElementById(`${id}-likes`);
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "/api/rate", false);
+			xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+			xhr.onload = function() {
+				const response = JSON.parse(this.responseText);
+
+				if (response.success) likesElement.innerText = response.likes;
+			};
+			xhr.send(JSON.stringify({
+				action: "like",
+				code: id,
+				steamid: '<%- user.steamid %>'
+			}));
+		}
+
+		function dislike(element) {
+			const id = element.getAttribute("id");
+			const dislikesElement = document.getElementById(`${id}-dislikes`);
+
+			const xhr = new XMLHttpRequest();
+			xhr.open("POST", "/api/rate", false);
+			xhr.setRequestHeader("Content-type", "application/json; charset=utf-8");
+			xhr.onload = function() {
+				const response = JSON.parse(this.responseText);
+
+				if (response.success) dislikesElement.innerText = response.dislikes;
+			};
+			xhr.send(JSON.stringify({
+				action: "dislike",
+				code: id,
+				steamid: '<%- user.steamid %>'
+			}));
+		}
+		<% } %>
+	</script>
+</head>
+
+<body class="w-screen font-mono">
+	<% include ../components/navbar.html %>
+
+	<div class="hero min-h-screen bg-base-200">
+		<div class="hero-content text-center">
+			<div class="text-center align-top w-full">
+				<div class="text-5xl font-bold font-mono mb-4">Courses</div>
+
+				<% if (!user) { %>
+				<div class="text-lg font-mono mb-4">
+					<a class="link link-warning text-red-700 hover:text-red-500" href="/key">Authorize with Steam</a> to load and upload these courses in-game!
+				</div>
+				<% } %>
+
+				<div class="flex font-mono">
+					<div class="join">
+						<div>
+							<div>
+								<input class="input input-bordered join-item" id="searchQuery" type="text" placeholder="Search" onkeyup="if (event.key === 'Enter') update();" />
+							</div>
+						</div>
+						<select class="select select-bordered join-item" id="pageSelect" onchange="update();">
+							<option disabled selected>Page</option>
+							<%- pagesDropdown %>
+						</select>
+						<select class="select select-bordered join-item" id="sortValue" onchange="update();">
+							<option disabled selected>Sort by</option>
+							<%- sortDropdown %>
+						</select>
+						<div class="indicator">
+							<a class="btn btn-primary join-team hover:bg-red-700" href="/">Clear</a>
+						</div>
+					</div>
+				</div>
+
+				<div id="courses" class="grid xl:grid-cols-2">
+					<%- coursesList %>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<% include ../components/footer.html %>
+</body>
+
+</html>

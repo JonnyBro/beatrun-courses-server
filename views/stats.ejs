@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+	<title>beatrun.ru | Course - <%= course.name %></title>
+
+	<link rel="stylesheet" type="text/css" href="/css/style.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+
+	<style>
+		body::-webkit-scrollbar {
+			width: 0 !important
+		}
+
+		body {
+			overflow: -moz-scrollbars-none;
+		}
+
+		body {
+			-ms-overflow-style: none;
+		}
+	</style>
+</head>
+
+<body class="w-screen font-mono">
+	<% include ../components/navbar.html %>
+	<%- console.log(course) %>
+	<div class="hero min-h-screen bg-base-200">
+		<div class="hero-content text-center">
+			<div class="text-center align-top w-full">
+				<div class="text-5xl font-bold font-mono mb-2"><%= course.name %></div>
+				<div class="text-lg font-mono mb-4"><%= code %></div>
+
+				<div class="stats stats-vertical lg:stats-horizontal shadow">
+					<div class="stat">
+						<div class="stat-title">Upload Date</div>
+						<div class="stat-value"><%= course.date.split(", ")[0] %><br><%= course.date.split(", ")[1] %></div>
+					</div>
+
+					<div class="stat">
+						<div class="stat-title">Elements Count</div>
+						<div class="stat-value"><%= course.objectCount %></div>
+					</div>
+
+					<div class="stat">
+						<div class="stat-title">Checkpoints Count</div>
+						<div class="stat-value"><%= course.checkpointsCount %></div>
+					</div>
+
+					<div class="stat">
+						<div class="stat-title">Times played</div>
+						<div class="stat-value"><%= course.plays %></div>
+						<div class="stat-desc">Doesn't count direct downloads</div>
+					</div>
+
+					<div class="stat">
+						<div class="stat-title">Uploaded by</div>
+						<div class="stat-value"><a class="hover:text-red-700" href="https://steamcommunity.com/profiles/<%= course.uploader.userid %>"><%= course.uploader.name %></a></div>
+					</div>
+
+					<div class="stat">
+						<div class="stat-title">Map</div>
+						<div class="stat-value"><a class="hover:text-red-700" href="https://steamcommunity.com/sharedfiles/filedetails/?id=<%= course.mapid %>"><%= course.map %></a></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<% include ../components/footer.html %>
+</body>
+
+</html>
