@@ -1,8 +1,8 @@
 # Custom
-public/css/style.css
+public/css/*
 public/courses/*
 data/*
-!data/main_db.example.json
+!data/main_db.json
 
 # Logs
 logs
