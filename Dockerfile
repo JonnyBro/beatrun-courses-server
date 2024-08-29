@@ -51,7 +51,6 @@ COPY . .
 RUN pnpm run build
 
 # This project specific
-RUN mv data/main_db.example.json data/main_db.json
 RUN chmod -R 777 data/
 RUN chmod -R 777 public/
 # End
