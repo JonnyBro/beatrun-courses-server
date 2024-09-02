@@ -10,6 +10,7 @@ services:
       - data:/usr/src/app/data
     ports:
       - 6547:6547
+    restart: unless-stopped
 
 volumes:
   courses:
