@@ -38,8 +38,7 @@ router.get("/", async (req, res) => {
 		name: "Course Name",
 		map: "Map Name",
 		elements: "Element count",
-		scoresmart: "Rating (Smart)",
-		scoredumb: "Rating (Dumb)",
+		scoresmart: "Rating",
 		plays: "Plays",
 	};
 	let sortDropdown = "";
@@ -98,7 +97,6 @@ router.get("/", async (req, res) => {
 			dislikes: rating.dislikes,
 			rates: rating.ratings,
 			scoresmart: rating.rateSmart,
-			scoredumb: rating.rateDumb,
 			mapimg: codeMapImage,
 			mapwid: codeMapId,
 			time: codeData.time,
@@ -114,7 +112,6 @@ router.get("/", async (req, res) => {
 		map: "STRING",
 		elements: "DESC",
 		scoresmart: "DESC",
-		scoredumb: "DESC",
 		plays: "DESC",
 	};
 
@@ -181,25 +178,22 @@ router.get("/", async (req, res) => {
  *                  - dislikes: Number of dislikes
  *                  - ratings: Total number of ratings
  *                  - rateSmart: Likes minus dislikes
- *                  - rateDumb: Likes divided by total ratings
  */
 function getCourseRating(data) {
 	const ratings = Object.keys(data).length;
 
-	if (ratings <= 0) return { likes: 0, dislikes: 0, ratings: 0, rateSmart: 0, rateDumb: 0 };
+	if (ratings <= 0) return { likes: 0, dislikes: 0, ratings: 0, rateSmart: 0 };
 
 	let likes = 0,
 		dislikes = 0,
-		rateSmart = 0,
-		rateDumb = 0;
+		rateSmart = 0;
 
 	for (const r in data) if (data[r]) likes += 1;
 
 	dislikes = ratings - likes;
 	rateSmart = ratings + likes - dislikes;
-	rateDumb = likes / ratings;
 
-	return { likes: likes, dislikes: dislikes, ratings: ratings, rateSmart: rateSmart, rateDumb: rateDumb };
+	return { likes: likes, dislikes: dislikes, ratings: ratings, rateSmart: rateSmart };
 }
 
 /**
@@ -219,7 +213,6 @@ function generateCourseCard(course) {
 		"{likesCount}": course.likes,
 		"{dislikesCount}": course.dislikes,
 		"{ratesmart}": course.scoresmart,
-		"{ratedumb}": course.scoredumb,
 		"{mapImage}": course.mapimg,
 		"{mapID}": course.mapwid,
 		"{elementsCount}": course.elements === 1 ? "1 element" : `${course.elements} elements`,
