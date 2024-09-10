@@ -4,5 +4,6 @@ jobs:
     runs-on: docker
     steps:
       - run: |
-            apt update && apt install docker
+            apt update &&
+            apt install docker &&
             docker build -t beatrun-courses-server-docker:latest .
