@@ -3,4 +3,6 @@ jobs:
   test:
     runs-on: docker
     steps:
-      - run: docker build -t beatrun-courses-server-docker:latest .
+      - run: |
+            apt update && apt install docker
+            docker build -t beatrun-courses-server-docker:latest .
