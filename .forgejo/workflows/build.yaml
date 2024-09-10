@@ -4,4 +4,4 @@ jobs:
     runs-on: docker
     steps:
       - name: Build Docker image
-      - run: docker build -t beatrun-courses-server-docker:latest
+      - run: docker build -t beatrun-courses-server-docker:latest .
