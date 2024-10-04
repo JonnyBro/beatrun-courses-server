@@ -33,16 +33,24 @@
 		<div class="hero-content text-center">
 			<div class="text-center align-top w-full">
 				<div class="text-5xl font-bold font-mono mb-2">Uploading</div>
-				<div class="text-lg font-mono mb-4">Here you can upload your course!</div>
+				<div class="text-lg font-mono mb-4">Here you can upload your course.<br>Please make sure to input a proper map and a link to it!</div>
 
-				<form action="/api/upload_site" method="post" enctype="multipart/form-data" class="w-full max-w-sm font-mono">
-					<div class="flex flex-col mt-4 space-y-2">
-						<input type="text" id="courseMap" name="map" placeholder="Enter course map..." required class="input input-bordered" />
-						<input type="url" id="mapLink" name="link" placeholder="Paste map link here..." required class="input input-bordered" />
-						<input type="file" id="courseFile" name="file" accept=".txt" required class="file-input file-input-bordered" />
-						<input type="submit" id="courseSubmit" class="btn btn-primary hover:bg-red-700"></input>
-					</div>
-				</form>
+				<div style="margin-left: 13.5%; margin-right: 13.5%;">
+					<form action="/api/upload_site" method="post" enctype="multipart/form-data" class="w-full font-mono max-w-sm">
+						<div class="flex flex-col mt-4 space-y-2">
+							<input type="text" id="courseMap" name="map" placeholder="Enter course map..." required class="input input-bordered" />
+							<input type="url" id="mapLink" name="link" placeholder="Paste map link here..." required class="input input-bordered" />
+							<label class="form-control w-full">
+								<input type="file" id="courseFile" name="file" accept=".txt" required class="file-input file-input-bordered" />
+								<div class="label">
+									<span class="label-text"></span>
+									<span class="label-text" style="margin-right: 1%;">^ Select a course file here ^</span>
+								</div>
+							</label>
+							<input type="submit" id="courseSubmit" class="btn btn-primary hover:bg-red-700"></input>
+						</div>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
