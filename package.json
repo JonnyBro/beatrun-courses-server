@@ -1,6 +1,6 @@
 {
 	"name": "beatrun-courses-server-express",
-	"version": "1.2.6",
+	"version": "1.2.7",
 	"scripts": {
 		"build": "tailwindcss -i ./tailwind-files/input.css -o ./public/css/style.css",
 		"watch": "tailwindcss -i ./tailwind-files/input.css -o ./public/css/style.css --watch",
