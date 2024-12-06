@@ -21,7 +21,8 @@ const indexRouter = require("./routes/index"),
 	uploadRouter = require("./routes/upload"),
 	adminRouter = require("./routes/admin"),
 	apiRouter = require("./routes/api"),
-	statsRouter = require("./routes/stats");
+	statsRouter = require("./routes/stats"),
+	authRouter = require("./routes/auth");
 
 const app = express();
 
@@ -87,15 +88,7 @@ app.use("/upload", uploadRouter);
 app.use("/admin", adminRouter);
 app.use("/api", apiRouter);
 app.use("/stats", statsRouter);
-app.get("/auth", passport.authenticate("steam"), () => {});
-app.get("/auth/return", passport.authenticate("steam", { failureRedirect: "/" }), (req, res) => res.redirect("/key"));
-app.get("/auth/logout", (req, res, next) => {
-	req.logout(function (err) {
-		if (err) return next(err);
-
-		res.redirect("/key");
-	});
-});
+app.use("/auth", authRouter);
 
 /* catch 404 and forward to error handler
 app.use(function (req, res, next) {
