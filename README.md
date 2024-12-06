@@ -6,7 +6,8 @@ This is project is a rewrite of this [fork](https://github.com/JonnyBro/beatrun-
 ## Installation
 
 ```bash
-docker compose up --build -d
+pnpm i
+pnpm start
 ```
 
 ## TODO
