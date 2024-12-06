@@ -1,9 +1,9 @@
 # Custom
-stack.env
 public/css/*
 public/courses/*
 data/*
 !data/main_db.example.json
+config.js
 
 # Logs
 logs
