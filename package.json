@@ -13,6 +13,7 @@
 		"express-session": "^1.18.0",
 		"formidable": "^2.1.2",
 		"lzma": "^2.3.2",
+		"mongoose": "^8.9.0",
 		"morgan": "^1.9.1",
 		"node-fetch": "^2.7.0",
 		"node-json-db": "^2.3.0",

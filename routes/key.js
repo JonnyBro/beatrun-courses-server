@@ -5,7 +5,22 @@ const express = require("express"),
 const { sanitize } = require("../utils/functions");
 
 router.get("/", async (req, res) => {
-	if (req.user) req.user.authKey = await registerUser(req.app.locals, req.user);
+	if (req.user) {
+		req.user.authKey = await registerUser(req.app.locals, req.user);
+
+		const courses = await req.app.locals.db.getData("/courses");
+		const codes = Object.keys(courses);
+		const userCourses = [];
+
+		codes.forEach(code => {
+			if (courses[code].uploader.userid === req.user.steamid) {
+				delete courses[code].uploader.authkey;
+				userCourses.push(`<a class="hover:text-red-700" href="/stats/${code}">${courses[code].name}</a>`);
+			}
+		});
+
+		req.user.courses = userCourses;
+	}
 
 	res.render("key", {
 		user: req.user,

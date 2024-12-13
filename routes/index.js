@@ -79,9 +79,7 @@ router.get("/", async (req, res) => {
 		const codeUserId = codeData.uploader.userid;
 		const codeUsername = usernames[codeUserId] ? usernames[codeUserId] : codeUserId;
 
-		if (!ratings[code]) {
-			ratings[code] = {};
-		}
+		if (!ratings[code]) ratings[code] = {};
 
 		const rating = getCourseRating(ratings[code]);
 
