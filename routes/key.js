@@ -2,7 +2,7 @@ const express = require("express"),
 	router = express.Router(),
 	fetch = require("node-fetch");
 
-const { sanitize } = require("../utils/functions");
+const { getKey, sanitize } = require("../utils/functions");
 
 router.get("/", async (req, res) => {
 	if (req.user) {
@@ -55,7 +55,7 @@ async function registerUser(locals, user) {
 	if (!hasGame(locals, user)) return "Account doesn't have Garry's mod. Make sure your game details are public.";
 
 	const usernames = await locals.db.getData("/usernames");
-	const key = await locals.getKey(user);
+	const key = await getKey(locals.db, user);
 	const username = sanitize(user.personaname, false, true);
 
 	usernames[user.steamid] = username || "Unknown";

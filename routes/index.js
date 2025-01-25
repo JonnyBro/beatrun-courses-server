@@ -60,7 +60,7 @@ router.get("/", async (req, res) => {
 		let codeFile = "";
 		try {
 			codeFile = fs.readFileSync(`public/${codeData.path}`, "utf-8");
-		} catch (e) {
+		} catch {
 			return console.log(`[WARNING] Not found file for: ${code}`);
 		}
 

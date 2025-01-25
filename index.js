@@ -6,8 +6,7 @@ const express = require("express"),
 	passport = require("passport"),
 	SteamStrategy = require("passport-steam").Strategy;
 
-const { JsonDB, Config } = require("node-json-db"),
-	{ generateRandomString, log } = require("./utils/functions");
+const { JsonDB, Config } = require("node-json-db");
 
 const config = require("./config");
 const db = new JsonDB(new Config(`data/${config.production ? "main" : "test"}_db`, true, true, "/"));
@@ -110,129 +109,7 @@ db.getData("/admins").then(data => {
 app.locals = {
 	config: config,
 	db: db,
-	getKey: getKey,
-	isRatelimited: isRatelimited,
-	isMultiAccount: isMultiAccount,
 };
-
-/**
- * Gets a user's key from the database.
- *
- * Checks if the user already has a key, and returns it if so.
- * Otherwise generates a new one.
- *
- * @param {Object | string} user The user object or SteamID64.
- * @returns {Promise<String>} The user's key.
- */
-async function getKey(user) {
-	user = typeof user === "string" ? user : user.steamid;
-
-	const keys = await db.getData("/keys");
-	const key = keys[user];
-
-	if (key) {
-		await log(
-			`[KEY] User logged in (SteamID: ${user}, Key ${key}).`,
-			`[KEY] User logged in (SteamID: \`${user}\`, Key \`${key}\`).`,
-		);
-		return key;
-	} else return await _createKey(user);
-}
-
-/**
- * Creates a new unique key for the given user and saves it to the database.
- *
- * @param {Object | string} user The OpenID Steam user object or SteamID64.
- * @returns {Promise<String>} The new unique key generated for the user.
- */
-async function _createKey(user) {
-	user = typeof user === "string" ? user : user.steamid;
-
-	const keys = await db.getData("/keys");
-	const key = generateRandomString();
-	const isFound = keys[key];
-
-	if (!isFound) {
-		keys[user] = key;
-
-		const now = Date.now();
-
-		await log(
-			`[KEY] New user (SteamID: ${user}, Key: ${key}, TimeCreated: ${new Date(now).toLocaleString("ru-RU")}).`,
-			`[KEY] New user (SteamID: \`${user}\`, Key: \`${key}\`, TimeCreated: <t:${Math.floor(now / 1000)}:f>).`,
-		);
-		await db.push("/keys", keys);
-
-		return key;
-	} else return await _createKey(user);
-}
-
-/**
- * Checks if an IP address is currently rate limited.
- *
- * Gets the current rate limits from the database.
- * If the IP already has a recent rate limit, returns true.
- * Otherwise, saves a new rate limit for the IP and returns false.
- *
- * @param {string} ip The IP address to check
- * @returns {Promise<boolean>} Whether the IP is currently rate limited
- */
-async function isRatelimited(ip) {
-	const rateLimits = await db.getData("/ratelimits");
-
-	if (rateLimits[ip] && Date.now() - rateLimits[ip] <= config.rateLimitTime) return true;
-
-	rateLimits[ip] = Date.now();
-
-	await db.push("/ratelimits", rateLimits);
-
-	return false;
-}
-
-/**
- * Checks if a user is using multiple accounts based on their IP address and Steam ID.
- *
- * Retrieves the locked accounts and user records from the database. If the user's account is locked, returns true.
- * Otherwise, checks if the user has changed their IP address more than the configured `ipChangeTime`. If so, clears the
- * user's IP address history and locks the account if the user has changed their IP more than 3 times. Updates the
- * database with the new account status and returns the result.
- *
- * @param {string} ip The IP address of the user.
- * @param {string} steamid The Steam ID of the user.
- * @returns {Promise<boolean>} Whether the user is using multiple accounts.
- */
-async function isMultiAccount(ip, steamid) {
-	const locked = await db.getData("/locked");
-	const records = await db.getData("/records");
-
-	if (locked[steamid]) return true;
-
-	if (!records[steamid])
-		records[steamid] = {
-			ips: {
-				[ip]: true,
-			},
-			lastchanged: Date.now(),
-		};
-
-	// Clear IPs if the user has changed their ip more than ipChangeTime
-	if (Date.now() - records[steamid]["lastchanged"] > config.ipChangeTime) {
-		records[steamid]["ips"] = [];
-		records[steamid]["lastchanged"] = Date.now();
-	}
-
-	// Lock account if the user changed their IP more than 3 time in ipChangeTime
-	if (Object.keys(records[steamid]["ips"]).length > 2) {
-		locked[steamid] = true;
-
-		await db.push("/locked", locked);
-		return true;
-	}
-
-	await db.push("/records", records);
-
-	return false;
-}
 
 // HTTP server
 const http = require("http");

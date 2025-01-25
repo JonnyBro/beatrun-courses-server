@@ -4,7 +4,7 @@ const express = require("express"),
 	openGraphScraper = require("open-graph-scraper"),
 	lzma = require("lzma");
 
-const { isAdmin, isUser, isUserGame, generateCode, isCourseFileValid, log } = require("../utils/functions"),
+const { isAdmin, isUser, isUserGame, isRatelimited, isMultiAccount, isLocked, getKey, generateCode, isCourseFileValid, log } = require("../utils/functions"),
 	{ formidable } = require("formidable");
 
 router.post("/", isUser, async (req, res) => {
@@ -21,19 +21,21 @@ router.get("/download", isUserGame, async (req, res) => {
 	if (!headers.map) return res.status(401).json({ res: res.statusCode, message: "No map provided. Please provide a valid map." });
 
 	const ip = headers["cf-connecting-ip"] || "Unknown";
+	const db = req.app.locals.db;
 	const key = headers.authorization;
-	const keys = await req.app.locals.db.getData("/keys");
+	const keys = await db.getData("/keys");
 	const steamIds = Object.fromEntries(Object.entries(keys).map(([k, v]) => [v, k]));
 	const steamid = steamIds[key];
 
-	if (ip !== "Unknown" && (await req.app.locals.isRatelimited(ip))) return res.status(401).json({ res: res.statusCode, message: "Too many requests. Please try again later." });
-	if (ip !== "Unknown" && (await req.app.locals.isMultiAccount(ip, steamid))) return res.status(401).json({ res: res.statusCode, message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (ip !== "Unknown" && (await isRatelimited(db, ip))) return res.status(401).json({ res: res.statusCode, message: "Too many requests. Please try again later." });
+	if (ip !== "Unknown" && (await isMultiAccount(db, ip, steamid))) return res.status(401).json({ res: res.statusCode, message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (await isLocked(db, steamid)) return res.status(401).json({ res: res.statusCode, message: "Your account is locked. Please open a ticket on our Discord server." });
 
 	let courseData;
 
 	try {
-		courseData = await req.app.locals.db.getData(`/courses/${headers.code.toUpperCase()}`);
-	} catch (e) {
+		courseData = await db.getData(`/courses/${headers.code.toUpperCase()}`);
+	} catch {
 		return res.status(401).json({ res: res.statusCode, message: "Invalid course code provided." });
 	}
 
@@ -49,7 +51,7 @@ router.get("/download", isUserGame, async (req, res) => {
 	if (!courseData.plays) courseData.plays = 1;
 	else courseData.plays++;
 
-	await req.app.locals.db.push(`/courses/${headers.code.toUpperCase()}`, courseData);
+	await db.push(`/courses/${headers.code.toUpperCase()}`, courseData);
 
 	res.send({ res: res.statusCode, file: file });
 });
@@ -61,18 +63,20 @@ router.post("/upload", isUserGame, async (req, res) => {
 	if (headers.mapid === null || headers.mapid === undefined) return res.status(401).json({ res: res.statusCode, message: "No map id provided. Please provide a valid map id." });
 
 	const ip = headers["cf-connecting-ip"] || "Unknown";
+	const db = req.app.locals.db;
 	const key = headers.authorization;
-	const keys = await req.app.locals.db.getData("/keys");
+	const keys = await db.getData("/keys");
 	const steamIds = Object.fromEntries(Object.entries(keys).map(([k, v]) => [v, k]));
 	const steamid = steamIds[key];
 
-	if (ip !== "Unknown" && (await req.app.locals.isRatelimited(ip))) return res.status(401).json({ res: res.statusCode, message: "Too many requests. Please try again later." });
-	if (ip !== "Unknown" && (await req.app.locals.isMultiAccount(ip, steamid))) return res.status(401).json({ res: res.statusCode, message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (ip !== "Unknown" && (await isRatelimited(db, ip))) return res.status(401).json({ res: res.statusCode, message: "Too many requests. Please try again later." });
+	if (ip !== "Unknown" && (await isMultiAccount(db, ip, steamid))) return res.status(401).json({ res: res.statusCode, message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (await isLocked(db, steamid)) return res.status(401).json({ res: res.statusCode, message: "Your account is locked. Please open a ticket on our Discord server." });
 
 	let course = "";
 	try {
 		course = lzma.decompress(Buffer.from(headers.course, "base64"));
-	} catch (e) {
+	} catch {
 		course = Buffer.from(headers.course, "base64").toString("utf-8");
 	}
 
@@ -90,7 +94,7 @@ router.post("/upload", isUserGame, async (req, res) => {
 
 	const mapImage = headers.mapid === "0" || headers.mapid === "no_map_id" ? "" : await openGraphScraper({ url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${headers.mapid}` }).then(data => data.result.ogImage[0].url);
 
-	await req.app.locals.db.push("/courses", {
+	await db.push("/courses", {
 		[code]: {
 			map: headers.map,
 			uploader: {
@@ -115,9 +119,11 @@ router.post("/upload", isUserGame, async (req, res) => {
 router.post("/upload_site", isUser, async (req, res) => {
 	const { headers, user } = req;
 	const ip = headers["cf-connecting-ip"] || "Unknown";
+	const db = req.app.locals.db;
 
-	if (ip !== "Unknown" && (await req.app.locals.isRatelimited(ip))) return res.status(401).json({ res: res.statusCode, message: "Too many requests. Please try again later." });
-	if (ip !== "Unknown" && (await req.app.locals.isMultiAccount(ip, user.steamid))) return res.status(401).json({ res: res.statusCode, message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (ip !== "Unknown" && (await isRatelimited(db, ip))) return res.status(401).json({ res: res.statusCode, message: "Too many requests. Please try again later." });
+	if (ip !== "Unknown" && (await isMultiAccount(db, ip, user.steamid))) return res.status(401).json({ res: res.statusCode, message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (await isLocked(db, user.steamid)) return res.status(401).json({ res: res.statusCode, message: "Your account is locked. Please open a ticket on our Discord server." });
 
 	const form = formidable({ maxFileSize: 10 * 1024 * 1024 });
 
@@ -129,7 +135,7 @@ router.post("/upload_site", isUser, async (req, res) => {
 		let course = "";
 		try {
 			course = lzma.decompress(uploaded);
-		} catch (e) {
+		} catch {
 			course = uploaded;
 		}
 
@@ -148,7 +154,7 @@ router.post("/upload_site", isUser, async (req, res) => {
 		const mapid = fields.link.match(/id=(\d+)/)[1];
 		const mapImage = await openGraphScraper({ url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${mapid}` }).then(data => data.result.ogImage[0].url);
 
-		await req.app.locals.db.push("/courses", {
+		await db.push("/courses", {
 			[code]: {
 				map: fields.map,
 				uploader: {
@@ -178,15 +184,17 @@ router.post("/update", isUserGame, async (req, res) => {
 	if (!headers.code) return res.status(401).json({ res: res.statusCode, message: "No code provided. Please provide a valid course code." });
 
 	const ip = headers["cf-connecting-ip"] || "Unknown";
+	const db = req.app.locals.db;
 	const key = headers.authorization;
-	const keys = await req.app.locals.db.getData("/keys");
+	const keys = await db.getData("/keys");
 	const steamIds = Object.fromEntries(Object.entries(keys).map(([k, v]) => [v, k]));
 	const steamid = steamIds[key];
 
-	if (ip !== "Unknown" && (await req.app.locals.isRatelimited(ip))) return res.status(401).json({ message: "Too many requests. Please try again later." });
-	if (ip !== "Unknown" && (await req.app.locals.isMultiAccount(ip, steamid))) return res.status(401).json({ message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (ip !== "Unknown" && (await isRatelimited(db, ip))) return res.status(401).json({ message: "Too many requests. Please try again later." });
+	if (ip !== "Unknown" && (await isMultiAccount(db, ip, steamid))) return res.status(401).json({ message: "Your account was detected as multiaccount. Please open a ticket on our Discord server." });
+	if (await isLocked(db, steamid)) return res.status(401).json({ res: res.statusCode, message: "Your account is locked. Please open a ticket on our Discord server." });
 
-	const courseData = await req.app.locals.db.getData(`/courses/${headers.code.toUpperCase()}`);
+	const courseData = await db.getData(`/courses/${headers.code.toUpperCase()}`);
 
 	if (courseData.map !== headers.map) return res.status(401).json({ res: res.statusCode, message: "Invalid map. You should provide the same map as before." });
 	if (courseData.uploader.userid !== steamIds[key]) return res.status(401).json({ res: res.statusCode, message: "Invalid key. You are not the uploader of this course. Only the uploader can update their course." });
@@ -194,7 +202,7 @@ router.post("/update", isUserGame, async (req, res) => {
 	let course = "";
 	try {
 		course = lzma.decompress(Buffer.from(headers.course, "base64"));
-	} catch (e) {
+	} catch {
 		course = Buffer.from(headers.course, "base64").toString("utf-8");
 	}
 
@@ -204,7 +212,7 @@ router.post("/update", isUserGame, async (req, res) => {
 
 	courseData.time = Date.now();
 
-	await req.app.locals.db.push(`/courses/${headers.code.toUpperCase()}`, courseData);
+	await db.push(`/courses/${headers.code.toUpperCase()}`, courseData);
 
 	await log(
 		`[UPDATE] User updated a course (Course: ${headers.code.toUpperCase()}, SteamID: ${steamIds[key]}, Key ${key}).`,
@@ -242,7 +250,7 @@ router.post("/admin", isAdmin, async (req, res) => {
 	if (action === "addKey") {
 		if (!target) return res.send({ success: false, message: "Target not provided. Please provide a target." });
 
-		const key = await req.app.locals.getKey(target);
+		const key = await getKey(req.app.locals.db, target);
 
 		if (!key) return res.send({ success: false, message: "Internal error. Contact the developer." });
 
@@ -364,7 +372,7 @@ router.get("/info/:code", async (req, res) => {
 
 	try {
 		course = await req.app.locals.db.getData(`/courses/${req.params.code.toUpperCase()}`);
-	} catch (e) {
+	} catch {
 		return res.status(401).json({ res: res.statusCode, message: "Invalid course code provided." });
 	}
 

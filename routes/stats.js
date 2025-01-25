@@ -7,7 +7,7 @@ router.get("/:code", async (req, res) => {
 
 	try {
 		course = await req.app.locals.db.getData(`/courses/${req.params.code.toUpperCase()}`);
-	} catch (e) {
+	} catch {
 		return res.status(401).json({ res: res.statusCode, message: "Invalid course code provided." });
 	}
 
