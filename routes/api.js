@@ -57,8 +57,8 @@ router.get("/download", isUserGame, async (req, res) => {
 });
 
 router.post("/upload", isUserGame, async (req, res) => {
-	const { headers } = req;
-	if (!headers.course) return res.status(401).json({ res: res.statusCode, message: "No course provided. Please provide a valid course." });
+	const { headers, body } = req;
+	if (!body || !body.data) return res.status(401).json({ res: res.statusCode, message: "No course provided. Please provide a valid course." });
 	if (!headers.map) return res.status(401).json({ res: res.statusCode, message: "No map provided. Please provide a valid map." });
 	if (headers.mapid === null || headers.mapid === undefined) return res.status(401).json({ res: res.statusCode, message: "No map id provided. Please provide a valid map id." });
 
@@ -75,9 +75,9 @@ router.post("/upload", isUserGame, async (req, res) => {
 
 	let course = "";
 	try {
-		course = lzma.decompress(Buffer.from(headers.course, "base64"));
+		course = lzma.decompress(Buffer.from(body.data, "base64"));
 	} catch {
-		course = Buffer.from(headers.course, "base64").toString("utf-8");
+		course = Buffer.from(body.data, "base64").toString("utf-8");
 	}
 
 	if (!isCourseFileValid(JSON.parse(course))) return res.status(401).json({ res: res.statusCode, message: "Invalid course file. Please provide a valid course." });
@@ -178,8 +178,8 @@ router.post("/upload_site", isUser, async (req, res) => {
 });
 
 router.post("/update", isUserGame, async (req, res) => {
-	const { headers } = req;
-	if (!headers.course) return res.status(401).json({ res: res.statusCode, message: "No course provided. Please provide a valid course." });
+	const { headers, body } = req;
+	if (!body) return res.status(401).json({ res: res.statusCode, message: "No course provided. Please provide a valid course." });
 	if (!headers.map) return res.status(401).json({ res: res.statusCode, message: "No map provided. Please provide a valid map." });
 	if (!headers.code) return res.status(401).json({ res: res.statusCode, message: "No code provided. Please provide a valid course code." });
 
@@ -201,9 +201,9 @@ router.post("/update", isUserGame, async (req, res) => {
 
 	let course = "";
 	try {
-		course = lzma.decompress(Buffer.from(headers.course, "base64"));
+		course = lzma.decompress(Buffer.from(body, "base64"));
 	} catch {
-		course = Buffer.from(headers.course, "base64").toString("utf-8");
+		course = Buffer.from(body, "base64").toString("utf-8");
 	}
 
 	if (!isCourseFileValid(JSON.parse(course))) return res.status(401).json({ res: res.statusCode, message: "Invalid course file. Please provide a valid course." });
