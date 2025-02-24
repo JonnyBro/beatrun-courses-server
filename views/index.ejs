@@ -26,6 +26,9 @@
 	</style>
 
 	<script>
+		// Apply user's theme
+		document.documentElement.setAttribute("data-theme", localStorage.getItem("theme"));
+
 		function update() {
 			const page = document.getElementById("pageSelect");
 			const sort = document.getElementById("sortValue");

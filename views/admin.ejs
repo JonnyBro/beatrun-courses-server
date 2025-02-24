@@ -25,6 +25,9 @@
 	</style>
 
 	<script>
+		// Apply user's theme
+		document.documentElement.setAttribute("data-theme", localStorage.getItem("theme"));
+
 		function sendAction(args) {
 			const { action } = args;
 			const responseBox = document.getElementById("responseBox");
