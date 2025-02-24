@@ -24,6 +24,11 @@
 			-ms-overflow-style: none;
 		}
 	</style>
+
+	<script>
+		// Apply user's theme
+		document.documentElement.setAttribute("data-theme", localStorage.getItem("theme"));
+	</script>
 </head>
 
 <body class="w-screen font-mono">
