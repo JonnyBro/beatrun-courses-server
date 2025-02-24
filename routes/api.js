@@ -151,8 +151,9 @@ router.post("/upload_site", isUser, async (req, res) => {
 
 		fs.writeFileSync(file, course);
 
-		const mapid = fields.link.match(/id=(\d+)/)[1];
-		const mapImage = await openGraphScraper({ url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${mapid}` }).then(data => data.result.ogImage[0].url);
+		const matched = fields.link.match(/id=(\d+)/);
+		const mapid = matched ? matched[1] : null;
+		const mapImage = mapid ? await openGraphScraper({ url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${mapid}` }).then(data => data.result.ogImage[0].url) : "";
 
 		await db.push("/courses", {
 			[code]: {
