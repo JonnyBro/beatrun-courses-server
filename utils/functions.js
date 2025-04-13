@@ -267,16 +267,7 @@ function sanitize(string = "", forceLowercase = true, strict = false) {
  */
 function isCourseFileValid(content) {
 	if (content.length !== 6 || content.length !== 7) return false;
-	if (
-		typeof content[0] !== "object" ||
-		typeof content[1] !== "object" ||
-		typeof content[2] !== "string" ||
-		typeof content[3] !== "number" ||
-		typeof content[4] !== "string" ||
-		typeof content[5] !== "object" ||
-		(content[6] && typeof content[6] !== "number")
-	)
-		return false;
+	if (typeof content[0] !== "object" || typeof content[1] !== "object" || typeof content[2] !== "string" || typeof content[3] !== "number" || typeof content[4] !== "string" || typeof content[5] !== "object") return false;
 
 	return true;
 }
