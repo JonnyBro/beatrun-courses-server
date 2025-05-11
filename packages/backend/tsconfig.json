@@ -1,0 +1,15 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"outDir": "dist",
+		"paths": {
+			"@/": ["./src/*"]
+		},
+		"moduleDetection": "force",
+		"resolveJsonModule": true,
+		"allowJs": true,
+		"esModuleInterop": true,
+		"isolatedModules": true
+	},
+	"include": ["src/**/*"]
+}

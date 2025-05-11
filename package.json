@@ -1,116 +1,42 @@
 {
-	"name": "beatrun-courses-server-express",
-	"version": "1.2.7",
+	"name": "beatrun-courses-server",
+	"version": "2.0.0",
+	"description": "Beatrun courses database written in JavaScript using [Node.js](https://nodejs.org).\\\r This project is a rewrite of this [fork](https://github.com/JonnyBro/beatrun-courses-server) from PHP to JavaScript. The original project was made by [relaxtakenotes](https://github.com/relaxtakenotes/beatrun-courses-server).",
+	"type": "module",
 	"scripts": {
-		"build": "tailwindcss -i ./tailwind-files/input.css -o ./public/css/style.css",
-		"watch": "tailwindcss -i ./tailwind-files/input.css -o ./public/css/style.css --watch",
-		"start": "node ."
+		"dev": "pnpm -r --parallel --filter='./packages/*' run dev",
+		"build": "pnpm -r --filter='./packages/*' run build",
+		"lint": "eslint --cache .",
+		"format": "prettier --write --cache .",
+		"prepare": "husky"
 	},
-	"dependencies": {
-		"daisyui": "^4.12.23",
-		"ejs": "^2.6.1",
-		"express": "^4.21.2",
-		"express-session": "^1.18.1",
-		"formidable": "^2.1.2",
-		"lzma": "^2.3.2",
-		"mongoose": "^8.9.5",
-		"morgan": "^1.10.0",
-		"node-fetch": "^2.7.0",
-		"node-json-db": "^2.3.1",
-		"open-graph-scraper": "^6.5.0",
-		"passport": "^0.7.0",
-		"passport-steam": "^1.0.18"
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/JonnyBro/beatrun-courses-server.git"
 	},
+	"author": "",
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://github.com/JonnyBro/beatrun-courses-server/issues"
+	},
+	"homepage": "https://github.com/JonnyBro/beatrun-courses-server#readme",
 	"devDependencies": {
-		"eslint": "^8.57.0",
-		"prettier": "^3.2.5",
-		"tailwindcss": "^3.4.1"
+		"@types/node": "^22.14.0",
+		"@typescript-eslint/eslint-plugin": "^8.32.0",
+		"@typescript-eslint/parser": "^8.32.0",
+		"@vue/eslint-config-prettier": "^10.2.0",
+		"@vue/eslint-config-typescript": "^14.5.0",
+		"eslint": "^9.26.0",
+		"eslint-plugin-vue": "~10.0.0",
+		"husky": "^9.1.7",
+		"lint-staged": "^16.0.0",
+		"prettier": "^3.5.3",
+		"typescript": "~5.8.0"
 	},
-	"eslintConfig": {
-		"extends": "eslint:recommended",
-		"env": {
-			"commonjs": true,
-			"es6": true,
-			"es2020": true,
-			"node": true
-		},
-		"globals": {
-			"Atomics": "readonly",
-			"SharedArrayBuffer": "readonly"
-		},
-		"parserOptions": {
-			"ecmaVersion": 2020
-		},
-		"rules": {
-			"arrow-spacing": [
-				"warn",
-				{
-					"before": true,
-					"after": true
-				}
-			],
-			"comma-dangle": [
-				"error",
-				"always-multiline"
-			],
-			"comma-spacing": "error",
-			"comma-style": "error",
-			"dot-location": [
-				"error",
-				"property"
-			],
-			"handle-callback-err": "off",
-			"indent": [
-				"error",
-				"tab",
-				{
-					"SwitchCase": 1
-				}
-			],
-			"keyword-spacing": "error",
-			"max-nested-callbacks": [
-				"error",
-				{
-					"max": 4
-				}
-			],
-			"max-statements-per-line": [
-				"error",
-				{
-					"max": 2
-				}
-			],
-			"no-console": "off",
-			"no-multi-spaces": "error",
-			"no-multiple-empty-lines": [
-				"error",
-				{
-					"max": 2,
-					"maxEOF": 1,
-					"maxBOF": 0
-				}
-			],
-			"no-trailing-spaces": [
-				"error"
-			],
-			"no-var": "error",
-			"object-curly-spacing": [
-				"error",
-				"always"
-			],
-			"prefer-const": "error",
-			"quotes": [
-				"error",
-				"double"
-			],
-			"semi": [
-				"error",
-				"always"
-			],
-			"space-in-parens": "error",
-			"space-infix-ops": "error",
-			"space-unary-ops": "error",
-			"yoda": "error"
-		}
+	"lint-staged": {
+		"*.{ts,vue,js,json,md}": [
+			"eslint --fix .",
+			"prettier --write ."
+		]
 	}
 }

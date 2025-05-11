@@ -1,0 +1,10 @@
+*.config.js
+*.config.ts
+*.config.mjs
+*.config.cjs
+*.config.json
+.*rc
+*.rc.*
+
+pnpm*
+.pnpm*
