@@ -180,7 +180,7 @@ router.post("/upload_site", isUser, async (req, res) => {
 
 router.post("/update", isUserGame, async (req, res) => {
 	const { headers, body } = req;
-	if (!body) return res.status(401).json({ res: res.statusCode, message: "No course provided. Please provide a valid course." });
+	if (!body || !body.data) return res.status(401).json({ res: res.statusCode, message: "No course provided. Please provide a valid course." });
 	if (!headers.map) return res.status(401).json({ res: res.statusCode, message: "No map provided. Please provide a valid map." });
 	if (!headers.code) return res.status(401).json({ res: res.statusCode, message: "No code provided. Please provide a valid course code." });
 
