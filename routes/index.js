@@ -96,7 +96,7 @@ router.get("/", async (req, res) => {
 			rates: rating.ratings,
 			scoresmart: rating.rateSmart,
 			mapimg: codeMapImage,
-			mapwid: codeMapId,
+			mapid: codeMapId,
 			time: codeData.time,
 			plays: codeData.plays || 0,
 		});
@@ -144,7 +144,7 @@ router.get("/", async (req, res) => {
 			searchString += c.userid;
 			searchString += c.username;
 			searchString += c.map;
-			searchString += c.mapwid;
+			searchString += c.mapid;
 
 			return searchString.toLowerCase().includes(query);
 		});
@@ -202,17 +202,17 @@ function getCourseRating(data) {
  */
 function generateCourseCard(course) {
 	const templates = {
-		"{courseName}": course.name,
-		"{courseCode}": course.code,
-		"{uploaderID}": course.userid,
-		"{uploaderName}": course.username,
-		"{courseMap}": course.map,
+		"{courseName}": sanitize(course.name),
+		"{courseCode}": sanitize(course.code),
+		"{uploaderID}": sanitize(course.userid),
+		"{uploaderName}": sanitize(course.username),
+		"{courseMap}": sanitize(course.map),
 		"{downloadLink}": course.download,
 		"{likesCount}": course.likes,
 		"{dislikesCount}": course.dislikes,
 		"{ratesmart}": course.scoresmart,
 		"{mapImage}": course.mapimg,
-		"{mapID}": course.mapwid,
+		"{mapID}": sanitize(course.mapid),
 		"{elementsCount}": course.elements === 1 ? "1 element" : `${course.elements} elements`,
 		"{uploadDate}": new Date(course.time).toLocaleString("ru-RU", { day: "2-digit", month: "2-digit", year: "2-digit" }),
 		"{plays}": course.plays === 1 ? "1 play" : `${course.plays || 0} plays`,

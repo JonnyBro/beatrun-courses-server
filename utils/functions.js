@@ -248,13 +248,15 @@ function generateCode() {
  * @param {boolean} [strict=false] - Whether to remove all non-alphanumeric characters.
  * @returns {string} The sanitized string.
  */
-function sanitize(string = "", forceLowercase = true, strict = false) {
-	string = string.toString();
+function sanitize(string = "", forceLowercase = false, strict = false) {
+	if (!string) return;
 
-	const strip = ["~", "`", "!", "@", "#", "$", "%", "^", "&", "*", "(", ")", "=", "+", "[", "{", "]", "}", "\\", "|", ";", ":", "\"", "'", "&#8216;", "&#8217;", "&#8220;", "&#8221;", "&#8211;", "&#8212;", "â€”", "â€“", ",", "<", ".", ">", "/", "?"];
+	string = string.toString().trim();
 
-	let clean = string.trim().replace(strip, "").replace(/\s+/g, "-");
-	clean = strict ? string.replace(/[^\u0400-\u04FF\w\d\s-]/g, "") : clean;
+	let clean = string.replace(/[~`!@#$%^&*()=+[\]{}|\\;:'",<.>/?\u2018\u2019\u201C\u201D\u2013\u2014–—]/g, "");
+	clean = clean.replace(/&#\d+;/g, "");
+
+	if (strict) clean = clean.replace(/\s+/g, "-").replace(/[^\u0400-\u04FF\w-]/g, "");
 
 	return forceLowercase ? clean.toLowerCase() : clean;
 }
