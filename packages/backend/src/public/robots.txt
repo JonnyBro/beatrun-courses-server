@@ -1,7 +1,2 @@
 User-agent: *
-Disallow: /courses
-Disallow: /courses/*
-Disallow: /admin
-Disallow: /admin/*
-Disallow: /api
-Disallow: /api/*
+Disallow: /

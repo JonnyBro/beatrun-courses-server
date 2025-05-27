@@ -298,7 +298,7 @@ router.post('/upload_site', isUser, async (req, res) => {
 
 router.post('/update', isUserGame, async (req, res) => {
 	const { headers, body } = req
-	if (!body)
+	if (!body || !body.data)
 		return res
 			.status(401)
 			.json({
