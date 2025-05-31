@@ -1,21 +1,21 @@
 {
 	"name": "@beatrun-courses-server/backend",
 	"version": "1.2.7",
+	"type": "module",
 	"scripts": {
-		"start": "node .",
-		"build": "tsup",
-		"dev": "tsup --watch"
+		"start": "node dist/index.js",
+		"build": "tsup src",
+		"dev": "tsup src --watch"
 	},
 	"dependencies": {
-		"daisyui": "^4.12.23",
+		"@fastify/multipart": "^9.0.3",
+		"@fastify/oauth2": "^8.1.2",
+		"@fastify/swagger": "^9.5.1",
+		"@fastify/swagger-ui": "^5.2.2",
 		"ejs": "^2.6.1",
-		"express": "^4.21.2",
-		"express-session": "^1.18.1",
-		"formidable": "^2.1.2",
+		"fastify": "^5.3.3",
 		"lzma": "^2.3.2",
-		"morgan": "^1.10.0",
 		"node-fetch": "^2.7.0",
-		"node-json-db": "^2.3.1",
 		"open-graph-scraper": "^6.5.0",
 		"passport": "^0.7.0",
 		"passport-steam": "^1.0.18"

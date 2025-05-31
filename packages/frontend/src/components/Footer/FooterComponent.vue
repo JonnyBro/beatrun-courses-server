@@ -6,7 +6,7 @@
 			<a
 				class="hover:underline"
 				target="_blank"
-				href="https://git.jonnybro.ru/jonny_bro/beatrun-courses-server-docker"
+				href="https://github.com/JonnyBro/beatrun-courses-server"
 				>[Full source code available here!]</a
 			>
 		</div>
