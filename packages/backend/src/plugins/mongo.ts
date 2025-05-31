@@ -1,16 +1,12 @@
 import fastifyMongo from "@fastify/mongodb";
-import { FastifyInstance, FastifyPluginOptions } from "fastify";
+import { FastifyInstance } from "fastify";
+import fastifyPlugin from "fastify-plugin";
+import config from "../../config.json";
 
-interface MongoPluginOptions extends FastifyPluginOptions {
-	mongoUrl: string;
+async function dbConnector(fastify: FastifyInstance) {
+	await fastify.register(fastifyMongo, {
+		url: config.mongo,
+	});
 }
 
-const plugin = async (fastify: FastifyInstance, options: MongoPluginOptions) => {
-	try {
-		await fastify.register(fastifyMongo, { url: options.mongoUrl });
-	} catch (e) {
-		throw e;
-	}
-};
-
-export default plugin;
+export default fastifyPlugin(dbConnector);

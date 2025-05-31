@@ -6,9 +6,7 @@ import indexRouter from "./routes/index";
 const fastify = Fastify({ logger: !config.prod });
 
 // Plugins
-fastify.register(mongoPlugin, {
-	mongoUrl: config.mongo,
-});
+fastify.register(mongoPlugin);
 
 // Routes
 fastify.register(indexRouter);
