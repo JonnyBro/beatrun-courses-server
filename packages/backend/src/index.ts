@@ -1,24 +1,21 @@
 import Fastify from "fastify";
-import config from "../config.js";
+import config from "../config.json";
+import mongoPlugin from "./plugins/mongo";
+import indexRouter from "./routes/index";
 
 const fastify = Fastify({ logger: !config.prod });
-import indexRouter from "./routes/indexRouter";
 
-fastify.register(indexRouter);
-
-fastify.get("/", async function (request, reply) {
-	return { hello: "world" };
+// Plugins
+fastify.register(mongoPlugin, {
+	mongoUrl: config.mongo,
 });
 
-const start = async () => {
-	fastify.listen({ host: "0.0.0.0", port: config.port }, (err, address) => {
-		if (err) {
-			fastify.log.error(err);
-			process.exit(1);
-		}
+// Routes
+fastify.register(indexRouter);
 
-		fastify.log.info(`Server is listening on ${address}`);
-	});
-};
-
-start();
+fastify.listen({ host: "0.0.0.0", port: config.port }, (err) => {
+	if (err) {
+		fastify.log.error(err);
+		process.exit(1);
+	}
+});

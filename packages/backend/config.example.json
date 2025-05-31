@@ -1,5 +1,6 @@
 {
 	"prod": true,
+	"mongo": "mongodb://localhost:27017/courses",
 	"domain": "http://localhost:6547",
 	"port": 6547,
 	"rateLimitTime": 5000,
