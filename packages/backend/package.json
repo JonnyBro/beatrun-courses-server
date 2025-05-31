@@ -5,7 +5,7 @@
 	"scripts": {
 		"start": "node dist/index.js",
 		"build": "tsup src",
-		"dev": "tsup src --watch"
+		"dev": "tsup src --watch --onSuccess \"node dist/index.js\""
 	},
 	"dependencies": {
 		"@fastify/multipart": "^9.0.3",
