@@ -1,0 +1,10 @@
+{
+	"prod": true,
+	"domain": "http://localhost:6547",
+	"port": 6547,
+	"rateLimitTime": 5000,
+	"ipChangeTime": 10800000,
+	"steamKey": "",
+	"cookieSecret": "",
+	"webhookUrl": ""
+}
