@@ -18,11 +18,12 @@ const vueConfig = defineConfigWithVueTs(
 
 export default defineConfig([
 	globalIgnores([
-		"node_modules",
-		"dist/**",
-		"pnpm*",
-		".pnpm*",
-		"**/*.config.{js,ts,mjs,cjs,json}",
+		'node_modules',
+		'**/dist',
+		'**/pnpm*',
+		'**/.pnpm*',
+		'**/*.md',
+		'**/*.config.{js,ts,mjs,cjs,json}'
 	]),
 	...vueConfig,
 	{
