@@ -1,25 +1,45 @@
-// import { FastifyInstance } from "fastify";
+import { FastifyInstance } from "fastify";
+import { User } from "../plugins/mongo";
 
-// const createKey = async (fastify: FastifyInstance, user: any) => {
-// 	user = typeof user === "string" ? user : user.steamid;
+export const createAuthKey = async (fastify: FastifyInstance, steamId: string) => {
+	const users = fastify.mongo.db?.collection<User>("users");
+	if (!users) return { code: 404, message: "Users collection not found" };
 
-// 	const keys = fastify.mongo.db?.collection("keys");
-// 	const key = generateRandomString();
-// 	const isFound = keys[key];
+	let key = generateRandomString(32);
 
-// 	if (!isFound) {
-// 		keys[user] = key;
+	while (true) {
+		const existingUser = await users.findOne({ key });
 
-// 		const now = Date.now();
+		if (!existingUser) {
+			await users.updateOne({ steamId }, { $set: { key } });
 
-// 		await log(
-// 			`[KEY] New user (SteamID: ${user}, Key: ${key}, TimeCreated: ${new Date(now).toLocaleString("ru-RU")}).`,
-// 			`[KEY] New user (SteamID: \`${user}\`, Key: \`${key}\`, TimeCreated: <t:${Math.floor(now / 1000)}:f>).`,
-// 		);
-// 		await db.push("/keys", keys);
+			return { code: 200, message: key };
+		}
 
-// 		return key;
-// 	} else return await createKey(db, user);
-// };
+		key = generateRandomString(32);
+	}
+};
 
-// export { createKey };
+export const getAuthKey = async (fastify: FastifyInstance, steamId: string) => {
+	const users = fastify.mongo.db?.collection<User>("users");
+	if (!users) return { code: 404, message: "Users collection not found" };
+
+	const user = await users.findOne({ steamId });
+	if (!user) return { code: 404, message: "User not found" };
+
+	return user.key;
+};
+
+export const generateRandomString = (
+	length: number,
+	chars: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
+) => {
+	let result = "";
+	const charactersLength = chars.length;
+
+	for (let i = 0; i < length; i++) {
+		result += chars.charAt(Math.floor(Math.random() * charactersLength));
+	}
+
+	return result;
+};

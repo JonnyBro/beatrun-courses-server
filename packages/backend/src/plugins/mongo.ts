@@ -4,9 +4,9 @@ import fastifyPlugin from "fastify-plugin";
 import config from "../../config.json";
 
 export interface User {
-	_id: ObjectId;
+	_id?: ObjectId;
 	steamId: string;
-	username: string;
+	username?: string;
 	key: string;
 	createdAt: Date;
 }

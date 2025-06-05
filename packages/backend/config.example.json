@@ -2,6 +2,7 @@
 	"prod": true,
 	"mongo": "mongodb://localhost:27017/courses",
 	"domain": "http://localhost:6547",
+	"secret": "very-strong-secret-string",
 	"port": 6547,
 	"rateLimitTime": 5000,
 	"ipChangeTime": 10800000,

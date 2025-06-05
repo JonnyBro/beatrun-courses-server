@@ -1,7 +1,7 @@
 {
 	"name": "beatrun-courses-server",
 	"version": "2.0.0",
-	"description": "Beatrun courses database written in JavaScript using [Node.js](https://nodejs.org).\\\r This project is a rewrite of this [fork](https://github.com/JonnyBro/beatrun-courses-server) from PHP to JavaScript. The original project was made by [relaxtakenotes](https://github.com/relaxtakenotes/beatrun-courses-server).",
+	"description": "Beatrun courses database",
 	"type": "module",
 	"scripts": {
 		"dev": "pnpm -r --parallel --filter='./packages/*' run dev",
