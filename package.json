@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "pnpm -r --parallel --filter='./packages/*' run dev",
 		"build": "pnpm -r --filter='./packages/*' run build",
-		"lint": "eslint --cache .",
+		"lint": "eslint --cache --fix .",
 		"format": "prettier --write --cache .",
 		"prepare": "husky"
 	},
@@ -35,9 +35,9 @@
 		"typescript": "~5.8.0"
 	},
 	"lint-staged": {
-		"*.{ts,vue,js,json,md}": [
-			"eslint --fix .",
-			"prettier --write ."
+		"*.{ts,vue,js,json}": [
+			"pnpm lint",
+			"pnpm format"
 		]
 	},
 	"packageManager": "pnpm@10.11.0+sha512.6540583f41cc5f628eb3d9773ecee802f4f9ef9923cc45b69890fb47991d4b092964694ec3a4f738a420c918a333062c8b925d312f42e4f0c263eb603551f977"
