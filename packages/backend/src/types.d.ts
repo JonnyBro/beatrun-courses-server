@@ -6,7 +6,7 @@ declare module "@fastify/session" {
 	}
 }
 
-interface SteamUser {
+export interface SteamUser {
 	steamid: string;
 	communityvisibilitystate: number;
 	profilestate: number;
