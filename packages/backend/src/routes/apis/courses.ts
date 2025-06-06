@@ -136,8 +136,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		const binaryData = course.data.buffer as Buffer;
 		const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
+		const base64lzma = Buffer.from(LZMA.compress(decompressed)).toString("base64");
 
-		if (!decompressed) {
+		if (!base64lzma) {
 			return reply
 				.status(500)
 				.send({ code: reply.statusCode, message: "Internal server error" });
@@ -148,7 +149,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		reply.status(200).send({
 			code: 200,
 			message: "Course found",
-			data: decompressed,
+			data: base64lzma,
 		});
 	});
 };
