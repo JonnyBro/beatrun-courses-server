@@ -10,6 +10,18 @@ async function dbConnector(fastify: FastifyInstance) {
 			url: config.mongo,
 		});
 
+		const collections = await fastify.mongo.db?.listCollections().toArray();
+
+		if (!collections?.some(c => c.name === "users")) {
+			await fastify.mongo.db?.createCollection("users");
+			console.log("[backend] Created 'users' collection");
+		}
+
+		if (!collections?.some(c => c.name === "courses")) {
+			await fastify.mongo.db?.createCollection("courses");
+			console.log("[backend] Created 'courses' collection");
+		}
+
 		console.log("[backend] Connected to the database successfully");
 	} catch (e) {
 		console.error("[backend] Error while connecting to the database\n", e);
