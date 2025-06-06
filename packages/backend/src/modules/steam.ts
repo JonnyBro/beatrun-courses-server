@@ -71,7 +71,7 @@ const sanitizeQuery = (query: Record<string, string>, expectedRealm: string) => 
 	// because it's very important that it be a signed parameter.
 	assert(
 		sanitizedQuery["openid.return_to"],
-		"No \"openid.return_to\" parameter is present in the URL",
+		"No 'openid.return_to' parameter is present in the URL",
 	);
 
 	const realm = canonicalizeRealm(sanitizedQuery["openid.return_to"]);
@@ -84,7 +84,7 @@ const sanitizeQuery = (query: Record<string, string>, expectedRealm: string) => 
 	assert(
 		claimedId,
 		// eslint-disable-next-line max-len
-		"No \"openid.claimed_id\" parameter is present in the URL, or it doesn't have the correct format",
+		"No 'openid.claimed_id' parameter is present in the URL, or it doesn't have the correct format",
 	);
 
 	return sanitizedQuery;
@@ -154,23 +154,20 @@ export const getSteamProfile = async (steamId: string, apiKey: string): Promise<
 
 	const contentType = response.headers.get("content-type");
 
-	if (contentType && contentType.indexOf("application/json") !== -1) {
+	if (contentType && contentType.includes("application/json")) {
 		data = await response.json();
 	} else {
 		const text = await response.text();
 
-		if (text?.includes("Access is denied.")) {
+		if (text.includes("Access is denied.")) {
 			throw new Error("Steam API key is invalid");
 		}
 
 		data = text;
 	}
 
-	const profile = data?.response?.players?.find(
-		(profile: Record<string, unknown>) => profile.steamid === steamId,
-	);
-
-	assert(profile, "There was an error fetching your Steam profile.");
+	const profile = data?.response?.players[0];
+	assert(profile, "There was an error fetching a Steam profile.");
 
 	return profile;
 };

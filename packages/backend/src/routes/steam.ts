@@ -3,13 +3,13 @@ import config from "../../config.json";
 import { buildAuthUrl, getSteamProfile, checkLogin } from "../modules/steam";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/auth/steam", (req, reply) => {
-		const url = buildAuthUrl(config.domain, `${config.domain}/auth/steam/callback`);
+	fastify.get("/auth", (req, reply) => {
+		const url = buildAuthUrl(config.domain, `${config.domain}/auth/callback`);
 
 		reply.redirect(url);
 	});
 
-	fastify.get("/auth/steam/callback", async (req, reply) => {
+	fastify.get("/auth/callback", async (req, reply) => {
 		try {
 			const steamId = (await checkLogin(req.url, config.domain)).getBigIntID().toString();
 
@@ -20,6 +20,10 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			reply.status(500).send({ code: reply.statusCode, message: e });
 			console.error(e);
 		}
+	});
+
+	fastify.get("/profile", async (req, reply) => {
+		reply.send(req.session.profile);
 	});
 };
 
