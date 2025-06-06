@@ -2,7 +2,7 @@
 	<nav class="flex items-center justify-between px-4 font-mono h-9">
 		<RouterLink
 			to="/"
-			class="text-lg font-bold hover:text-red-700 dark:hover:text-slate-300 transition-colors duration-200"
+			class="text-lg font-bold hover:text-red-700 transition-colors duration-200"
 		>
 			beatrun.ru | Courses Database
 		</RouterLink>
@@ -47,11 +47,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
-import { useWindowSize } from '@vueuse/core'
-import { Github, Server, Menu } from 'lucide-vue-next'
-import { ToggleTheme } from '../UI/ToggleTheme'
-import { Button } from '../UI/button'
+import { ref, watch } from "vue";
+import { useWindowSize } from "@vueuse/core";
+import { Github, Server, Menu } from "lucide-vue-next";
+import { ToggleTheme } from "../UI/ToggleTheme";
+import { Button } from "../UI/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -59,31 +59,31 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from '../UI/dropdown-menu'
+} from "../UI/dropdown-menu";
 
-const isMenuOpen = ref(false)
+const isMenuOpen = ref(false);
 
-const { width } = useWindowSize()
+const { width } = useWindowSize();
 
 const menuLinks = [
 	{
-		label: 'My fork',
-		link: 'https://github.com/JonnyBro/beatrun',
+		label: "My fork",
+		link: "https://github.com/JonnyBro/beatrun",
 		icon: Github,
 	},
 	{
-		label: 'Our Discrod',
-		link: 'https://discord.com/invite/93Psubbgsg',
+		label: "Our Discrod",
+		link: "https://discord.com/invite/93Psubbgsg",
 		icon: Server,
 	},
-]
+];
 
 watch(
 	() => width.value,
 	newWidth => {
 		if (newWidth >= 767) {
-			isMenuOpen.value = false
+			isMenuOpen.value = false;
 		}
 	},
-)
+);
 </script>

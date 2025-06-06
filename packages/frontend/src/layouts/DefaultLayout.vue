@@ -10,7 +10,7 @@
 				<header class="p-2 border-b-2">
 					<slot name="header" />
 				</header>
-				<main class="p-4 flex-grow overflow-y-auto">
+				<main class="p-4 flex-grow overflow-y-auto mx-auto">
 					<slot />
 				</main>
 				<footer class="p-4 border-t-2">
@@ -22,13 +22,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { LoaderCircle } from 'lucide-vue-next'
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+import { LoaderCircle } from "lucide-vue-next";
 
-const router = useRouter()
+const router = useRouter();
 
-const isRouterReady = ref(false)
+const isRouterReady = ref(false);
 
-router.isReady().then(() => (isRouterReady.value = true))
+void router.isReady().then(() => (isRouterReady.value = true));
 </script>
