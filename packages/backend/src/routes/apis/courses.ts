@@ -104,22 +104,12 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	);
 
 	fastify.get("/api/courses/download", async (req, reply) => {
-		const key = req.headers.authorization;
-		if (!key) {
-			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
-		}
-
 		const code = req.headers.code as string;
 		const mapName = req.headers.mapname as string;
 		if (!code || !mapName) {
 			return reply
 				.status(400)
 				.send({ code: reply.statusCode, message: "Provide course code and map name" });
-		}
-
-		const user = await getUserFromKey(fastify, key);
-		if (!user) {
-			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 		}
 
 		const courses = fastify.mongo.db?.collection<Course>("courses");
