@@ -4,8 +4,9 @@
 	"type": "module",
 	"scripts": {
 		"start": "node dist/index.js",
-		"build": "tsup src",
-		"dev": "tsup src --watch --onSuccess \"node dist/index.js\""
+		"build": "pnpm type-check && tsup src",
+		"type-check": "tsc --noEmit",
+		"dev": "tsx src/index.ts"
 	},
 	"dependencies": {
 		"@fastify/cookie": "^11.0.2",
