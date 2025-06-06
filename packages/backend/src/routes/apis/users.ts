@@ -80,7 +80,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				.send({ code: reply.statusCode, message: "Error while deleting user" });
 		}
 
-		reply.status(200).send({ code: reply.statusCode, message: "User deleted successfully" });
+		reply.status(200).send({ code: reply.statusCode, message: `User ${user.steamId} deleted successfully` });
 	});
 };
 

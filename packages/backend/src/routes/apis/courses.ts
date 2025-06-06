@@ -114,7 +114,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		if (!code || !mapName) {
 			return reply
 				.status(400)
-				.send({ code: reply.statusCode, message: "Provide code and map name" });
+				.send({ code: reply.statusCode, message: "Provide course code and map name" });
 		}
 
 		const user = await getUserFromKey(fastify, key);
@@ -151,6 +151,52 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			message: "Course found",
 			data: base64lzma,
 		});
+	});
+
+	fastify.delete("/api/courses/delete/:code", async (req, reply) => {
+		const key = req.headers.authorization;
+		if (!key) {
+			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+		}
+
+		const params = req.params as { code: string };
+		const code = params.code;
+		if (!code) {
+			return reply
+				.status(400)
+				.send({ code: reply.statusCode, message: "Provide course code" });
+		}
+
+		const user = await getUserFromKey(fastify, key);
+		if (!user) {
+			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+		}
+
+		const courses = fastify.mongo.db?.collection<Course>("courses");
+		if (!courses) {
+			return reply
+				.status(500)
+				.send({ code: reply.statusCode, message: "Internal server error" });
+		}
+
+		const course = await courses.findOne({ code });
+		if (!course) {
+			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+		}
+
+		if (course.uploadedBy !== user.steamId) {
+			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+		}
+
+		const res = await courses.deleteOne({ code });
+
+		if (res.deletedCount === 0) {
+			return reply
+				.status(500)
+				.send({ code: reply.statusCode, message: "Error while deleting course" });
+		}
+
+		reply.status(200).send({ code: reply.statusCode, message: `Course ${code} deleted successfully` });
 	});
 };
 
