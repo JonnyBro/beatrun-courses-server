@@ -15,7 +15,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			req.session.profile = await getSteamProfile(steamId, config.steamKey);
 
-			reply.redirect("/");
+			reply.redirect("/api/users/create");
 		} catch (e) {
 			reply.status(500).send({ code: reply.statusCode, message: e });
 			console.error(e);
@@ -23,6 +23,8 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.get("/profile", async (req, reply) => {
+		if (!req.session.profile) return reply.redirect("/auth");
+
 		reply.send(req.session.profile);
 	});
 };

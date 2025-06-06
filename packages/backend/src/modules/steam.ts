@@ -96,7 +96,6 @@ const checkParams = (url: string, expectedRealm: string) => {
 	const openidMode = parsedUrl.searchParams.get("openid.mode") || "";
 	assert(
 		openidMode === "id_res",
-		// eslint-disable-next-line max-len
 		`Response parameter openid.mode value "${openidMode}" does not match expected value "id_res"`,
 	);
 
@@ -119,7 +118,7 @@ const doSteamRequest = async (body: Record<string, string>) => {
 		});
 
 		if (!response.ok) {
-			throw new Error("bollocks");
+			throw new Error("Not OK response from Steam");
 		}
 
 		const data = await response.text();
@@ -139,14 +138,13 @@ export const checkLogin = async (url: string, expectedRealm: string) => {
 	assert(query, "Failed to extract and verify parameters");
 
 	const response = await doSteamRequest(query);
-	assert(response, "Response was not validated by Steam. It may be forged or reused.");
+	assert(response, "Response was not validated by Steam. It may be forged or reused");
 
 	return new SteamID(extractClaimedId(query)![1]);
 };
 
 export const getSteamProfile = async (steamId: string, apiKey: string): Promise<SteamUser> => {
 	const response = await fetch(
-		// eslint-disable-next-line max-len
 		`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`,
 	);
 
@@ -159,7 +157,7 @@ export const getSteamProfile = async (steamId: string, apiKey: string): Promise<
 	} else {
 		const text = await response.text();
 
-		if (text.includes("Access is denied.")) {
+		if (text.includes("Access is denied")) {
 			throw new Error("Steam API key is invalid");
 		}
 
@@ -167,7 +165,20 @@ export const getSteamProfile = async (steamId: string, apiKey: string): Promise<
 	}
 
 	const profile = data?.response?.players[0];
-	assert(profile, "There was an error fetching a Steam profile.");
+	assert(profile, "There was an error fetching a Steam profile");
 
 	return profile;
+};
+
+export const hasGame = async (steamId: string, apiKey: string, gameId: number) => {
+	const response = (
+		await fetch(
+			`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamId}&format=json`,
+		).then(r => r.json())
+	).response;
+
+	if (response.games && response.games.find((g: Record<string, unknown>) => g.appid === gameId)) {
+		return true;
+	}
+	return false;
 };

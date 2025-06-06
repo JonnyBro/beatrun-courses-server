@@ -1,9 +1,9 @@
 import { FastifyInstance } from "fastify";
-import { User } from "../plugins/mongo";
+import { type SteamUser, User } from "../types";
 
-export const createAuthKey = async (fastify: FastifyInstance, steamId: string) => {
+const createUser = async (fastify: FastifyInstance, profile: SteamUser) => {
 	const users = fastify.mongo.db?.collection<User>("users");
-	if (!users) return { code: 404, message: "Users collection not found" };
+	if (!users) throw new Error("Users collection does not exists");
 
 	let key = generateRandomString(32);
 
@@ -11,23 +11,35 @@ export const createAuthKey = async (fastify: FastifyInstance, steamId: string) =
 		const existingUser = await users.findOne({ key });
 
 		if (!existingUser) {
-			await users.updateOne({ steamId }, { $set: { key } });
+			const res = await users.findOneAndUpdate(
+				{ steamId: profile.steamid },
+				{ $set: { username: profile.personaname, createdAt: Date.now(), key } },
+				{
+					upsert: true,
+					returnDocument: "after",
+				},
+			);
 
-			return { code: 200, message: key };
+			return res as User;
 		}
 
 		key = generateRandomString(32);
 	}
 };
 
-export const getAuthKey = async (fastify: FastifyInstance, steamId: string) => {
+export const getUser = async (fastify: FastifyInstance, data: SteamUser | string) => {
 	const users = fastify.mongo.db?.collection<User>("users");
-	if (!users) return { code: 404, message: "Users collection not found" };
+	if (!users) throw new Error("Users collection does not exist");
 
-	const user = await users.findOne({ steamId });
-	if (!user) return { code: 404, message: "User not found" };
+	if (typeof data === "string") {
+		const user = await users.findOne({ steamId: data });
+		return user;
+	}
 
-	return user.key;
+	const user = await users.findOne({ steamId: data.steamid });
+	if (!user) return await createUser(fastify, data);
+
+	return user;
 };
 
 export const generateRandomString = (

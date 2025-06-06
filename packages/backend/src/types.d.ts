@@ -1,8 +1,10 @@
+import { ObjectId } from "@fastify/mongodb";
 import "@fastify/session";
 
 declare module "@fastify/session" {
 	interface FastifySessionObject {
 		profile?: SteamUser;
+		user?: User;
 	}
 }
 
@@ -21,4 +23,13 @@ export interface SteamUser {
 	primaryclanid: string;
 	timecreated: number;
 	personastateflags: number;
+}
+
+export interface User {
+	_id?: ObjectId;
+	steamId: string;
+	username?: string;
+	key: string;
+	createdAt: number;
+	admin?: boolean;
 }

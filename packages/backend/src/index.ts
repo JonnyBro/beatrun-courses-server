@@ -5,7 +5,7 @@ import config from "../config.json";
 import mongoPlugin from "./plugins/mongo";
 import apiRouter from "./routes/api";
 import indexRouter from "./routes/index";
-import steamRouter from "./routes/steam";
+import authRouter from "./routes/auth";
 
 const fastify = Fastify({ logger: !config.prod });
 
@@ -21,7 +21,7 @@ fastify.register(fastifySession, {
 
 fastify.register(indexRouter);
 fastify.register(apiRouter);
-fastify.register(steamRouter);
+fastify.register(authRouter);
 
 fastify.listen({ host: "0.0.0.0", port: config.port }, err => {
 	if (err) {
