@@ -8,6 +8,8 @@ declare module "@fastify/session" {
 	}
 }
 
+export type CourseData = [object, object, string, number, string, object, number?];
+
 export interface SteamUser {
 	steamid: string;
 	communityvisibilitystate: number;
@@ -32,4 +34,15 @@ export interface User {
 	key: string;
 	createdAt: number;
 	admin?: boolean;
+}
+
+export interface Course {
+	code: string;
+	uploadedBy: string;
+	uploadedAt: number;
+	mapName: string;
+	mapId: string;
+	mapImg: string;
+	downloadCount: number;
+	data: Uint8Array;
 }
