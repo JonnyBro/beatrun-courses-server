@@ -134,10 +134,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 		}
 
-		const binaryData =
-			course.data instanceof mongodb.Binary
-				? (course.data.buffer as Buffer)
-				: Buffer.from(course.data);
+		const binaryData = course.data.buffer as Buffer;
 		const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
 
 		if (!decompressed) {
