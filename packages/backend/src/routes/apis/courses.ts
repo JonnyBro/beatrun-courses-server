@@ -4,6 +4,7 @@ import LZMA from "lzma";
 import ogs from "open-graph-scraper";
 import { Course } from "../../types";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../../utils/functions";
+import { mongodb } from "@fastify/mongodb";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.post(
@@ -52,17 +53,21 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			do code = generateCode(randomNum(2, 6), 4);
 			while (await courses.findOne({ code }));
 
-			const mapImg =
-				mapId === "0"
-					? ""
-					: await ogs({
+			let mapImg = "";
+			if (mapId !== "0") {
+				try {
+					const { result } = await ogs({
 						url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${mapId}`,
-					}).then(data => {
-						if (data.error) return "";
-						if (!data.result.ogImage) return "";
-						return data.result.ogImage[0].url;
 					});
-			const compressedData = brotli.compress(Buffer.from(course, "utf-8"));
+					mapImg = result.ogImage?.[0]?.url || "";
+				} catch (e) {
+					console.error("Failed to fetch map image:", e);
+				}
+			}
+
+			const buffer = Buffer.from(course, "utf-8");
+			const compressedData = brotli.compress(buffer);
+			const binaryData = new mongodb.Binary(compressedData);
 
 			const res = await courses.findOneAndUpdate(
 				{ code },
@@ -75,7 +80,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 						mapId,
 						mapImg,
 						downloadCount: 0,
-						data: compressedData,
+						data: binaryData,
 					},
 				},
 				{
@@ -97,6 +102,58 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			});
 		},
 	);
+
+	fastify.get("/api/courses/download", async (req, reply) => {
+		const key = req.headers.authorization;
+		if (!key) {
+			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+		}
+
+		const code = req.headers.code as string;
+		const mapName = req.headers.mapname as string;
+		if (!code || !mapName) {
+			return reply
+				.status(400)
+				.send({ code: reply.statusCode, message: "Provide code and map name" });
+		}
+
+		const user = await getUserFromKey(fastify, key);
+		if (!user) {
+			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+		}
+
+		const courses = fastify.mongo.db?.collection<Course>("courses");
+		if (!courses) {
+			return reply
+				.status(500)
+				.send({ code: reply.statusCode, message: "Internal server error" });
+		}
+
+		const course = await courses.findOne({ code, mapName });
+		if (!course) {
+			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+		}
+
+		const binaryData =
+			course.data instanceof mongodb.Binary
+				? (course.data.buffer as Buffer)
+				: Buffer.from(course.data);
+		const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
+
+		if (!decompressed) {
+			return reply
+				.status(500)
+				.send({ code: reply.statusCode, message: "Internal server error" });
+		}
+
+		await courses.updateOne({ code }, { $inc: { downloadCount: 1 } });
+
+		reply.status(200).send({
+			code: 200,
+			message: "Course found",
+			data: decompressed,
+		});
+	});
 };
 
 export default router;

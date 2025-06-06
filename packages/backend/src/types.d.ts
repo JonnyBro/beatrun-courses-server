@@ -1,4 +1,4 @@
-import { ObjectId } from "@fastify/mongodb";
+import { mongodb, ObjectId } from "@fastify/mongodb";
 import "@fastify/session";
 
 declare module "@fastify/session" {
@@ -44,5 +44,5 @@ export interface Course {
 	mapId: string;
 	mapImg: string;
 	downloadCount: number;
-	data: Uint8Array;
+	data: mongodb.Binary;
 }
