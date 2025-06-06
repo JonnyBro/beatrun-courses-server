@@ -7,6 +7,31 @@ import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../.
 import { mongodb } from "@fastify/mongodb";
 
 const router = (fastify: FastifyInstance, _options: object) => {
+	fastify.get("/api/courses/info/:code", async (req, reply) => {
+		const params = req.params as { code: string };
+
+		const code = params.code;
+		if (!code) {
+			return reply
+				.status(400)
+				.send({ code: reply.statusCode, message: "Provide course code and map name" });
+		}
+
+		const courses = fastify.mongo.db?.collection<Course>("courses");
+		if (!courses) {
+			return reply
+				.status(500)
+				.send({ code: reply.statusCode, message: "Internal server error" });
+		}
+
+		const course = await courses.findOne({ code });
+		if (!course) {
+			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+		}
+
+		reply.status(200).send({ code: reply.statusCode, message: course });
+	});
+
 	fastify.post(
 		"/api/courses/upload",
 		{
@@ -144,12 +169,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.delete("/api/courses/delete/:code", async (req, reply) => {
+		const params = req.params as { code: string };
+
 		const key = req.headers.authorization;
 		if (!key) {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 		}
 
-		const params = req.params as { code: string };
 		const code = params.code;
 		if (!code) {
 			return reply
