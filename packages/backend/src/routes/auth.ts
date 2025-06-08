@@ -23,9 +23,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.get("/profile", async (req, reply) => {
-		if (!req.session.profile) return reply.redirect("/auth");
-
-		reply.send(req.session.profile);
+		reply.status(200).send({
+			code: reply.statusCode,
+			profile: req.session.profile || {},
+			user: req.session.user || {},
+		});
 	});
 };
 

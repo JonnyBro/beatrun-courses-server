@@ -9,19 +9,6 @@ const canonicalizeRealm = (realm: string) => {
 	return match[1].toLowerCase();
 };
 
-export const buildAuthUrl = (realm: string, returnUrl: string) => {
-	const query = {
-		"openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
-		"openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
-		"openid.mode": "checkid_setup",
-		"openid.ns": "http://specs.openid.net/auth/2.0",
-		"openid.realm": realm,
-		"openid.return_to": returnUrl,
-	};
-
-	return "https://steamcommunity.com/openid/login?" + new URLSearchParams(query).toString();
-};
-
 const buildQuery = (parsedUrl: URL) => {
 	const query: Record<string, string> = {};
 
@@ -131,6 +118,19 @@ const doSteamRequest = async (body: Record<string, string>) => {
 	} catch (e) {
 		console.error(e);
 	}
+};
+
+export const buildAuthUrl = (realm: string, returnUrl: string) => {
+	const query = {
+		"openid.claimed_id": "http://specs.openid.net/auth/2.0/identifier_select",
+		"openid.identity": "http://specs.openid.net/auth/2.0/identifier_select",
+		"openid.mode": "checkid_setup",
+		"openid.ns": "http://specs.openid.net/auth/2.0",
+		"openid.realm": realm,
+		"openid.return_to": returnUrl,
+	};
+
+	return "https://steamcommunity.com/openid/login?" + new URLSearchParams(query).toString();
 };
 
 export const checkLogin = async (url: string, expectedRealm: string) => {
