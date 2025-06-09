@@ -2,7 +2,7 @@ import { FastifyInstance } from "fastify";
 import config from "../../../config.json";
 import { hasGame } from "../../modules/steam";
 import { User } from "../../types";
-import { getUserFromSteam } from "../../utils/functions";
+import { getUserFromSteam, isSteamUser } from "../../utils/functions";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/api/users/create", async (req, reply) => {
@@ -11,15 +11,19 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 		}
 
-		const createdAt = profile.timecreated * 1000;
-		if (Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24 * 30)) < 3) {
-			return reply.status(401).send({
-				code: reply.statusCode,
-				message: "Your account is too young. The account must be at least 3 months old",
-			});
+		const isSUser = isSteamUser(profile);
+
+		if (isSUser) {
+			const createdAt = profile.timecreated * 1000;
+			if (Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24 * 30)) < 3) {
+				return reply.status(401).send({
+					code: reply.statusCode,
+					message: "Your account is too young. The account must be at least 3 months old",
+				});
+			}
 		}
 
-		const hasGmod = await hasGame(profile.steamid, config.steamKey, 4000);
+		const hasGmod = isSUser ? await hasGame(profile.steamid, config.steamApiKey, 4000) : true;
 		if (!hasGmod) {
 			return reply.status(401).send({
 				code: reply.statusCode,
@@ -58,7 +62,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		const params = req.params as { id: string };
 		if (params.id === req.session.user.steamId) {
-			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+			return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
 		}
 
 		const user = await getUserFromSteam(fastify, params.id);

@@ -3,7 +3,7 @@ import "@fastify/session";
 
 declare module "@fastify/session" {
 	interface FastifySessionObject {
-		profile?: SteamUser;
+		profile?: SteamUser | string;
 		user?: User;
 	}
 }

@@ -9,14 +9,17 @@ import { coursesRouter, usersRouter } from "./routes/apis";
 import authRouter from "./routes/auth";
 import indexRouter from "./routes/index";
 
-const fastify = Fastify({ logger: !config.prod });
+const fastify = Fastify({
+	ignoreTrailingSlash: true,
+	logger: !config.production,
+});
 
 fastify.register(mongoPlugin);
 fastify.register(fastifyCookie);
 fastify.register(fastifySession, {
 	secret: config.secret,
 	cookie: {
-		secure: config.prod,
+		secure: config.production,
 		maxAge: 24 * 60 * 60 * 1000, // 24 hours
 	},
 });

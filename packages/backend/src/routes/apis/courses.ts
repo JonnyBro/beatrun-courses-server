@@ -1,10 +1,10 @@
+import { mongodb } from "@fastify/mongodb";
 import brotli from "brotli";
 import { FastifyInstance } from "fastify";
 import LZMA from "lzma";
 import ogs from "open-graph-scraper";
 import { Course } from "../../types";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../../utils/functions";
-import { mongodb } from "@fastify/mongodb";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/api/courses/info/:code", async (req, reply) => {

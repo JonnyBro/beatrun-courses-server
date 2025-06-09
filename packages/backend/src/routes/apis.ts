@@ -1,4 +1,5 @@
-import usersRouter from "./apis/users";
 import coursesRouter from "./apis/courses";
+import usersRouter from "./apis/users";
 
-export { usersRouter, coursesRouter };
+export { coursesRouter, usersRouter };
+
