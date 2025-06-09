@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
 import config from "../../../config.json";
 import { hasGame } from "../../modules/steam";
-import { User } from "../../types";
 import { getUserFromSteam, isSteamUser } from "../../utils/functions";
+import { getCollection } from "../../plugins/mongo";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/api/users/create", async (req, reply) => {
@@ -70,12 +70,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(404).send({ code: reply.statusCode, message: "User not found" });
 		}
 
-		const users = fastify.mongo.db?.collection<User>("users");
-		if (!users) {
-			return reply
-				.status(500)
-				.send({ code: reply.statusCode, message: "Collection not found" });
-		}
+		const users = getCollection(fastify, "users");
 
 		const res = await users.deleteOne({ steamId: params.id });
 		if (res.deletedCount === 0) {

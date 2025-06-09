@@ -3,13 +3,12 @@ import brotli from "brotli";
 import { FastifyInstance } from "fastify";
 import LZMA from "lzma";
 import ogs from "open-graph-scraper";
-import { Course } from "../../types";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../../utils/functions";
+import { getCollection } from "../../plugins/mongo";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/api/courses/info/:code", async (req, reply) => {
 		const params = req.params as { code: string };
-
 		const code = params.code;
 		if (!code) {
 			return reply
@@ -17,13 +16,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				.send({ code: reply.statusCode, message: "Provide course code and map name" });
 		}
 
-		const courses = fastify.mongo.db?.collection<Course>("courses");
-		if (!courses) {
-			return reply
-				.status(500)
-				.send({ code: reply.statusCode, message: "Internal server error" });
-		}
-
+		const courses = getCollection(fastify, "courses");
 		const course = await courses.findOne({ code });
 		if (!course) {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
@@ -52,7 +45,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const key = req.headers.authorization!;
 			const mapName = req.headers.mapname as string;
 			const mapId = req.headers.mapid as string;
-
 			const body = req.body as string;
 			const course = LZMA.decompress(Buffer.from(body, "base64")) as string;
 
@@ -67,12 +59,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					.send({ code: reply.statusCode, message: "Course file is invalid" });
 			}
 
-			const courses = fastify.mongo.db?.collection<Course>("courses");
-			if (!courses) {
-				return reply
-					.status(500)
-					.send({ code: reply.statusCode, message: "Internal server error" });
-			}
+			const courses = getCollection(fastify, "courses");
 
 			let code: string;
 			do code = generateCode(randomNum(2, 6), 4);
@@ -137,13 +124,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				.send({ code: reply.statusCode, message: "Provide course code and map name" });
 		}
 
-		const courses = fastify.mongo.db?.collection<Course>("courses");
-		if (!courses) {
-			return reply
-				.status(500)
-				.send({ code: reply.statusCode, message: "Internal server error" });
-		}
-
+		const courses = getCollection(fastify, "courses");
 		const course = await courses.findOne({ code, mapName });
 		if (!course) {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
@@ -208,13 +189,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
-			const courses = fastify.mongo.db?.collection<Course>("courses");
-			if (!courses) {
-				return reply
-					.status(500)
-					.send({ code: reply.statusCode, message: "Internal server error" });
-			}
-
+			const courses = getCollection(fastify, "courses");
 			const course = await courses.findOne({ code });
 			if (!course) {
 				return reply
@@ -223,11 +198,10 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			if (course.uploadedBy !== user.steamId) {
-				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+				return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
 			}
 
 			const res = await courses.deleteOne({ code });
-
 			if (res.deletedCount === 0) {
 				return reply
 					.status(500)

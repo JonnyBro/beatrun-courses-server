@@ -3,7 +3,7 @@ import { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";
 import config from "../../config.json";
 
-async function dbConnector(fastify: FastifyInstance) {
+export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 	try {
 		await fastify.register(fastifyMongo, {
 			forceClose: true,
@@ -26,6 +26,10 @@ async function dbConnector(fastify: FastifyInstance) {
 	} catch (e) {
 		console.error("[backend] Error while connecting to the database\n", e);
 	}
-}
+});
 
-export default fastifyPlugin(dbConnector);
+export const getCollection = (fastify: FastifyInstance, name: string) => {
+	const collection = fastify.mongo.db?.collection(name);
+	if (!collection) throw new Error(`Collection ${name} does not exists in the database`);
+	return collection;
+};
