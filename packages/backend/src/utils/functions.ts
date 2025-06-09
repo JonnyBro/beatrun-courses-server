@@ -1,6 +1,8 @@
 import { FastifyInstance } from "fastify";
-import { CourseData, type SteamUser, User } from "../types";
 import { getCollection } from "../plugins/mongo";
+import { CourseData, type SteamUser, User } from "../types";
+
+const charsList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 const createUser = async (fastify: FastifyInstance, data: SteamUser | string) => {
 	const users = getCollection(fastify, "users");
@@ -42,10 +44,7 @@ export const getUserFromKey = async (fastify: FastifyInstance, key: string) => {
 	return user as User;
 };
 
-export const generateRandomString = (
-	length: number,
-	chars: string = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-) => {
+export const generateRandomString = (length: number, chars = charsList) => {
 	let result = "";
 	const charactersLength = chars.length;
 
