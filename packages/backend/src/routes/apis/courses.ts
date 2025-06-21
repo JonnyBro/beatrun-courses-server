@@ -7,6 +7,12 @@ import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../.
 import { getCollection } from "../../plugins/mongo";
 
 const router = (fastify: FastifyInstance, _options: object) => {
+	fastify.get("/courses/list", async (req, reply) => {
+		const courses = await getCollection(fastify, "courses").find({}).toArray();
+
+		reply.status(200).send({ code: reply.statusCode, message: courses });
+	});
+
 	fastify.get("/api/courses/info/:code", async (req, reply) => {
 		const params = req.params as { code: string };
 		const code = params.code;
