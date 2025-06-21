@@ -13,7 +13,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		reply.status(200).send({ code: reply.statusCode, message: courses });
 	});
 
-	fastify.get("/api/courses/info/:code", async (req, reply) => {
+	fastify.get("/courses/info/:code", async (req, reply) => {
 		const params = req.params as { code: string };
 		const code = params.code;
 		if (!code) {
@@ -32,7 +32,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.post(
-		"/api/courses/upload",
+		"/courses/upload",
 		{
 			schema: {
 				headers: {
@@ -121,7 +121,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		},
 	);
 
-	fastify.get("/api/courses/download", async (req, reply) => {
+	fastify.get("/courses/download", async (req, reply) => {
 		const code = req.headers.code as string;
 		const mapName = req.headers.mapname as string;
 		if (!code || !mapName) {
@@ -156,7 +156,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.delete(
-		"/api/courses/delete/:code",
+		"/courses/delete/:code",
 		{
 			schema: {
 				params: {

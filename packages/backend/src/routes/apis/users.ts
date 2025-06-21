@@ -5,7 +5,7 @@ import { getUserFromSteam, isSteamUser } from "../../utils/functions";
 import { getCollection } from "../../plugins/mongo";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/api/users/create", async (req, reply) => {
+	fastify.get("/users/create", async (req, reply) => {
 		const profile = req.session.profile;
 		if (!profile) {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
@@ -44,7 +44,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		reply.status(200).send({ code: reply.statusCode, message: req.session.user });
 	});
 
-	fastify.get("/api/users/get/:id", async (req, reply) => {
+	fastify.get("/users/get/:id", async (req, reply) => {
 		if (!req.session.user || !req.session.user.admin) {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 		}
@@ -55,7 +55,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		reply.send(user);
 	});
 
-	fastify.delete("/api/users/delete/:id", async (req, reply) => {
+	fastify.delete("/users/delete/:id", async (req, reply) => {
 		if (!req.session.user || !req.session.user.admin) {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 		}
