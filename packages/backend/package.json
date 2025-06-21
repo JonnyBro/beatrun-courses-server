@@ -6,7 +6,7 @@
 		"start": "node dist/index.js",
 		"build": "pnpm type-check && tsc && tsc-alias",
 		"type-check": "tsc --noEmit",
-		"dev": "tsx src/index.ts"
+		"dev": "tsx watch src/index.ts"
 	},
 	"dependencies": {
 		"@fastify/cookie": "^11.0.2",
