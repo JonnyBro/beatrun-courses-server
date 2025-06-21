@@ -8,9 +8,24 @@ import { getCollection } from "../../plugins/mongo";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/courses/list", async (req, reply) => {
+		const users = await getCollection(fastify, "users").find({}).toArray();
+		const userMap = new Map(users.map(user => [user.steamId, user]));
 		const courses = await getCollection(fastify, "courses").find({}).toArray();
+		const enrichedCourses = courses.map(course => {
+			const user = userMap.get(course.uploadedBy);
+			return {
+				...course,
+				uploadedBy: user || null,
+			};
+		});
 
-		reply.status(200).send({ code: reply.statusCode, message: courses });
+		reply
+			.status(200)
+			.send({
+				code: reply.statusCode,
+				message: "List of all courses",
+				data: enrichedCourses,
+			});
 	});
 
 	fastify.get("/courses/info/:code", async (req, reply) => {
@@ -28,7 +43,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 		}
 
-		reply.status(200).send({ code: reply.statusCode, message: course });
+		const user = (await getCollection(fastify, "users")
+			.find({ steamId: course.uploadedBy })
+			.toArray())[0];
+
+		course.uploadedBy = user || null;
+
+		reply.status(200).send({ code: reply.statusCode, message: "Course data", data: course });
 	});
 
 	fastify.post(
