@@ -9,12 +9,19 @@
 			>
 			to load and upload these courses in-game!
 		</div>
-		<div class="grid gap-3 justify-center md:grid-cols-2 xl:grid-cols-3">
-			<CourseCard v-for="i in 10" :key="i" />
+		<div v-if="courses" class="grid gap-3 justify-center md:grid-cols-2 xl:grid-cols-3">
+			<CourseCard v-for="course in courses.data" :key="course._id" :data="course" />
 		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
+import { getCourses } from "@/api/courses";
 import CourseCard from "@/components/CourseCard/CourseCard.vue";
+import { useQuery } from "@tanstack/vue-query";
+
+const { data: courses } = useQuery({
+	queryKey: ["courses"],
+	queryFn: getCourses,
+});
 </script>

@@ -72,7 +72,7 @@ const menuLinks = [
 		icon: Github,
 	},
 	{
-		label: "Our Discrod",
+		label: "Our Discord",
 		link: "https://discord.com/invite/93Psubbgsg",
 		icon: Server,
 	},
