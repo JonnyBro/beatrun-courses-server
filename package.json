@@ -4,8 +4,8 @@
 	"description": "Beatrun courses database",
 	"type": "module",
 	"scripts": {
-		"dev": "pnpm -r --parallel --filter='./packages/*' run dev",
-		"build": "pnpm -r --filter='./packages/*' run build",
+		"dev": "pnpm -r --parallel run dev",
+		"build": "pnpm -r --parallel run build",
 		"lint": "eslint --cache --fix .",
 		"format": "prettier --write --cache .",
 		"prepare": "husky"
