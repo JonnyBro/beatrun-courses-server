@@ -13,16 +13,16 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useDark, useToggle } from '@vueuse/core'
-import { Moon, Sun } from 'lucide-vue-next'
-import { Button } from '../button'
+import { computed } from "vue";
+import { useDark, useToggle } from "@vueuse/core";
+import { Moon, Sun } from "lucide-vue-next";
+import { Button } from "../button";
 
-const isDark = useDark()
-const toggleDark = useToggle(isDark)
+const isDark = useDark();
+const toggleDark = useToggle(isDark);
 
-const props = withDefaults(defineProps<{ variant?: 'btn' | 'text' }>(), {
-	variant: 'btn',
-})
-const currentTheme = computed(() => (isDark.value ? Moon : Sun))
+const props = withDefaults(defineProps<{ variant?: "btn" | "text" }>(), {
+	variant: "btn",
+});
+const currentTheme = computed(() => (isDark.value ? Moon : Sun));
 </script>
