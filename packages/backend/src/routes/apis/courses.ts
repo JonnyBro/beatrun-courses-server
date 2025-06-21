@@ -3,8 +3,8 @@ import brotli from "brotli";
 import { FastifyInstance } from "fastify";
 import LZMA from "lzma";
 import ogs from "open-graph-scraper";
-import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../../utils/functions";
 import { getCollection } from "../../plugins/mongo";
+import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../../utils/functions";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/courses/list", async (req, reply) => {
@@ -74,6 +74,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const mapId = req.headers.mapid as string;
 			const body = req.body as string;
 			const course = LZMA.decompress(Buffer.from(body, "base64")) as string;
+			const courseJSON = JSON.parse(course);
 
 			const user = await getUserFromKey(fastify, key);
 			if (!user) {
@@ -113,6 +114,8 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				{
 					$set: {
 						code,
+						name: courseJSON[4],
+						elementsCount: courseJSON[0].length + courseJSON[5].length,
 						uploadedBy: user.steamId,
 						uploadedAt: Date.now(),
 						mapName,

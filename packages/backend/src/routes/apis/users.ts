@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
 import config from "../../../config.json";
 import { hasGame } from "../../modules/steam";
-import { getUserFromSteam, isSteamUser } from "../../utils/functions";
 import { getCollection } from "../../plugins/mongo";
+import { getUserFromSteam, isSteamUser } from "../../utils/functions";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/users/create", async (req, reply) => {
