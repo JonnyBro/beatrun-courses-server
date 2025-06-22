@@ -19,13 +19,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			};
 		});
 
-		reply
-			.status(200)
-			.send({
-				code: reply.statusCode,
-				message: "List of all courses",
-				data: enrichedCourses,
-			});
+		reply.status(200).send({
+			code: reply.statusCode,
+			message: "List of all courses",
+			data: enrichedCourses,
+		});
 	});
 
 	fastify.get("/courses/info/:code", async (req, reply) => {
@@ -43,9 +41,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 		}
 
-		const user = (await getCollection(fastify, "users")
-			.find({ steamId: course.uploadedBy })
-			.toArray())[0];
+		const user = (
+			await getCollection(fastify, "users").find({ steamId: course.uploadedBy }).toArray()
+		)[0];
 
 		course.uploadedBy = user || null;
 
