@@ -41,6 +41,7 @@ export const getUserFromSteam = async (fastify: FastifyInstance, data: SteamUser
 export const getUserFromKey = async (fastify: FastifyInstance, key: string) => {
 	const users = getCollection(fastify, "users");
 	const user = await users.findOne({ key });
+	if (!user) throw new Error("User from key not found");
 	return user as User;
 };
 
