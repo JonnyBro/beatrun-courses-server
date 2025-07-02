@@ -6,7 +6,15 @@
 		"strict": true,
 		"sourceMap": true,
 		"baseUrl": ".",
-		"skipLibCheck": true
+		"skipLibCheck": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"incremental": true,
+		"noEmitOnError": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true
 	},
 	"exclude": ["node_modules", "dist"]
 }

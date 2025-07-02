@@ -1,9 +1,9 @@
+import config from "@/../config.json";
+import { buildAuthUrl, checkLogin, getSteamProfile } from "@/modules/steam";
 import { FastifyInstance } from "fastify";
-import config from "../../config.json";
-import { buildAuthUrl, checkLogin, getSteamProfile } from "../modules/steam";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/auth", (req, reply) => {
+	fastify.get("/auth", (_req, reply) => {
 		const url = buildAuthUrl(config.domain, `${config.domain}/auth/callback`);
 
 		reply.redirect(url);

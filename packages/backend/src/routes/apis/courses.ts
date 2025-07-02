@@ -1,13 +1,13 @@
+import { getCollection } from "@/plugins/mongo";
+import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions";
 import { mongodb } from "@fastify/mongodb";
 import brotli from "brotli";
 import { FastifyInstance } from "fastify";
 import LZMA from "lzma";
 import ogs from "open-graph-scraper";
-import { getCollection } from "../../plugins/mongo";
-import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "../../utils/functions";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/courses/list", async (req, reply) => {
+	fastify.get("/courses/list", async (_req, reply) => {
 		const users = await getCollection(fastify, "users").find({}).toArray();
 		const userMap = new Map(users.map(user => [user.steamId, user]));
 		const courses = await getCollection(fastify, "courses").find({}).toArray();

@@ -1,15 +1,13 @@
 {
 	"extends": "../../tsconfig.base.json",
 	"compilerOptions": {
-		"outDir": "dist",
+		"rootDir": "./src",
+		"outDir": "./dist",
+		"baseUrl": ".",
 		"paths": {
-			"@/": ["./src/*"]
+			"@/*": ["./src/*"]
 		},
-		"moduleDetection": "force",
-		"resolveJsonModule": true,
-		"allowJs": true,
-		"esModuleInterop": true,
-		"isolatedModules": true
+		"moduleDetection": "force"
 	},
 	"include": ["src/**/*"]
 }

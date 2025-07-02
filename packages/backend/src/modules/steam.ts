@@ -1,6 +1,6 @@
+import { type SteamUser } from "@/types";
 import assert from "assert";
 import SteamID from "steamid";
-import { type SteamUser } from "../types";
 
 const canonicalizeRealm = (realm: string) => {
 	const match = realm.match(/^(https?:\/\/[^:/]+(?::\d+)?)/);
@@ -94,7 +94,7 @@ const checkParams = (url: string, expectedRealm: string) => {
 
 const doSteamRequest = async (body: Record<string, string>) => {
 	try {
-		const response = await fetch("https://steamcommunity.com/openid/login", {
+		const res = await fetch("https://steamcommunity.com/openid/login", {
 			method: "POST",
 			headers: {
 				"Content-Type": "application/x-www-form-urlencoded",
@@ -104,11 +104,11 @@ const doSteamRequest = async (body: Record<string, string>) => {
 			body: new URLSearchParams(body).toString(),
 		});
 
-		if (!response.ok) {
+		if (!res.ok) {
 			throw new Error("Not OK response from Steam");
 		}
 
-		const data = await response.text();
+		const data = await res.text();
 		const isValid = data
 			.replace(/\r\n/g, "\n")
 			.split("\n")
@@ -137,25 +137,25 @@ export const checkLogin = async (url: string, expectedRealm: string) => {
 	const query = checkParams("https://example.com" + url, expectedRealm);
 	assert(query, "Failed to extract and verify parameters");
 
-	const response = await doSteamRequest(query);
-	assert(response, "Response was not validated by Steam. It may be forged or reused");
+	const res = await doSteamRequest(query);
+	assert(res, "Response was not validated by Steam. It may be forged or reused");
 
 	return new SteamID(extractClaimedId(query)![1]);
 };
 
-export const getSteamProfile = async (steamId: string, apiKey: string): Promise<SteamUser> => {
-	const response = await fetch(
+export const getSteamProfile = async (steamId: string, apiKey: string) => {
+	const res = await fetch(
 		`https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=${apiKey}&steamids=${steamId}`,
 	);
 
 	let data;
 
-	const contentType = response.headers.get("content-type");
+	const contentType = res.headers.get("content-type");
 
 	if (contentType && contentType.includes("application/json")) {
-		data = await response.json();
+		data = await res.json();
 	} else {
-		const text = await response.text();
+		const text = await res.text();
 
 		if (text.includes("Access is denied")) {
 			throw new Error("Steam API key is invalid");
@@ -167,17 +167,17 @@ export const getSteamProfile = async (steamId: string, apiKey: string): Promise<
 	const profile = data?.response?.players[0];
 	assert(profile, "There was an error fetching a Steam profile");
 
-	return profile;
+	return profile as SteamUser;
 };
 
 export const hasGame = async (steamId: string, apiKey: string, gameId: number) => {
-	const response = (
+	const res = (
 		await fetch(
 			`https://api.steampowered.com/IPlayerService/GetOwnedGames/v0001/?key=${apiKey}&steamid=${steamId}&format=json`,
 		).then(r => r.json())
 	).response;
 
-	if (response.games && response.games.find((g: Record<string, unknown>) => g.appid === gameId)) {
+	if (res.games && res.games.find((g: Record<string, unknown>) => g.appid === gameId)) {
 		return true;
 	}
 	return false;

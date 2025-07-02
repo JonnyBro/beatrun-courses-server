@@ -1,6 +1,6 @@
+import { getCollection } from "@/plugins/mongo";
+import { type CourseData, type SteamUser, User } from "@/types";
 import { FastifyInstance } from "fastify";
-import { getCollection } from "../plugins/mongo";
-import { CourseData, type SteamUser, User } from "../types";
 
 const charsList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 

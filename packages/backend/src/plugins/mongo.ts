@@ -1,7 +1,7 @@
+import config from "@/../config.json";
 import fastifyMongo from "@fastify/mongodb";
 import { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";
-import config from "../../config.json";
 
 export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 	try {
