@@ -4,8 +4,6 @@
 	"domain": "http://localhost:6547",
 	"secret": "very-strong-secret",
 	"port": 6547,
-	"rateLimitTime": 5000,
-	"ipChangeTime": 10800000,
 	"_comment_steamApiKey": "Leave empty if you don't have an api key",
 	"steamApiKey": "",
 	"webhookUrl": ""
