@@ -21,7 +21,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		reply.status(200).send({
 			code: reply.statusCode,
-			message: "List of all courses",
 			data: enrichedCourses,
 		});
 	});
@@ -47,7 +46,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		course.uploadedBy = user || null;
 
-		reply.status(200).send({ code: reply.statusCode, message: "Course data", data: course });
+		reply.status(200).send({ code: reply.statusCode, data: course });
 	});
 
 	fastify.post(
@@ -172,7 +171,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		reply.status(200).send({
 			code: 200,
-			message: "Course found",
 			data: base64lzma,
 		});
 	});

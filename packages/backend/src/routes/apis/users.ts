@@ -41,7 +41,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		req.session.user = user;
 
-		reply.status(200).send({ code: reply.statusCode, message: req.session.user });
+		reply.status(200).send({ code: reply.statusCode, data: req.session.user });
 	});
 
 	fastify.get("/users/get/:id", async (req, reply) => {
