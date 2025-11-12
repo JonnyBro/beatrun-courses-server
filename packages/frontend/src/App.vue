@@ -1,8 +1,8 @@
 <script setup lang="ts">
+import FooterComponent from "@/components/Footer/FooterComponent.vue";
+import HeaderComponent from "@/components/Header/HeaderComponent.vue";
+import DefaultLayout from "@/layouts/DefaultLayout.vue";
 import { RouterView } from "vue-router";
-import DefaultLayout from "./layouts/DefaultLayout.vue";
-import HeaderComponent from "./components/Header/HeaderComponent.vue";
-import FooterComponent from "./components/Footer/FooterComponent.vue";
 </script>
 
 <template>
@@ -10,6 +10,7 @@ import FooterComponent from "./components/Footer/FooterComponent.vue";
 		<template #header>
 			<HeaderComponent />
 		</template>
+
 		<RouterView />
 
 		<template #footer>

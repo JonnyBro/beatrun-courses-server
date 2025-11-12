@@ -1,5 +1,5 @@
 <template>
-	<Card class="min-w-[450px] max-w-[450px] relative">
+	<CardCustom class="min-w-[450px] max-w-[450px] relative">
 		<template #image>
 			<img
 				:src="courseIcon"
@@ -65,14 +65,14 @@
 				<span class="text-sm font-mono select-none">{{ localDislikes }}</span>
 			</div>
 		</div>
-	</Card>
+	</CardCustom>
 </template>
 
 <script setup lang="ts">
 import { downloadCourseByCode } from "@/api/courses";
 import type { Course } from "@/api/courses/types";
 import unknownImg from "@/assets/img/unknown.jpg";
-import { Card } from "@/components/UI/card";
+import { CardCustom } from "@/components/UI/card-custom";
 import {
 	DownloadIcon,
 	FileIcon,

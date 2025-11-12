@@ -1,6 +1,6 @@
 <template>
 	<template v-if="props.variant === 'btn'">
-		<Button variant="ghost" @click="toggleDark()" size="icon">
+		<Button variant="ghost" @click="toggleDark()" size="icon" class="cursor-pointer">
 			<component :is="currentTheme" />
 		</Button>
 	</template>
@@ -24,5 +24,6 @@ const toggleDark = useToggle(isDark);
 const props = withDefaults(defineProps<{ variant?: "btn" | "text" }>(), {
 	variant: "btn",
 });
+
 const currentTheme = computed(() => (isDark.value ? Moon : Sun));
 </script>

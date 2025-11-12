@@ -15,7 +15,7 @@
 					</Button>
 				</DropdownMenuTrigger>
 				<DropdownMenuContent>
-					<DropdownMenuLabel>Меню</DropdownMenuLabel>
+					<DropdownMenuLabel>Menu</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem v-for="link in menuLinks" :key="link.label" as-child>
 						<a
@@ -35,10 +35,15 @@
 		</div>
 
 		<div class="hidden md:flex items-center gap-2">
-			<Button as-child v-for="link in menuLinks" :key="link.label" variant="ghost">
+			<Button
+				as-child
+				v-for="link in menuLinks"
+				:key="link.label"
+				variant="ghost"
+				size="icon"
+			>
 				<a target="_blank" :href="link.link" class="flex items-center gap-2">
 					<component :is="link.icon" />
-					<span> {{ link.label }} </span>
 				</a>
 			</Button>
 			<ToggleTheme />
@@ -67,14 +72,14 @@ const { width } = useWindowSize();
 
 const menuLinks = [
 	{
-		label: "My fork",
-		link: "https://github.com/JonnyBro/beatrun",
+		label: "Beatrun CE",
 		icon: Github,
+		link: "https://github.com/JonnyBro/beatrun",
 	},
 	{
 		label: "Our Discord",
-		link: "https://discord.com/invite/93Psubbgsg",
 		icon: Server,
+		link: "https://discord.com/invite/93Psubbgsg",
 	},
 ];
 
