@@ -144,15 +144,14 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 	fastify.get("/courses/download", async (req, reply) => {
 		const code = req.headers.code as string;
-		const mapName = req.headers.mapname as string;
-		if (!code || !mapName) {
+		if (!code) {
 			return reply
 				.status(400)
-				.send({ code: reply.statusCode, message: "Provide course code and map name" });
+				.send({ code: reply.statusCode, message: "Provide a course code" });
 		}
 
 		const courses = getCollection(fastify, "courses");
-		const course = await courses.findOne({ code, mapName });
+		const course = await courses.findOne({ code });
 		if (!course) {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 		}

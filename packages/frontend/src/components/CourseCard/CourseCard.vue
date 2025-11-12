@@ -31,7 +31,7 @@
 					>
 					<DownloadIcon
 						class="cursor-pointer hover:text-red-600 transition-colors"
-						@click="downloadHandler"
+						@click="downloadHandler(data.code)"
 					/>
 				</div>
 				<div class="text-left" v-for="data in datasAttributes" :key="data.label">
@@ -69,18 +69,19 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from "vue";
+import { downloadCourseByCode } from "@/api/courses";
+import type { Course } from "@/api/courses/types";
+import unknownImg from "@/assets/img/unknown.jpg";
+import { Card } from "@/components/UI/card";
 import {
 	DownloadIcon,
 	FileIcon,
+	ThumbsDownIcon,
+	ThumbsUpIcon,
 	UploadIcon,
 	User2Icon,
-	ThumbsUpIcon,
-	ThumbsDownIcon,
 } from "lucide-vue-next";
-import { Card } from "@/components/UI/card";
-import type { Course } from "@/api/courses/types";
-import unknownImg from "@/assets/img/unknown.jpg";
+import { computed, ref } from "vue";
 
 const props = defineProps<{
 	data: Course;
@@ -94,6 +95,7 @@ const copyToClipboard = async (text: string | undefined) => {
 	if (!text) return;
 	await navigator.clipboard.writeText(text);
 };
+
 const openSteamProfile = (steamId: string | undefined) => {
 	if (steamId) {
 		window.open(`https://steamcommunity.com/profiles/${steamId}`, "_blank");
@@ -144,10 +146,14 @@ const datasAttributes = [
 	},
 ];
 
-const downloadHandler = () => {
-	// TODO: реализовать скачивание
-	console.log("Download clicked");
+const downloadHandler = async (code: string) => {
+	const { data } = await downloadCourseByCode(code);
+	const link = document.createElement("a");
+	link.href = `data:text/plain;base64,${data}`;
+	link.download = `${code}.txt`;
+	link.click();
 };
+
 const likeHandler = () => {
 	try {
 		// await likeCourse(props.data.code);
@@ -156,6 +162,7 @@ const likeHandler = () => {
 		console.error("Error liking course:", error);
 	}
 };
+
 const dislikeHandler = () => {
 	try {
 		// await dislikeCourse(props.data.code);

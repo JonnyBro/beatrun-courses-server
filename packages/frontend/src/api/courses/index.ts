@@ -11,6 +11,15 @@ export const getCourseByCode = async (code: string) => {
 	return response.data;
 };
 
+export const downloadCourseByCode = async (code: string) => {
+	const response = await api.get<Response<string>>(`/courses/download`, {
+		headers: {
+			code,
+		},
+	});
+	return response.data;
+};
+
 export const likeCourse = async (code: string) => {
 	const response = await api.post(`/courses/like/${code}`);
 	return response.data;
