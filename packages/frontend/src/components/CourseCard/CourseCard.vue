@@ -138,11 +138,11 @@ const datasAttributes = [
 		title: new Date(props.data.uploadedAt).toLocaleDateString(),
 	},
 	{
-		label: "download",
+		label: "downloads",
 		icon: DownloadIcon,
 		isClicked: false,
 		clickHandler: () => {},
-		title: `${props.data.downloadCount} plays`,
+		title: `${props.data.downloadCount} downloads`,
 	},
 ];
 

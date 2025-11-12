@@ -1,6 +1,5 @@
 import config from "@/../config.json";
 import { hasGame } from "@/modules/steam";
-import { getCollection } from "@/plugins/mongo";
 import { getUserFromSteam, isSteamUser } from "@/utils/functions";
 import { FastifyInstance } from "fastify";
 
@@ -70,7 +69,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(404).send({ code: reply.statusCode, message: "User not found" });
 		}
 
-		const users = getCollection(fastify, "users");
+		const users = fastify.getCollection("users");
 
 		const res = await users.deleteOne({ steamId: params.id });
 		if (res.deletedCount === 0) {

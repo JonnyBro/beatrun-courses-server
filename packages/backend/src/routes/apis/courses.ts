@@ -1,4 +1,3 @@
-import { getCollection } from "@/plugins/mongo";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions";
 import { mongodb } from "@fastify/mongodb";
 import brotli from "brotli";
@@ -8,9 +7,9 @@ import ogs from "open-graph-scraper";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/courses/list", async (_req, reply) => {
-		const users = await getCollection(fastify, "users").find({}).toArray();
+		const users = await fastify.getUsersArray();
 		const userMap = new Map(users.map(user => [user.steamId, user]));
-		const courses = await getCollection(fastify, "courses").find({}).toArray();
+		const courses = await fastify.getCoursesArray();
 		const enrichedCourses = courses.map(course => {
 			const user = userMap.get(course.uploadedBy);
 			return {
@@ -34,15 +33,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				.send({ code: reply.statusCode, message: "Provide course code and map name" });
 		}
 
-		const courses = getCollection(fastify, "courses");
+		const courses = fastify.getCoursesCollection();
 		const course = await courses.findOne({ code });
 		if (!course) {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 		}
 
-		const user = (
-			await getCollection(fastify, "users").find({ steamId: course.uploadedBy }).toArray()
-		)[0];
+		const user = (await fastify.getUser(course.uploadedBy).toArray())[0];
+		delete user.key;
+		delete user.admin;
 
 		course.uploadedBy = user || null;
 
@@ -84,10 +83,10 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					.send({ code: reply.statusCode, message: "Course file is invalid" });
 			}
 
-			const courses = getCollection(fastify, "courses");
+			const courses = fastify.getCollection("courses");
 
 			let code: string;
-			do code = generateCode(randomNum(2, 6), 4);
+			do code = generateCode(randomNum(2, 6), randomNum(2, 4));
 			while (await courses.findOne({ code }));
 
 			let mapImg = "";
@@ -150,7 +149,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				.send({ code: reply.statusCode, message: "Provide a course code" });
 		}
 
-		const courses = getCollection(fastify, "courses");
+		const courses = fastify.getCollection("courses");
 		const course = await courses.findOne({ code });
 		if (!course) {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
@@ -206,7 +205,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			if (!code) {
 				return reply
 					.status(400)
-					.send({ code: reply.statusCode, message: "Provide course code" });
+					.send({ code: reply.statusCode, message: "Provide a course code" });
 			}
 
 			const user = await getUserFromKey(fastify, key);
@@ -214,7 +213,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
-			const courses = getCollection(fastify, "courses");
+			const courses = fastify.getCollection("courses");
 			const course = await courses.findOne({ code });
 			if (!course) {
 				return reply

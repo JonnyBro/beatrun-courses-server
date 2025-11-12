@@ -1,11 +1,10 @@
-import { getCollection } from "@/plugins/mongo";
 import { type CourseData, type SteamUser, User } from "@/types";
 import { FastifyInstance } from "fastify";
 
 const charsList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 const createUser = async (fastify: FastifyInstance, data: SteamUser | string) => {
-	const users = getCollection(fastify, "users");
+	const users = fastify.getUsersCollection();
 
 	let key: string;
 	do key = generateRandomString(randomNum(16, 32));
@@ -32,14 +31,14 @@ const createUser = async (fastify: FastifyInstance, data: SteamUser | string) =>
 };
 
 export const getUserFromSteam = async (fastify: FastifyInstance, data: SteamUser | string) => {
-	const users = getCollection(fastify, "users");
+	const users = fastify.getUsersCollection();
 	const user = await users.findOne({ steamId: isSteamUser(data) ? data.steamid : data });
 	if (!user) return await createUser(fastify, data);
 	return user as User;
 };
 
 export const getUserFromKey = async (fastify: FastifyInstance, key: string) => {
-	const users = getCollection(fastify, "users");
+	const users = fastify.getUsersCollection();
 	const user = await users.findOne({ key });
 	if (!user) throw new Error("User from key not found");
 	return user as User;
