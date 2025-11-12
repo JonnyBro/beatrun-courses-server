@@ -1,21 +1,22 @@
 <template>
-	<Card class="min-w-[250px] max-w-[450px] relative">
+	<Card class="min-w-[450px] max-w-[450px] relative">
 		<template #image>
 			<img
 				:src="courseIcon"
 				alt="ALT"
-				class="object-cover h-full w-full min-w-[180px] rounded-bl-xl rounded-tl-xl"
+				class="object-cover h-full min-w-[100px] max-w-[250px] rounded-bl-xl rounded-tl-xl"
 			/>
 			<div
 				class="absolute bottom-0 text-left text-sm font-mono bg-black/20 w-fit rounded-bl-xl"
 			>
 				<div class="bg-black/30 p-1 px-2 text-white rounded-bl-xl">
-					<RouterLink
-						class="hover:text-red-600 hover:underline transition-colors duration-200 block truncate"
-						:to="computedHref"
+					<a
+						class="hover:underline block truncate"
+						:href="`https://steamcommunity.com/sharedfiles/filedetails/?id=${data.mapId}`"
+						target="_blank"
 					>
 						{{ data.mapName }}
-					</RouterLink>
+					</a>
 					{{ data.elementsCount }} elements
 				</div>
 			</div>
@@ -80,10 +81,6 @@ import {
 import { Card } from "@/components/UI/card";
 import type { Course } from "@/api/courses/types";
 import unknownImg from "@/assets/img/unknown.jpg";
-
-const computedHref = computed(() => {
-	return "https://steamcommunity.com/sharedfiles/filedetails/?id={mapID}";
-});
 
 const props = defineProps<{
 	data: Course;
