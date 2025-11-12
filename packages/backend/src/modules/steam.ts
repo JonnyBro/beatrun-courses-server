@@ -70,7 +70,6 @@ const sanitizeQuery = (query: Record<string, string>, expectedRealm: string) => 
 	const claimedId = extractClaimedId(sanitizedQuery);
 	assert(
 		claimedId,
-		// eslint-disable-next-line max-len
 		"No 'openid.claimed_id' parameter is present in the URL, or it doesn't have the correct format",
 	);
 

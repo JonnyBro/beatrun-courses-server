@@ -48,7 +48,7 @@ export default defineConfig([
 			},
 		},
 		rules: {
-			"max-len": ["error", { code: 100, ignoreRegExpLiterals: true, ignoreTemplateLiterals: true }],
+			"max-len": ["error", { code: 120, ignoreRegExpLiterals: true, ignoreTemplateLiterals: true }],
 			"no-unused-vars": "off",
 			"@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_", varsIgnorePattern: "^_", caughtErrorsIgnorePattern: "^_" }],
 			"arrow-body-style": ["error", "as-needed"],
@@ -97,4 +97,12 @@ export default defineConfig([
 			"prettier/prettier": "off",
 		},
 	},
+	{
+		files: [
+			"packages/frontend/**/*.vue",
+		],
+		rules: {
+			"vue/multi-word-component-names": "off",
+		}
+	}
 ])

@@ -8,9 +8,7 @@ export const api = axios.create({
 });
 
 api.interceptors.response.use(
-	config => {
-		return config;
-	},
+	config => config,
 	(error: AxiosError) => {
 		console.log(error);
 		return Promise.reject(error);

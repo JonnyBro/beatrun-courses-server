@@ -12,7 +12,7 @@ export const getCourseByCode = async (code: string) => {
 };
 
 export const downloadCourseByCode = async (code: string) => {
-	const response = await api.get<Response<string>>(`/api/courses/download`, {
+	const response = await api.get<Response<string>>("/api/courses/download", {
 		headers: {
 			code,
 		},
