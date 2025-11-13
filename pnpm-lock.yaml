@@ -153,6 +153,9 @@ importers:
       vue-router:
         specifier: ^4.5.0
         version: 4.5.1(vue@3.5.13(typescript@5.8.3))
+      vue3-simple-icons:
+        specifier: ^15.6.0
+        version: 15.6.0(typescript@5.8.3)
     devDependencies:
       '@tsconfig/node22':
         specifier: ^22.0.1
@@ -2978,6 +2981,9 @@ packages:
     hasBin: true
     peerDependencies:
       typescript: '>=5.0.0'
+
+  vue3-simple-icons@15.6.0:
+    resolution: {integrity: sha512-e7FkRt5yY6wDmeBzOL7PQw/n5PIiYh5Xbk9f0aAVJpl1E1ddMRLLRjiD9tG8P2UTtCc0Yh48XN3tn0TdZAuL0w==}
 
   vue@3.5.13:
     resolution: {integrity: sha512-wmeiSMxkZCSc+PM2w2VRsOYAZC8GdipNFRTsLSfodVqI9mbejKeXEGr8SckuLnrQPGe3oJN5c3K0vpoU9q/wCQ==}
@@ -5942,6 +5948,12 @@ snapshots:
       '@volar/typescript': 2.4.13
       '@vue/language-core': 2.2.10(typescript@5.8.3)
       typescript: 5.8.3
+
+  vue3-simple-icons@15.6.0(typescript@5.8.3):
+    dependencies:
+      vue: 3.5.13(typescript@5.8.3)
+    transitivePeerDependencies:
+      - typescript
 
   vue@3.5.13(typescript@5.8.3):
     dependencies:

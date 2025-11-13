@@ -1,3 +1,46 @@
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { useWindowSize } from "@vueuse/core";
+import { Menu } from "lucide-vue-next";
+import { GitHubIcon, DiscordIcon } from "vue3-simple-icons";
+import { ToggleTheme } from "../ui/ToggleTheme";
+import { Button } from "../ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+
+const isMenuOpen = ref(false);
+
+const { width } = useWindowSize();
+
+const menuLinks = [
+	{
+		label: "Beatrun CE",
+		icon: GitHubIcon,
+		link: "https://github.com/JonnyBro/beatrun",
+	},
+	{
+		label: "Our Discord",
+		icon: DiscordIcon,
+		link: "https://discord.gg/93Psubbgsg",
+	},
+];
+
+watch(
+	() => width.value,
+	newWidth => {
+		if (newWidth >= 767) {
+			isMenuOpen.value = false;
+		}
+	},
+);
+</script>
+
 <template>
 	<nav class="flex items-center justify-between px-4 font-mono h-9">
 		<RouterLink
@@ -50,45 +93,3 @@
 		</div>
 	</nav>
 </template>
-
-<script setup lang="ts">
-import { ref, watch } from "vue";
-import { useWindowSize } from "@vueuse/core";
-import { Github, Server, Menu } from "lucide-vue-next";
-import { ToggleTheme } from "../UI/ToggleTheme";
-import { Button } from "../UI/button";
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "../UI/dropdown-menu";
-
-const isMenuOpen = ref(false);
-
-const { width } = useWindowSize();
-
-const menuLinks = [
-	{
-		label: "Beatrun CE",
-		icon: Github,
-		link: "https://github.com/JonnyBro/beatrun",
-	},
-	{
-		label: "Our Discord",
-		icon: Server,
-		link: "https://discord.com/invite/93Psubbgsg",
-	},
-];
-
-watch(
-	() => width.value,
-	newWidth => {
-		if (newWidth >= 767) {
-			isMenuOpen.value = false;
-		}
-	},
-);
-</script>
