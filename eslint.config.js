@@ -13,6 +13,13 @@ const vueConfig = defineConfigWithVueTs(
 	},
 	pluginVue.configs["flat/essential"],
 	vueTsConfigs.recommendedTypeChecked,
+	{
+		languageOptions: {
+			parserOptions: {
+				projectService: true,
+			},
+		},
+	},
 	skipFormatting,
 )
 
