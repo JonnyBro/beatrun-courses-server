@@ -6,9 +6,7 @@
 				alt="ALT"
 				class="object-cover h-full min-w-[100px] max-w-[250px] rounded-bl-xl rounded-tl-xl"
 			/>
-			<div
-				class="absolute bottom-0 text-left text-sm font-mono bg-black/20 w-fit rounded-bl-xl"
-			>
+			<div class="absolute bottom-0 text-left text-sm font-mono bg-black/20 w-fit rounded-bl-xl">
 				<div class="bg-black/30 p-1 px-2 text-white rounded-bl-xl">
 					<a
 						class="hover:underline block truncate"
@@ -73,14 +71,7 @@ import { downloadCourseByCode } from "@/api/courses";
 import type { Course } from "@/api/courses/types";
 import unknownImg from "@/assets/img/unknown.jpg";
 import { CardCustom } from "@/components/ui/card-custom";
-import {
-	DownloadIcon,
-	FileIcon,
-	ThumbsDownIcon,
-	ThumbsUpIcon,
-	UploadIcon,
-	User2Icon,
-} from "lucide-vue-next";
+import { DownloadIcon, FileIcon, ThumbsDownIcon, ThumbsUpIcon, UploadIcon, User2Icon } from "lucide-vue-next";
 import { computed, ref } from "vue";
 
 const props = defineProps<{

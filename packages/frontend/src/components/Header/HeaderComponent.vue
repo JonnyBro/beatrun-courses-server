@@ -43,10 +43,7 @@ watch(
 
 <template>
 	<nav class="flex items-center justify-between px-4 font-mono h-9">
-		<RouterLink
-			to="/"
-			class="text-lg font-bold hover:text-red-700 transition-colors duration-200"
-		>
+		<RouterLink to="/" class="text-lg font-bold hover:text-red-700 transition-colors duration-200">
 			beatrun.ru | Courses Database
 		</RouterLink>
 
@@ -61,11 +58,7 @@ watch(
 					<DropdownMenuLabel>Menu</DropdownMenuLabel>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem v-for="link in menuLinks" :key="link.label" as-child>
-						<a
-							target="_blank"
-							:href="link.link"
-							class="flex items-center gap-2 cursor-pointer"
-						>
+						<a target="_blank" :href="link.link" class="flex items-center gap-2 cursor-pointer">
 							<component :is="link.icon" />
 							<span> {{ link.label }} </span>
 						</a>
@@ -78,13 +71,7 @@ watch(
 		</div>
 
 		<div class="hidden md:flex items-center gap-2">
-			<Button
-				as-child
-				v-for="link in menuLinks"
-				:key="link.label"
-				variant="ghost"
-				size="icon"
-			>
+			<Button as-child v-for="link in menuLinks" :key="link.label" variant="ghost" size="icon">
 				<a target="_blank" :href="link.link" class="flex items-center gap-2">
 					<component :is="link.icon" />
 				</a>

@@ -5,10 +5,7 @@
 		<div class="block text-center font-mono">
 			Coperight @ Jonny_Bro & rlx & slincnik 2023 - {{ new Date().getFullYear() }}
 			<br />
-			<a
-				class="hover:underline"
-				target="_blank"
-				href="https://github.com/JonnyBro/beatrun-courses-server"
+			<a class="hover:underline" target="_blank" href="https://github.com/JonnyBro/beatrun-courses-server"
 				>[Full source code available here!]</a
 			>
 		</div>
