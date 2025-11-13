@@ -56,22 +56,13 @@ const sanitizeQuery = (query: Record<string, string>, expectedRealm: string) => 
 
 	// Check openid.return_to from our query object,
 	// because it's very important that it be a signed parameter.
-	assert(
-		sanitizedQuery["openid.return_to"],
-		"No 'openid.return_to' parameter is present in the URL",
-	);
+	assert(sanitizedQuery["openid.return_to"], "No 'openid.return_to' parameter is present in the URL");
 
 	const realm = canonicalizeRealm(sanitizedQuery["openid.return_to"]);
-	assert(
-		realm === expectedRealm,
-		`Return realm "${realm}" does not match expected realm "${expectedRealm}"`,
-	);
+	assert(realm === expectedRealm, `Return realm "${realm}" does not match expected realm "${expectedRealm}"`);
 
 	const claimedId = extractClaimedId(sanitizedQuery);
-	assert(
-		claimedId,
-		"No 'openid.claimed_id' parameter is present in the URL, or it doesn't have the correct format",
-	);
+	assert(claimedId, "No 'openid.claimed_id' parameter is present in the URL, or it doesn't have the correct format");
 
 	return sanitizedQuery;
 };

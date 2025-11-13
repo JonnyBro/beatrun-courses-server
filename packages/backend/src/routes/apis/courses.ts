@@ -1,3 +1,4 @@
+import { CourseData } from "@/types";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions";
 import { mongodb } from "@fastify/mongodb";
 import brotli from "brotli";
@@ -10,6 +11,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		const users = await fastify.getUsersArray();
 		const userMap = new Map(users.map(user => [user.steamId, user]));
 		const courses = await fastify.getCoursesArray();
+
 		const enrichedCourses = courses.map(course => {
 			const user = userMap.get(course.uploadedBy);
 			return {
@@ -28,9 +30,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		const params = req.params as { code: string };
 		const code = params.code;
 		if (!code) {
-			return reply
-				.status(400)
-				.send({ code: reply.statusCode, message: "Provide course code and map name" });
+			return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
 		}
 
 		const courses = fastify.getCoursesCollection();
@@ -68,19 +68,16 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const key = req.headers.authorization!;
 			const mapName = req.headers.mapname as string;
 			const mapId = req.headers.mapid as string;
-			const body = req.body as string;
-			const course = LZMA.decompress(Buffer.from(body, "base64")) as string;
-			const courseJSON = JSON.parse(course);
+			const courseString = LZMA.decompress(Buffer.from(req.body as string, "base64")) as string;
+			const courseJSON = JSON.parse(courseString) as CourseData;
 
 			const user = await getUserFromKey(fastify, key);
 			if (!user) {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
-			if (!isCourseFileValid(course)) {
-				return reply
-					.status(400)
-					.send({ code: reply.statusCode, message: "Course file is invalid" });
+			if (!isCourseFileValid(courseString)) {
+				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
 			}
 
 			const courses = fastify.getCollection("courses");
@@ -97,11 +94,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					});
 					mapImg = result.ogImage?.[0]?.url || "";
 				} catch (e) {
-					console.error("Failed to fetch map image:", e);
+					console.error(`Failed to fetch map image (${mapId}):`, e);
 				}
 			}
 
-			const buffer = Buffer.from(course, "utf-8");
+			const buffer = Buffer.from(courseString, "utf-8");
 			const compressedData = brotli.compress(buffer);
 			const binaryData = new mongodb.Binary(compressedData);
 
@@ -130,13 +127,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			if (!res) {
 				return reply.status(500).send({
 					code: reply.statusCode,
-					message: "Error saving a course to the database",
+					message: "Error saving a course to the database. Report to administrator",
 				});
 			}
 
 			reply.status(200).send({
 				code: reply.statusCode,
-				message: `Course uploaded successfully! Code: ${res.code}`,
+				message: `Course uploaded successfully. Code: ${res.code}`,
 			});
 		},
 	);
@@ -144,9 +141,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/api/courses/download", async (req, reply) => {
 		const code = req.headers.code as string;
 		if (!code) {
-			return reply
-				.status(400)
-				.send({ code: reply.statusCode, message: "Provide a course code" });
+			return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
 		}
 
 		const courses = fastify.getCollection("courses");
@@ -162,7 +157,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		if (!base64lzma) {
 			return reply
 				.status(500)
-				.send({ code: reply.statusCode, message: "Internal server error" });
+				.send({ code: reply.statusCode, message: "Internal server error. Report to administrator" });
 		}
 
 		await courses.updateOne({ code }, { $inc: { downloadCount: 1 } });
@@ -203,9 +198,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			const code = params.code;
 			if (!code) {
-				return reply
-					.status(400)
-					.send({ code: reply.statusCode, message: "Provide a course code" });
+				return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
 			}
 
 			const user = await getUserFromKey(fastify, key);
@@ -216,9 +209,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const courses = fastify.getCollection("courses");
 			const course = await courses.findOne({ code });
 			if (!course) {
-				return reply
-					.status(404)
-					.send({ code: reply.statusCode, message: "Course not found" });
+				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 			}
 
 			if (course.uploadedBy !== user.steamId) {
@@ -229,12 +220,10 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			if (res.deletedCount === 0) {
 				return reply
 					.status(500)
-					.send({ code: reply.statusCode, message: "Error while deleting course" });
+					.send({ code: reply.statusCode, message: "Error while deleting course. Report to administrator" });
 			}
 
-			reply
-				.status(200)
-				.send({ code: reply.statusCode, message: `Course ${code} deleted successfully` });
+			reply.status(200).send({ code: reply.statusCode, message: `Course ${code} deleted successfully` });
 		},
 	);
 };

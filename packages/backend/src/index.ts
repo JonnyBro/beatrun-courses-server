@@ -1,5 +1,5 @@
 import config from "@/../config.json";
-import { coursesRouter, usersRouter } from "@/routes/apis/index";
+import { coursesRouter, usersRouter } from "@/routes/apis";
 import authRouter from "@/routes/auth";
 import indexRouter from "@/routes/index";
 import fastifyCookie from "@fastify/cookie";

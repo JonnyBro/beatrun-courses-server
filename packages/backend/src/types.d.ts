@@ -8,17 +8,17 @@ declare module "@fastify/session" {
 	}
 }
 
-/*
-	Course file structure:
-	[0] = Props
-	[1] = Checkpoints
-	[2] = Starting position
-	[3] = Starting angle
-	[4] = Course name
-	[5] = Entities
-	[6] = Restricted player's speed (0 = unrestricted) | OPTIONAL
+/**
+Course file structure (from 0 to 6):
+	Props,
+	Checkpoints,
+	Starting position,
+	Starting angle,
+	Course name,
+	Entities,
+	Restrict player's speed (0 is default, 325) | undefined,
 */
-export type CourseData = [object, object, string, number, string, object, number?];
+export type CourseData = [Array<object>, Array<object>, string, number, string, Array<object>, number?];
 
 export interface SteamUser {
 	steamid: string;

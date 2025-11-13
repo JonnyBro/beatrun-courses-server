@@ -10,6 +10,8 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			url: config.mongo,
 		});
 
+		console.log("[backend] Connected to the database successfully");
+
 		const collections = await fastify.mongo.db?.listCollections().toArray();
 
 		if (!collections?.some(c => c.name === "users")) {
@@ -58,7 +60,7 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			return collection;
 		});
 
-		console.log("[backend] Connected to the database successfully");
+		console.log("[backend] Decorators registered");
 	} catch (e) {
 		console.error("[backend] Error while connecting to the database\n", e);
 	}
