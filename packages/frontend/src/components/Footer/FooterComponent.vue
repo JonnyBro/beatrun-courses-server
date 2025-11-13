@@ -1,3 +1,5 @@
+<script setup lang="ts"></script>
+
 <template>
 	<div class="flex items-center justify-center">
 		<div class="block text-center font-mono">
@@ -12,5 +14,3 @@
 		</div>
 	</div>
 </template>
-
-<script setup lang="ts"></script>

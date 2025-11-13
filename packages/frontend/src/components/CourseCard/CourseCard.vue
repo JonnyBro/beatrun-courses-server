@@ -72,7 +72,7 @@
 import { downloadCourseByCode } from "@/api/courses";
 import type { Course } from "@/api/courses/types";
 import unknownImg from "@/assets/img/unknown.jpg";
-import { CardCustom } from "@/components/UI/card-custom";
+import { CardCustom } from "@/components/ui/card-custom";
 import {
 	DownloadIcon,
 	FileIcon,
