@@ -12,16 +12,18 @@ const fastify = Fastify({
 	logger: !config.production,
 });
 
+// Plugins
 fastify.register(mongoPlugin);
 fastify.register(fastifyCookie);
 fastify.register(fastifySession, {
 	secret: config.secret,
 	cookie: {
 		secure: config.production,
-		maxAge: 24 * 60 * 60 * 1000, // 24 hours
+		maxAge: 72 * 60 * 60 * 1000, // 72 hours
 	},
 });
 
+// Routers
 fastify.register(authRouter);
 fastify.register(coursesRouter);
 fastify.register(indexRouter);

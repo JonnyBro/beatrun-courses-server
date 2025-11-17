@@ -7,7 +7,7 @@ import LZMA from "lzma";
 import ogs from "open-graph-scraper";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/api/courses/list", async (_req, reply) => {
+	fastify.get("/courses/list", async (_req, reply) => {
 		const users = await fastify.getUsersArray();
 		const userMap = new Map(users.map(user => [user.steamId, user]));
 		const courses = await fastify.getCoursesArray();
@@ -26,7 +26,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		});
 	});
 
-	fastify.get("/api/courses/info/:code", async (req, reply) => {
+	fastify.get("/courses/info/:code", async (req, reply) => {
 		const params = req.params as { code: string };
 		const code = params.code;
 		if (!code) {
@@ -49,7 +49,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.post(
-		"/api/courses/upload",
+		"/courses/upload",
 		{
 			schema: {
 				headers: {
@@ -138,7 +138,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		},
 	);
 
-	fastify.get("/api/courses/download", async (req, reply) => {
+	fastify.get("/courses/download", async (req, reply) => {
 		const code = req.headers.code as string;
 		if (!code) {
 			return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
@@ -169,7 +169,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.delete(
-		"/api/courses/delete/:code",
+		"/courses/delete/:code",
 		{
 			schema: {
 				params: {

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 
-const baseURL = "http://localhost:5173/api";
+const baseURL = "http://localhost:5173";
 
 export const api = axios.create({
 	baseURL,

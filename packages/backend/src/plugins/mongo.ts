@@ -60,7 +60,7 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			return collection;
 		});
 
-		console.log("[backend] Decorators registered");
+		console.log("[backend] Decorators registered successfully");
 	} catch (e) {
 		console.error("[backend] Error while connecting to the database\n", e);
 	}
