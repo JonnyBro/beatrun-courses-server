@@ -14,6 +14,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		const enrichedCourses = courses.map(course => {
 			const user = userMap.get(course.uploadedBy);
+			delete user?.key;
+			delete user?.admin;
+
 			return {
 				...course,
 				uploadedBy: user || null,
@@ -163,7 +166,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		await courses.updateOne({ code }, { $inc: { downloadCount: 1 } });
 
 		reply.status(200).send({
-			code: 200,
+			code: reply.statusCode,
 			data: base64lzma,
 		});
 	});
