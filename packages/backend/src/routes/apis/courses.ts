@@ -15,6 +15,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					type: "object",
 					properties: {
 						mapname: { type: "string" },
+						game: { type: "string" },
 					},
 				},
 			},
@@ -25,12 +26,22 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const courses = await fastify.getCoursesArray();
 
 			let enrichedCourses = courses.map(course => {
+				let data: string | mongodb.Binary = course.data;
+
+				if (req.headers.game === "yes") {
+					const binaryData = course.data.buffer as Buffer;
+					const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
+
+					data = Buffer.from(LZMA.compress(decompressed)).toString("base64");
+				}
+
 				const user = userMap.get(course.uploadedBy);
 				delete user?.key;
 				delete user?.admin;
 
 				return {
 					...course,
+					data,
 					uploadedBy: user || null,
 				};
 			});
