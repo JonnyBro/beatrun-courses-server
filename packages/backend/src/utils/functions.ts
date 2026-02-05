@@ -33,14 +33,14 @@ export const createUser = async (fastify: FastifyInstance, data: SteamUser | str
 export const getUserFromSteam = async (fastify: FastifyInstance, data: SteamUser | string) => {
 	const users = fastify.getUsersCollection();
 	const user = await users.findOne({ steamId: isSteamUser(data) ? data.steamid : data });
-	if (!user) throw new Error("User not found");
+	if (!user) return;
 	return user as User;
 };
 
 export const getUserFromKey = async (fastify: FastifyInstance, key: string) => {
 	const users = fastify.getUsersCollection();
 	const user = await users.findOne({ key });
-	if (!user) throw new Error("User not found");
+	if (!user) return;
 	return user as User;
 };
 
@@ -85,12 +85,12 @@ export const isCourseFileValid = (content: CourseData | string) => {
 
 export const randomNum = (min: number = 0, max: number = 100) => Math.floor(Math.random() * (max - min + 1)) + min;
 
-export const generateCode = (codeLength: number, blocksLength: number) => {
+export const generateCode = (blocksCount: number, blockLength: number) => {
 	let code = "";
 
-	for (let i = 0; i < codeLength; i++) {
-		code += generateRandomString(blocksLength);
-		if (i !== codeLength - 1) code += "-";
+	for (let i = 0; i < blocksCount; i++) {
+		code += generateRandomString(blockLength);
+		if (i !== blocksCount - 1) code += "-";
 	}
 
 	return code.toUpperCase();

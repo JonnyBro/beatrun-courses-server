@@ -71,7 +71,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const key = req.headers.authorization!;
 			const mapName = req.headers.mapname as string;
 			const mapId = req.headers.mapid as string;
-			const courseString = LZMA.decompress(Buffer.from(req.body as string, "base64")) as string;
+
+			let courseString: string;
+
+			try {
+				courseString = LZMA.decompress(Buffer.from(req.body as string, "base64")) as string;
+			} catch {
+				courseString = req.body as string;
+			}
+
 			const courseJSON = JSON.parse(courseString) as CourseData;
 
 			const user = await getUserFromKey(fastify, key);
@@ -90,7 +98,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			while (await courses.findOne({ code }));
 
 			let mapImg = "";
-			if (mapId !== "0") {
+			if (mapId !== "0" && mapId !== "") {
 				try {
 					const { result } = await ogs({
 						url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${mapId}`,
@@ -192,14 +200,12 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			},
 		},
 		async (req, reply) => {
-			const params = req.params as { code: string };
-
 			const key = req.headers.authorization;
 			if (!key) {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
-			const code = params.code;
+			const code = (req.params as { code: string }).code;
 			if (!code) {
 				return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
 			}
