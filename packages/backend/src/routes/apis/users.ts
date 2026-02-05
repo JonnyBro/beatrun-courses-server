@@ -16,7 +16,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			if (Math.floor((Date.now() - createdAt) / (1000 * 60 * 60 * 24 * 30)) < 3) {
 				return reply.status(401).send({
 					code: reply.statusCode,
-					message: "Your account is too young. The account must be at least 3 months old",
+					message: "Your account is too young. Your account must be at least 3 months old",
 				});
 			}
 

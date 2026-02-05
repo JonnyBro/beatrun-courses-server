@@ -7,27 +7,44 @@ import LZMA from "lzma";
 import ogs from "open-graph-scraper";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/courses/list", async (_req, reply) => {
-		const users = await fastify.getUsersArray();
-		const userMap = new Map(users.map(user => [user.steamId, user]));
-		const courses = await fastify.getCoursesArray();
+	fastify.get(
+		"/courses/list",
+		{
+			schema: {
+				headers: {
+					type: "object",
+					properties: {
+						mapname: { type: "string" },
+					},
+				},
+			},
+		},
+		async (req, reply) => {
+			const users = await fastify.getUsersArray();
+			const userMap = new Map(users.map(user => [user.steamId, user]));
+			const courses = await fastify.getCoursesArray();
 
-		const enrichedCourses = courses.map(course => {
-			const user = userMap.get(course.uploadedBy);
-			delete user?.key;
-			delete user?.admin;
+			let enrichedCourses = courses.map(course => {
+				const user = userMap.get(course.uploadedBy);
+				delete user?.key;
+				delete user?.admin;
 
-			return {
-				...course,
-				uploadedBy: user || null,
-			};
-		});
+				return {
+					...course,
+					uploadedBy: user || null,
+				};
+			});
 
-		reply.status(200).send({
-			code: reply.statusCode,
-			data: enrichedCourses,
-		});
-	});
+			if (req.headers.mapname) {
+				enrichedCourses = enrichedCourses.filter(c => c.mapName === req.headers.mapname);
+			}
+
+			reply.status(200).send({
+				code: reply.statusCode,
+				data: enrichedCourses,
+			});
+		},
+	);
 
 	fastify.get("/courses/info/:code", async (req, reply) => {
 		const params = req.params as { code: string };
@@ -42,9 +59,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 		}
 
-		const user = (await fastify.getUser(course.uploadedBy).toArray())[0];
-		delete user.key;
-		delete user.admin;
+		const user = await fastify.getUser(course.uploadedBy);
+		delete user?.key;
+		delete user?.admin;
 
 		course.uploadedBy = user || null;
 

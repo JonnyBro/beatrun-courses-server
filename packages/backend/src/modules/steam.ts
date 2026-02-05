@@ -1,6 +1,22 @@
-import { type SteamUser } from "@/types";
 import assert from "assert";
 import SteamID from "steamid";
+
+export interface SteamUser {
+	steamid: string;
+	communityvisibilitystate: number;
+	profilestate: number;
+	personaname: string;
+	profileurl: string;
+	avatar: string;
+	avatarmedium: string;
+	avatarfull: string;
+	avatarhash: string;
+	lastlogoff: number;
+	personastate: number;
+	primaryclanid: string;
+	timecreated: number;
+	personastateflags: number;
+}
 
 const canonicalizeRealm = (realm: string) => {
 	const match = realm.match(/^(https?:\/\/[^:/]+(?::\d+)?)/);

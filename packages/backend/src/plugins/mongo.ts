@@ -1,4 +1,5 @@
 import config from "@/../config.json";
+import { Course, User } from "@/types";
 import fastifyMongo, { mongodb } from "@fastify/mongodb";
 import { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";
@@ -30,14 +31,14 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			return collection;
 		});
 
-		fastify.decorate("getCourse", (code: string) => {
-			const course = fastify.getCollection("courses").find({ code });
-			return course;
+		fastify.decorate("getCourse", async (code: string) => {
+			const course = await fastify.getCollection("courses").findOne({ code });
+			return course as Course | null;
 		});
 
 		fastify.decorate("getCoursesArray", async () => {
 			const array = await fastify.getCollection("courses").find({}).toArray();
-			return array;
+			return array as Course[];
 		});
 
 		fastify.decorate("getCoursesCollection", () => {
@@ -45,14 +46,14 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			return collection;
 		});
 
-		fastify.decorate("getUser", (steamId: string) => {
-			const user = fastify.getCollection("users").find({ steamId });
-			return user;
+		fastify.decorate("getUser", async (steamId: string) => {
+			const user = await fastify.getCollection("users").findOne({ steamId });
+			return user as User | null;
 		});
 
 		fastify.decorate("getUsersArray", async () => {
 			const array = await fastify.getCollection("users").find({}).toArray();
-			return array;
+			return array as User[];
 		});
 
 		fastify.decorate("getUsersCollection", () => {
@@ -69,11 +70,11 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 declare module "fastify" {
 	interface FastifyInstance {
 		getCollection: (name: string) => mongodb.Collection;
-		getCourse: (code: string) => mongodb.FindCursor<mongodb.WithId<mongodb.BSON.Document>>;
-		getCoursesArray: () => Promise<mongodb.WithId<mongodb.Document>[]>;
+		getCourse: (code: string) => Promise<Course | null>;
+		getCoursesArray: () => Promise<Course[]>;
 		getCoursesCollection: () => mongodb.Collection;
-		getUser: (steamId: string) => mongodb.FindCursor<mongodb.WithId<mongodb.BSON.Document>>;
-		getUsersArray: () => Promise<mongodb.WithId<mongodb.Document>[]>;
+		getUser: (steamId: string) => Promise<User | null>;
+		getUsersArray: () => Promise<User[]>;
 		getUsersCollection: () => mongodb.Collection;
 	}
 }

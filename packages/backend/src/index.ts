@@ -8,7 +8,9 @@ import Fastify from "fastify";
 import { mongoPlugin } from "./plugins/mongo";
 
 const fastify = Fastify({
-	ignoreTrailingSlash: true,
+	routerOptions: {
+		ignoreTrailingSlash: true,
+	},
 	logger: !config.production,
 });
 

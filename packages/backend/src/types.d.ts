@@ -1,4 +1,5 @@
-import { mongodb, ObjectId } from "@fastify/mongodb";
+import { SteamUser } from "@/modules/steam";
+import { mongodb } from "@fastify/mongodb";
 import "@fastify/session";
 
 declare module "@fastify/session" {
@@ -20,33 +21,15 @@ Course file structure (from 0 to 6):
 */
 export type CourseData = [Array<object>, Array<object>, string, number, string, Array<object>, number?];
 
-export interface SteamUser {
-	steamid: string;
-	communityvisibilitystate: number;
-	profilestate: number;
-	personaname: string;
-	profileurl: string;
-	avatar: string;
-	avatarmedium: string;
-	avatarfull: string;
-	avatarhash: string;
-	lastlogoff: number;
-	personastate: number;
-	primaryclanid: string;
-	timecreated: number;
-	personastateflags: number;
-}
-
-export interface User {
-	_id?: ObjectId;
+export interface User extends mongodb.WithId<mongodb.BSON.Document> {
 	steamId: string;
-	username?: string;
-	key: string;
 	createdAt: number;
+	username?: string;
+	key?: string;
 	admin?: boolean;
 }
 
-export interface Course {
+export interface Course extends mongodb.WithId<mongodb.BSON.Document> {
 	code: string;
 	uploadedBy: string;
 	uploadedAt: number;
