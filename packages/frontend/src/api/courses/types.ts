@@ -5,7 +5,7 @@ export type Course = {
 	downloadCount: number;
 	elementsCount: number;
 	name: string;
-	mapId: string;
+	workshopId: string;
 	mapImg: string;
 	mapName: string;
 	uploadedAt: number;

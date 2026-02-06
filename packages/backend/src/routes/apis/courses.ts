@@ -85,11 +85,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			schema: {
 				headers: {
 					type: "object",
-					required: ["authorization", "mapname", "mapid"],
+					required: ["authorization", "mapname", "workshopid"],
 					properties: {
 						authorization: { type: "string" },
 						mapname: { type: "string" },
-						mapid: { type: "string" },
+						workshopid: { type: "string" },
 					},
 				},
 				body: { type: "string" },
@@ -98,7 +98,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		async (req, reply) => {
 			const key = req.headers.authorization!;
 			const mapName = req.headers.mapname as string;
-			const mapId = req.headers.mapid as string;
+			const workshopId = req.headers.workshopid as string;
 
 			let courseString: string;
 
@@ -126,14 +126,14 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			while (await courses.findOne({ code }));
 
 			let mapImg = "";
-			if (mapId !== "0" && mapId !== "") {
+			if (workshopId !== "0") {
 				try {
 					const { result } = await ogs({
-						url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${mapId}`,
+						url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${workshopId}`,
 					});
 					mapImg = result.ogImage?.[0]?.url || "";
 				} catch (e) {
-					console.error(`Failed to fetch map image (${mapId}):`, e);
+					console.error(`Failed to fetch map image (${workshopId}):`, e);
 				}
 			}
 
@@ -151,7 +151,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 						uploadedBy: user.steamId,
 						uploadedAt: Date.now(),
 						mapName,
-						mapId,
+						workshopId,
 						mapImg,
 						downloadCount: 0,
 						data: binaryData,

@@ -10,7 +10,7 @@
 				<div class="bg-black/30 p-1 px-2 text-white rounded-bl-xl">
 					<a
 						class="hover:underline block truncate"
-						:href="`https://steamcommunity.com/sharedfiles/filedetails/?id=${data.mapId}`"
+						:href="`https://steamcommunity.com/sharedfiles/filedetails/?id=${data.workshopId}`"
 						target="_blank"
 					>
 						{{ data.mapName }}

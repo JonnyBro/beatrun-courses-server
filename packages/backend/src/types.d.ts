@@ -34,7 +34,7 @@ export interface Course extends mongodb.WithId<mongodb.BSON.Document> {
 	uploadedBy: string;
 	uploadedAt: number;
 	mapName: string;
-	mapId: string;
+	workshopId: string;
 	mapImg: string;
 	downloadCount: number;
 	data: mongodb.Binary;
