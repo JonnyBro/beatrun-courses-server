@@ -58,8 +58,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	);
 
 	fastify.get("/courses/info/:code", async (req, reply) => {
-		const params = req.params as { code: string };
-		const code = params.code;
+		const code = (req.params as { code: string }).code;
 		if (!code) {
 			return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
 		}
@@ -177,52 +176,57 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		},
 	);
 
-	fastify.get("/courses/download", async (req, reply) => {
-		const code = req.headers.code as string;
-		if (!code) {
-			return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
-		}
-
-		const courses = fastify.getCollection("courses");
-		const course = await courses.findOne({ code });
-		if (!course) {
-			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
-		}
-
-		const binaryData = course.data.buffer as Buffer;
-		const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
-		const base64lzma = Buffer.from(LZMA.compress(decompressed)).toString("base64");
-
-		if (!base64lzma) {
-			return reply
-				.status(500)
-				.send({ code: reply.statusCode, message: "Internal server error. Report to administrator" });
-		}
-
-		await courses.updateOne({ code }, { $inc: { downloadCount: 1 } });
-
-		reply.status(200).send({
-			code: reply.statusCode,
-			data: base64lzma,
-		});
-	});
-
-	fastify.delete(
-		"/courses/delete/:code",
+	fastify.get(
+		"/courses/download",
 		{
 			schema: {
-				params: {
+				headers: {
 					type: "object",
 					required: ["code"],
 					properties: {
 						code: { type: "string" },
 					},
 				},
+			},
+		},
+		async (req, reply) => {
+			const code = req.headers.code as string;
+			if (!code) {
+				return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
+			}
+
+			const courses = fastify.getCollection("courses");
+			const course = await courses.findOne({ code });
+			if (!course) {
+				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+			}
+
+			const binaryData = course.data.buffer as Buffer;
+			const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
+			const base64lzma = Buffer.from(LZMA.compress(decompressed)).toString("base64");
+
+			if (!base64lzma) {
+				return reply
+					.status(500)
+					.send({ code: reply.statusCode, message: "Internal server error. Report to administrator" });
+			}
+
+			await courses.updateOne({ code }, { $inc: { downloadCount: 1 } });
+
+			reply.status(200).send(base64lzma);
+		},
+	);
+
+	fastify.delete(
+		"/courses/delete",
+		{
+			schema: {
 				headers: {
 					type: "object",
-					required: ["authorization"],
+					required: ["authorization", "code"],
 					properties: {
 						authorization: { type: "string" },
+						code: { type: "string" },
 					},
 				},
 			},
@@ -233,7 +237,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
-			const code = (req.params as { code: string }).code;
+			const code = req.headers.code as string;
 			if (!code) {
 				return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
 			}
@@ -260,7 +264,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					.send({ code: reply.statusCode, message: "Error while deleting course. Report to administrator" });
 			}
 
-			reply.status(200).send({ code: reply.statusCode, message: `Course ${code} deleted successfully` });
+			reply
+				.status(200)
+				.send({ code: reply.statusCode, message: `Course with code "${code}" deleted successfully` });
 		},
 	);
 };
