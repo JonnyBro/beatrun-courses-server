@@ -3,10 +3,10 @@ import { coursesRouter, usersRouter } from "@/routes/apis";
 import authRouter from "@/routes/auth";
 import indexRouter from "@/routes/index";
 import fastifyCookie from "@fastify/cookie";
+import fastifyFormbody from "@fastify/formbody";
 import fastifySession from "@fastify/session";
 import Fastify from "fastify";
 import { mongoPlugin } from "./plugins/mongo";
-import fastifyFormbody from "@fastify/formbody";
 
 const fastify = Fastify({
 	routerOptions: {
