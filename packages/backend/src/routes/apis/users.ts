@@ -2,7 +2,7 @@ import { createUser, getUserFromSteamIdOrProfile, sanitize } from "@/utils/funct
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get(
+	fastify.post(
 		"/api/users/register",
 		{
 			schema: {

@@ -1,10 +1,10 @@
 import { CourseData } from "@/types";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions";
 import { mongodb } from "@fastify/mongodb";
-import brotli from "brotli";
 import { FastifyInstance } from "fastify";
 import LZMA from "lzma";
 import ogs from "open-graph-scraper";
+import { brotliCompressSync, brotliDecompressSync } from "zlib";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get(
@@ -30,7 +30,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 				if (req.headers.game === "yes") {
 					const binaryData = course.data.buffer as Buffer;
-					const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
+					const decompressed = Buffer.from(brotliDecompressSync(binaryData)).toString("utf-8");
 
 					data = Buffer.from(LZMA.compress(decompressed)).toString("base64");
 				}
@@ -144,7 +144,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			const buffer = Buffer.from(courseString, "utf-8");
-			const compressedData = brotli.compress(buffer);
+			const compressedData = brotliCompressSync(buffer);
 			const binaryData = new mongodb.Binary(compressedData);
 
 			const res = await courses.findOneAndUpdate(
@@ -209,7 +209,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			const binaryData = course.data.buffer as Buffer;
-			const decompressed = Buffer.from(brotli.decompress(binaryData)).toString("utf-8");
+			const decompressed = Buffer.from(brotliDecompressSync(binaryData)).toString("utf-8");
 			const base64lzma = Buffer.from(LZMA.compress(decompressed)).toString("base64");
 
 			if (!base64lzma) {
