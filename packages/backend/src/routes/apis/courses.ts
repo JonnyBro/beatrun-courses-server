@@ -84,11 +84,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			schema: {
 				headers: {
 					type: "object",
-					required: ["", "mapname"],
+					required: ["authorization", "mapname"],
 					properties: {
-						authorization: { type: ["string", "null"] },
+						authorization: { type: "string" },
 						mapname: { type: "string" },
-						workshopid: { type: "string" },
+						workshopid: { type: ["string", "null"] },
 					},
 				},
 				body: {
