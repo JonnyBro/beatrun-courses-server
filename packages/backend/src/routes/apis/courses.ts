@@ -3,7 +3,6 @@ import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/ut
 import { mongodb } from "@fastify/mongodb";
 import { FastifyInstance } from "fastify";
 import LZMA from "lzma";
-import ogs from "open-graph-scraper";
 import { brotliCompressSync, brotliDecompressSync } from "zlib";
 
 const router = (fastify: FastifyInstance, _options: object) => {
@@ -131,18 +130,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			do code = generateCode(randomNum(2, 6), randomNum(2, 4));
 			while (await courses.findOne({ code }));
 
-			let mapImg = "";
-			if (workshopId) {
-				try {
-					const { result } = await ogs({
-						url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${workshopId}`,
-					});
-					mapImg = result.ogImage?.[0]?.url || "";
-				} catch (e) {
-					console.error(`Failed to fetch map image (${workshopId}):`, e);
-				}
-			}
-
 			const buffer = Buffer.from(courseString, "utf-8");
 			const compressedData = brotliCompressSync(buffer);
 			const binaryData = new mongodb.Binary(compressedData);
@@ -158,7 +145,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 						uploadedAt: Date.now(),
 						mapName,
 						workshopId,
-						mapImg,
 						downloadCount: 0,
 						data: binaryData,
 					},

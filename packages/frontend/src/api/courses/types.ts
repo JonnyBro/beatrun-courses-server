@@ -6,7 +6,6 @@ export type Course = {
 	elementsCount: number;
 	name: string;
 	workshopId: string;
-	mapImg: string;
 	mapName: string;
 	uploadedAt: number;
 	uploadedBy: null | User;
