@@ -4,7 +4,7 @@ import { FastifyInstance } from "fastify";
 
 const charsList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
-export const createUser = async (fastify: FastifyInstance, data: SteamUser | string) => {
+export const createUser = async (fastify: FastifyInstance, data: SteamUser | string, username?: string) => {
 	const users = fastify.getUsersCollection();
 
 	let key: string;
@@ -17,9 +17,10 @@ export const createUser = async (fastify: FastifyInstance, data: SteamUser | str
 		{ steamId: isSUser ? data.steamid : data },
 		{
 			$set: {
-				username: isSUser ? data.personaname : undefined,
-				createdAt: Date.now(),
 				key,
+				username: isSUser ? data.personaname : username,
+				createdAt: Date.now(),
+				admin: false,
 			},
 		},
 		{
@@ -31,7 +32,7 @@ export const createUser = async (fastify: FastifyInstance, data: SteamUser | str
 	return res as User;
 };
 
-export const getUserFromSteam = async (fastify: FastifyInstance, data: SteamUser | string) => {
+export const getUserFromSteamIdOrProfile = async (fastify: FastifyInstance, data: SteamUser | string) => {
 	const users = fastify.getUsersCollection();
 	const user = await users.findOne({ steamId: isSteamUser(data) ? data.steamid : data });
 	if (!user) return;
@@ -57,14 +58,12 @@ export const generateRandomString = (length: number, chars = charsList) => {
 };
 
 export const sanitize = (string: string, forceLowercase = false, strict = false) => {
-	if (!string) return;
-
 	string = string.toString().trim();
 
 	let clean = string.replace(/[~`!@#$%^&*()=+[\]{}|\\;:'",<.>/?\u2018\u2019\u201C\u201D\u2013\u2014–—]/g, "");
 	clean = clean.replace(/&#\d+;/g, "");
 
-	if (strict) clean = clean.replace(/\s+/g, "-").replace(/[^\u0400-\u04FF\w-]/g, "");
+	if (strict) clean = clean.replace(/\s+/g, "_").replace(/[^\u0400-\u04FF\w-]/g, "");
 
 	return forceLowercase ? clean.toLowerCase() : clean;
 };

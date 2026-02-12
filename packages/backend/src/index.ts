@@ -1,6 +1,6 @@
 import config from "@/../config.json";
 import { coursesRouter, usersRouter } from "@/routes/apis";
-import authRouter from "@/routes/auth";
+// import authRouter from "@/routes/auth";
 import indexRouter from "@/routes/index";
 import fastifyCookie from "@fastify/cookie";
 import fastifyFormbody from "@fastify/formbody";
@@ -28,7 +28,7 @@ fastify.register(fastifySession, {
 fastify.register(fastifyFormbody);
 
 // Routers
-fastify.register(authRouter);
+// fastify.register(authRouter);
 fastify.register(coursesRouter);
 fastify.register(indexRouter);
 fastify.register(usersRouter);

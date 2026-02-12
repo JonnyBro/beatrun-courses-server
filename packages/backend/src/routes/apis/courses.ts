@@ -8,7 +8,7 @@ import ogs from "open-graph-scraper";
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get(
-		"/courses/list",
+		"/api/courses/list",
 		{
 			schema: {
 				headers: {
@@ -57,7 +57,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		},
 	);
 
-	fastify.get("/courses/info/:code", async (req, reply) => {
+	fastify.get("/api/courses/info/:code", async (req, reply) => {
 		const code = (req.params as { code: string }).code;
 		if (!code) {
 			return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
@@ -79,7 +79,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.post(
-		"/courses/upload",
+		"/api/courses/upload",
 		{
 			schema: {
 				headers: {
@@ -184,7 +184,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	);
 
 	fastify.get(
-		"/courses/download",
+		"/api/courses/download",
 		{
 			schema: {
 				headers: {
@@ -225,7 +225,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	);
 
 	fastify.delete(
-		"/courses/delete",
+		"/api/courses/delete",
 		{
 			schema: {
 				headers: {
