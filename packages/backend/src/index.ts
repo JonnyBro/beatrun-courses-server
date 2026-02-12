@@ -6,6 +6,7 @@ import fastifyCookie from "@fastify/cookie";
 import fastifySession from "@fastify/session";
 import Fastify from "fastify";
 import { mongoPlugin } from "./plugins/mongo";
+import fastifyFormbody from "@fastify/formbody";
 
 const fastify = Fastify({
 	routerOptions: {
@@ -24,6 +25,7 @@ fastify.register(fastifySession, {
 		maxAge: 72 * 60 * 60 * 1000, // 72 hours
 	},
 });
+fastify.register(fastifyFormbody);
 
 // Routers
 fastify.register(authRouter);

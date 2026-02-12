@@ -84,27 +84,34 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			schema: {
 				headers: {
 					type: "object",
-					required: ["authorization", "mapname", "workshopid"],
+					required: ["", "mapname"],
 					properties: {
-						authorization: { type: "string" },
+						authorization: { type: ["string", "null"] },
 						mapname: { type: "string" },
 						workshopid: { type: "string" },
 					},
 				},
-				body: { type: "string" },
+				body: {
+					type: "object",
+					required: ["data"],
+					properties: {
+						data: { type: "string" },
+					},
+				},
 			},
 		},
 		async (req, reply) => {
 			const key = req.headers.authorization!;
 			const mapName = req.headers.mapname as string;
-			const workshopId = req.headers.workshopid as string;
+			const workshopId = req.headers.workshopid as string | null;
+			const courseData = (req.body as { data: string }).data;
 
 			let courseString: string;
 
 			try {
-				courseString = LZMA.decompress(Buffer.from(req.body as string, "base64")) as string;
+				courseString = LZMA.decompress(Buffer.from(courseData, "base64")) as string;
 			} catch {
-				courseString = req.body as string;
+				courseString = Buffer.from(courseData, "base64").toString("utf-8");
 			}
 
 			const courseJSON = JSON.parse(courseString) as CourseData;
@@ -125,7 +132,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			while (await courses.findOne({ code }));
 
 			let mapImg = "";
-			if (workshopId !== "0") {
+			if (workshopId) {
 				try {
 					const { result } = await ogs({
 						url: `https://steamcommunity.com/sharedfiles/filedetails/?id=${workshopId}`,
