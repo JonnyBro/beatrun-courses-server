@@ -20,62 +20,24 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			},
 		},
 		async (req, reply) => {
-			const users = await fastify.getUsersArray();
-			const userMap = new Map(users.map(user => [user.steamId, user]));
 			const courses = await fastify.getCoursesArray();
 
-			let enrichedCourses = courses.map(course => {
-				let data: string | mongodb.Binary = course.data;
+			let strippedCourses = courses.map(course => {
+				delete course.data;
 
-				if (req.headers.game === "yes") {
-					const binaryData = course.data.buffer as Buffer;
-					const decompressed = Buffer.from(brotliDecompressSync(binaryData)).toString("utf-8");
-
-					data = Buffer.from(LZMA.compress(decompressed)).toString("base64");
-				}
-
-				const user = userMap.get(course.uploadedBy);
-				delete user?.key;
-				delete user?.admin;
-
-				return {
-					...course,
-					data,
-					uploadedBy: user || null,
-				};
+				return course;
 			});
 
 			if (req.headers.mapname) {
-				enrichedCourses = enrichedCourses.filter(c => c.mapName === req.headers.mapname);
+				strippedCourses = strippedCourses.filter(c => c.mapName === req.headers.mapname);
 			}
 
 			reply.status(200).send({
 				code: reply.statusCode,
-				data: enrichedCourses,
+				data: strippedCourses,
 			});
 		},
 	);
-
-	fastify.get("/api/courses/info/:code", async (req, reply) => {
-		const code = (req.params as { code: string }).code;
-		if (!code) {
-			return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
-		}
-
-		const courses = fastify.getCoursesCollection();
-		const course = await courses.findOne({ code });
-		if (!course) {
-			return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
-		}
-
-		const user = await fastify.getUser(course.uploadedBy);
-		delete user?.key;
-		delete user?.admin;
-
-		course.uploadedBy = user || null;
-
-		reply.status(200).send({ code: reply.statusCode, data: course });
-	});
 
 	fastify.post(
 		"/api/courses/upload",
@@ -141,7 +103,10 @@ const router = (fastify: FastifyInstance, _options: object) => {
 						code,
 						name: courseJSON[4],
 						elementsCount: courseJSON[0].length + courseJSON[5].length,
-						uploadedBy: user.steamId,
+						uploadedBy: {
+							steamId: user.steamId,
+							username: user.username,
+						},
 						uploadedAt: Date.now(),
 						mapName,
 						workshopId,
@@ -240,16 +205,16 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
-			const courses = fastify.getCollection("courses");
-			const course = await courses.findOne({ code });
+			const course = await fastify.getCourse(code);
 			if (!course) {
 				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 			}
 
-			if (course.uploadedBy !== user.steamId) {
+			if (course.uploadedBy.steamId !== user.steamId) {
 				return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
 			}
 
+			const courses = fastify.getCollection("courses");
 			const res = await courses.deleteOne({ code });
 			if (res.deletedCount === 0) {
 				return reply

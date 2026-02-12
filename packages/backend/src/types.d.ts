@@ -31,10 +31,13 @@ export interface User extends mongodb.WithId<mongodb.BSON.Document> {
 
 export interface Course extends mongodb.WithId<mongodb.BSON.Document> {
 	code: string;
-	uploadedBy: string;
+	uploadedBy: {
+		steamId: string;
+		username: string;
+	};
 	uploadedAt: number;
 	mapName: string;
 	workshopId: string;
 	downloadCount: number;
-	data: mongodb.Binary;
+	data?: mongodb.Binary;
 }
