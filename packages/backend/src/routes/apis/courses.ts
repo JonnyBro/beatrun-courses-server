@@ -224,7 +224,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			reply
 				.status(200)
-				.send({ code: reply.statusCode, message: `Course with code "${code}" deleted successfully` });
+				.send({ code: reply.statusCode, message: `Course with code '${code}' deleted successfully` });
 		},
 	);
 };
