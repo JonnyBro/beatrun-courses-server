@@ -23,7 +23,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const courses = await fastify.getCoursesArray();
 
 			let strippedCourses = courses?.map(course => {
-				delete course.data;
+				if (req.headers.game === "yes") delete course.data;
 
 				return course;
 			});
