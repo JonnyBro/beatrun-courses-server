@@ -22,14 +22,14 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		async (req, reply) => {
 			const courses = await fastify.getCoursesArray();
 
-			let strippedCourses = courses.map(course => {
+			let strippedCourses = courses?.map(course => {
 				delete course.data;
 
 				return course;
 			});
 
 			if (req.headers.mapname) {
-				strippedCourses = strippedCourses.filter(c => c.mapName === req.headers.mapname);
+				strippedCourses = strippedCourses?.filter(c => c.mapName === req.headers.mapname);
 			}
 
 			reply.status(200).send({
@@ -90,13 +90,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			let code: string;
 			do code = generateCode(randomNum(2, 6), randomNum(2, 4));
-			while (await courses.findOne({ code }));
+			while (await courses?.findOne({ code }));
 
 			const buffer = Buffer.from(courseString, "utf-8");
 			const compressedData = brotliCompressSync(buffer);
 			const binaryData = new mongodb.Binary(compressedData);
 
-			const res = await courses.findOneAndUpdate(
+			const res = await courses?.findOneAndUpdate(
 				{ code },
 				{
 					$set: {
@@ -154,7 +154,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			const courses = fastify.getCollection("courses");
-			const course = await courses.findOne({ code });
+			const course = await courses?.findOne({ code });
 			if (!course) {
 				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 			}
@@ -169,7 +169,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					.send({ code: reply.statusCode, message: "Internal server error. Report to administrator" });
 			}
 
-			await courses.updateOne({ code }, { $inc: { downloadCount: 1 } });
+			await courses?.updateOne({ code }, { $inc: { downloadCount: 1 } });
 
 			reply.status(200).send(base64lzma);
 		},
@@ -215,8 +215,8 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			const courses = fastify.getCollection("courses");
-			const res = await courses.deleteOne({ code });
-			if (res.deletedCount === 0) {
+			const res = await courses?.deleteOne({ code });
+			if (res?.deletedCount === 0) {
 				return reply
 					.status(500)
 					.send({ code: reply.statusCode, message: "Error while deleting course. Report to administrator" });

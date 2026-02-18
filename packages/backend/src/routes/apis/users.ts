@@ -1,4 +1,4 @@
-import { createUser, getUserFromSteamIdOrProfile, sanitize } from "@/utils/functions";
+import { createUser, getUserFromKey, getUserFromSteamIdOrProfile, sanitize } from "@/utils/functions";
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {
@@ -43,6 +43,29 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		reply.status(200).send({ code: reply.statusCode, data: user });
 	});
 
+	fastify.get(
+		"/api/key/validate",
+		{
+			schema: {
+				headers: {
+					type: "object",
+					required: ["key"],
+					properties: {
+						key: { type: "string" },
+					},
+				},
+			},
+		},
+		async (req, reply) => {
+			const key = req.headers.key as string;
+
+			const user = await getUserFromKey(fastify, key);
+			if (!user) return reply.status(200).send({ code: reply.statusCode, data: false });
+
+			reply.status(200).send({ code: reply.statusCode, data: true });
+		},
+	);
+
 	fastify.delete("/api/users/delete/:id", async (req, reply) => {
 		if (!req.session.user || !req.session.user.admin) {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
@@ -60,8 +83,8 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		const users = fastify.getCollection("users");
 
-		const res = await users.deleteOne({ steamId: params.id });
-		if (res.deletedCount === 0) {
+		const res = await users?.deleteOne({ steamId: params.id });
+		if (res?.deletedCount === 0) {
 			return reply.status(500).send({ code: reply.statusCode, message: "Error while deleting a user" });
 		}
 

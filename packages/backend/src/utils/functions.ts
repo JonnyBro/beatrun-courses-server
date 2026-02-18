@@ -9,11 +9,11 @@ export const createUser = async (fastify: FastifyInstance, data: SteamUser | str
 
 	let key: string;
 	do key = generateRandomString(randomNum(16, 32));
-	while (await users.findOne({ key }));
+	while (await users?.findOne({ key }));
 
 	const isSUser = isSteamUser(data);
 
-	const res = await users.findOneAndUpdate(
+	const res = await users?.findOneAndUpdate(
 		{ steamId: isSUser ? data.steamid : data },
 		{
 			$set: {
@@ -33,16 +33,17 @@ export const createUser = async (fastify: FastifyInstance, data: SteamUser | str
 };
 
 export const getUserFromSteamIdOrProfile = async (fastify: FastifyInstance, data: SteamUser | string) => {
-	const users = fastify.getUsersCollection();
-	const user = await users.findOne({ steamId: isSteamUser(data) ? data.steamid : data });
+	const user = await fastify.getUser(isSteamUser(data) ? data.steamid : data);
 	if (!user) return;
-	return user as User;
+
+	return user;
 };
 
 export const getUserFromKey = async (fastify: FastifyInstance, key: string) => {
 	const users = fastify.getUsersCollection();
-	const user = await users.findOne({ key });
+	const user = await users?.findOne({ key });
 	if (!user) return;
+
 	return user as User;
 };
 

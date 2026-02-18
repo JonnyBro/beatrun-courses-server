@@ -27,17 +27,26 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 
 		fastify.decorate("getCollection", (name: string) => {
 			const collection = fastify.mongo.db?.collection(name);
-			if (!collection) throw new Error(`Collection ${name} does not exists in the database`);
+			if (!collection) return;
+
 			return collection;
 		});
 
 		fastify.decorate("getCourse", async (code: string) => {
-			const course = await fastify.getCollection("courses").findOne({ code });
-			return course as Course | null;
+			const collection = fastify.getCollection("courses");
+			if (!collection) return;
+
+			const course = await collection.findOne({ code });
+			if (!course) return;
+
+			return course as Course;
 		});
 
 		fastify.decorate("getCoursesArray", async () => {
-			const array = await fastify.getCollection("courses").find({}).toArray();
+			const collection = fastify.getCollection("courses");
+			if (!collection) return;
+
+			const array = await collection.find({}).toArray();
 			return array as Course[];
 		});
 
@@ -47,12 +56,20 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 		});
 
 		fastify.decorate("getUser", async (steamId: string) => {
-			const user = await fastify.getCollection("users").findOne({ steamId });
-			return user as User | null;
+			const collection = fastify.getCollection("users");
+			if (!collection) return;
+
+			const user = await collection.findOne({ steamId });
+			if (!user) return;
+
+			return user as User;
 		});
 
 		fastify.decorate("getUsersArray", async () => {
-			const array = await fastify.getCollection("users").find({}).toArray();
+			const collection = fastify.getCollection("users");
+			if (!collection) return;
+
+			const array = await collection.find({}).toArray();
 			return array as User[];
 		});
 
@@ -69,12 +86,12 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 
 declare module "fastify" {
 	interface FastifyInstance {
-		getCollection: (name: string) => mongodb.Collection;
-		getCourse: (code: string) => Promise<Course | null>;
-		getCoursesArray: () => Promise<Course[]>;
-		getCoursesCollection: () => mongodb.Collection;
-		getUser: (steamId: string) => Promise<User | null>;
-		getUsersArray: () => Promise<User[]>;
-		getUsersCollection: () => mongodb.Collection;
+		getCollection: (name: string) => mongodb.Collection | undefined;
+		getCourse: (code: string) => Promise<Course | undefined>;
+		getCoursesArray: () => Promise<Course[] | undefined>;
+		getCoursesCollection: () => mongodb.Collection | undefined;
+		getUser: (steamId: string) => Promise<User | undefined>;
+		getUsersArray: () => Promise<User[] | undefined>;
+		getUsersCollection: () => mongodb.Collection | undefined;
 	}
 }
