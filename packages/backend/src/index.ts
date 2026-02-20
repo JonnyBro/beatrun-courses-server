@@ -9,6 +9,7 @@ import Fastify from "fastify";
 import { mongoPlugin } from "./plugins/mongo.js";
 
 const fastify = Fastify({
+	trustProxy: config.isBehindProxy,
 	routerOptions: {
 		ignoreTrailingSlash: true,
 	},

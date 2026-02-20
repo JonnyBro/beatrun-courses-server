@@ -1,5 +1,6 @@
 {
 	"production": true,
+	"isBehindProxy": false,
 	"mongo": "mongodb://localhost:27017/courses",
 	"domain": "http://localhost:6547",
 	"secret": "very-strong-secret",
