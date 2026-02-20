@@ -1,12 +1,12 @@
-import config from "@/../config.json";
-import { coursesRouter, usersRouter } from "@/routes/apis";
+import config from "@/../config.json" with { type: "json" };
+import { coursesRouter, usersRouter } from "@/routes/api/index.js";
 // import authRouter from "@/routes/auth";
-import indexRouter from "@/routes/index";
+import indexRouter from "@/routes/index.js";
 import fastifyCookie from "@fastify/cookie";
 import fastifyFormbody from "@fastify/formbody";
 import fastifySession from "@fastify/session";
 import Fastify from "fastify";
-import { mongoPlugin } from "./plugins/mongo";
+import { mongoPlugin } from "./plugins/mongo.js";
 
 const fastify = Fastify({
 	routerOptions: {

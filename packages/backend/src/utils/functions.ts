@@ -1,5 +1,5 @@
-import { SteamUser } from "@/modules/steam";
-import { CourseData, User } from "@/types";
+import { SteamUser } from "@/modules/steam.js";
+import { CourseData, User } from "@/types.js";
 import { FastifyInstance } from "fastify";
 
 const charsList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

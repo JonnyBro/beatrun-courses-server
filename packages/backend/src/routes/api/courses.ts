@@ -1,5 +1,5 @@
-import { CourseData } from "@/types";
-import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions";
+import { CourseData } from "@/types.js";
+import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions.js";
 import { mongodb } from "@fastify/mongodb";
 import { FastifyInstance } from "fastify";
 import LZMA from "lzma";

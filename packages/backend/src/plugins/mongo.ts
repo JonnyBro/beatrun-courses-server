@@ -1,5 +1,5 @@
-import config from "@/../config.json";
-import { Course, User } from "@/types";
+import config from "@/../config.json" with { type: "json" };
+import { Course, User } from "@/types.js";
 import fastifyMongo, { mongodb } from "@fastify/mongodb";
 import { FastifyInstance } from "fastify";
 import fastifyPlugin from "fastify-plugin";

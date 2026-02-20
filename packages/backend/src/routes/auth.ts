@@ -1,5 +1,5 @@
-import config from "@/../config.json";
-import { buildAuthUrl, checkLogin, getSteamProfile } from "@/modules/steam";
+import config from "@/../config.json" with { type: "json" };
+import { buildAuthUrl, checkLogin, getSteamProfile } from "@/modules/steam.js";
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {

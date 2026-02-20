@@ -1,4 +1,4 @@
-import { createUser, getUserFromKey, getUserFromSteamIdOrProfile, sanitize } from "@/utils/functions";
+import { createUser, getUserFromKey, getUserFromSteamIdOrProfile, sanitize } from "@/utils/functions.js";
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {
