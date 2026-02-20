@@ -1,5 +1,8 @@
 # Beatrun Courses Database Server
 
+> [!WARNING]
+> Only the backend is used, frontend does not work with the current backend implementation.
+
 Beatrun Courses Database written in [TypeScript](https://typescriptlang.org/).\
 For the backend we are using [fastify](https://fastify.dev) and for the frontend we are using [Vue 3](https://vuejs.org/).\
 \
