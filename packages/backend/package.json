@@ -1,6 +1,6 @@
 {
 	"name": "@beatrun-courses-server/backend",
-	"version": "2.1.5",
+	"version": "2.1.6",
 	"type": "module",
 	"scripts": {
 		"start": "node dist/index.js",
