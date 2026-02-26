@@ -1,38 +1,27 @@
-import { createUser, getUserFromKey, getUserFromSteamIdOrProfile, sanitize } from "@/utils/functions.js";
+import { type SteamUser } from "@/modules/steam.js";
+import { createUser, getUserFromKey, getUserFromSteamIdOrProfile } from "@/utils/functions.js";
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.post(
-		"/api/users/register",
-		{
-			schema: {
-				headers: {
-					type: "object",
-					required: ["steamid", "username"],
-					properties: {
-						steamid: { type: "string" },
-						username: { type: "string" },
-					},
-				},
-			},
-		},
-		async (req, reply) => {
-			const steamId = req.headers.steamid as string;
-			const username = sanitize(req.headers.username as string);
-			let message = "User already existed";
+	fastify.get("/api/users/register", async (req, reply) => {
+		if (!req.session.profile) return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 
-			let user = await getUserFromSteamIdOrProfile(fastify, steamId);
-			if (!user) {
-				message = "User created successfully";
-				user = await createUser(fastify, steamId, username);
-			}
+		const profile = req.session.profile as SteamUser | string;
 
-			reply.status(200).send({ code: reply.statusCode, message, data: user });
-		},
-	);
+		let user = await getUserFromSteamIdOrProfile(fastify, profile);
+		if (!user) user = await createUser(fastify, profile);
+
+		req.session.user = user;
+
+		return reply
+			.status(200)
+			.send(
+				`User: ${user.username || "null"}\nKey: ${user.key}\nCopy the key above and paste it into the box in-game.`,
+			);
+	});
 
 	fastify.get("/api/users/get/:id", async (req, reply) => {
-		if (!req.session.user || !req.session.user.admin) {
+		if (!req.session.user?.admin) {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 		}
 
@@ -67,7 +56,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	);
 
 	fastify.delete("/api/users/delete/:id", async (req, reply) => {
-		if (!req.session.user || !req.session.user.admin) {
+		if (!req.session.user?.admin) {
 			return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 		}
 

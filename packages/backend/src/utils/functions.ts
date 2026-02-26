@@ -18,7 +18,7 @@ export const createUser = async (fastify: FastifyInstance, data: SteamUser | str
 		{
 			$set: {
 				key,
-				username: isSUser ? data.personaname : username,
+				username: isSUser ? sanitize(data.personaname) : sanitize(username),
 				createdAt: Date.now(),
 				admin: false,
 			},
@@ -58,7 +58,9 @@ export const generateRandomString = (length: number, chars = charsList) => {
 	return result;
 };
 
-export const sanitize = (string: string, forceLowercase = false, strict = false) => {
+export const sanitize = (string?: string, forceLowercase = false, strict = false) => {
+	if (!string) return;
+
 	string = string.toString().trim();
 
 	let clean = string.replace(/[~`!@#$%^&*()=+[\]{}|\\;:'",<.>/?\u2018\u2019\u201C\u201D\u2013\u2014–—]/g, "");
