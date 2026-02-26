@@ -37,7 +37,7 @@ fastify.register(usersRouter);
 
 fastify.listen(
 	{
-		host: config.production ? undefined : "0.0.0.0",
+		host: config.host,
 		port: config.port,
 		listenTextResolver: address => `Server v${pkg.version} is listening at ${address}`,
 	},

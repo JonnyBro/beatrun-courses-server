@@ -1,10 +1,11 @@
 {
+	"host": "0.0.0.0",
+	"port": 6547,
 	"production": true,
 	"isBehindProxy": false,
 	"mongo": "mongodb://localhost:27017/courses",
 	"domain": "http://localhost:6547",
 	"secret": "very-strong-secret",
-	"port": 6547,
 	"_comment_steamApiKey": "Leave empty if you don't have an api key",
 	"steamApiKey": "",
 	"webhookUrl": ""
