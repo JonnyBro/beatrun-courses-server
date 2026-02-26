@@ -1,4 +1,5 @@
 import config from "@/../config.json" with { type: "json" };
+import pkg from "@/../package.json" with { type: "json" };
 import { coursesRouter, usersRouter } from "@/routes/api/index.js";
 import authRouter from "@/routes/auth.js";
 import indexRouter from "@/routes/index.js";
@@ -34,9 +35,16 @@ fastify.register(coursesRouter);
 fastify.register(indexRouter);
 fastify.register(usersRouter);
 
-fastify.listen({ host: "0.0.0.0", port: config.port }, err => {
-	if (err) {
-		fastify.log.error(err);
-		process.exit(1);
-	}
-});
+fastify.listen(
+	{
+		host: config.production ? undefined : "0.0.0.0",
+		port: config.port,
+		listenTextResolver: address => `Server v${pkg.version} is listening at ${address}`,
+	},
+	err => {
+		if (err) {
+			fastify.log.error(err);
+			process.exit(1);
+		}
+	},
+);
