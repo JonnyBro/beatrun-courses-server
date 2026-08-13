@@ -1,5 +1,5 @@
 import { type SteamUser } from "@/modules/steam.js";
-import { createUser, getUserFromKey, getUserFromSteamIdOrProfile } from "@/utils/functions.js";
+import { createUser, getUserFromKey, getUserFromSteamId } from "@/utils/functions.js";
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {
@@ -8,7 +8,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		const profile = req.session.profile as SteamUser | string;
 
-		let user = await getUserFromSteamIdOrProfile(fastify, profile);
+		let user;
+
+		if (typeof profile === "string") user = await getUserFromSteamId(fastify, profile);
+		else user = await getUserFromSteamId(fastify, profile.steamid);
+
 		if (!user) user = await createUser(fastify, profile);
 
 		req.session.user = user;
@@ -26,7 +30,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		}
 
 		const params = req.params as { id: string };
-		const user = await getUserFromSteamIdOrProfile(fastify, params.id);
+		const user = await getUserFromSteamId(fastify, params.id);
 		if (!user) return reply.status(404).send({ code: reply.statusCode, message: "No user found" });
 
 		reply.status(200).send({ code: reply.statusCode, data: user });
@@ -65,7 +69,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
 		}
 
-		const user = await getUserFromSteamIdOrProfile(fastify, params.id);
+		const user = await getUserFromSteamId(fastify, params.id);
 		if (!user) {
 			return reply.status(404).send({ code: reply.statusCode, message: "User not found" });
 		}

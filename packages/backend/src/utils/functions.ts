@@ -32,7 +32,7 @@ export const createUser = async (fastify: FastifyInstance, data: SteamUser | str
 	return res as User;
 };
 
-export const getUserFromSteamIdOrProfile = async (fastify: FastifyInstance, data: SteamUser | string) => {
+export const getUserFromSteamId = async (fastify: FastifyInstance, data: SteamUser | string) => {
 	const user = await fastify.getUser(isSteamUser(data) ? data.steamid : data);
 	if (!user) return;
 
