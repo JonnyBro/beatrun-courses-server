@@ -210,7 +210,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 			}
 
-			if (course.uploadedBy.steamId !== user.steamId) {
+			if (course.uploadedBy.steamId !== user.steamId || !user.admin) {
 				return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
 			}
 
