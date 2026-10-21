@@ -1,0 +1,164 @@
+/*
+ * Themes are presets taken from the game itself, set as data-theme="<name>" on <html>.
+ * Dark themes also get the "dark" class. Keep this list in sync with src/lib/theme.ts and index.html
+ *
+ * --hl      highlight, used for hover and active states (AEUI hover green in the HUD theme)
+ * --edge    the solid block on the left of HUD panels
+ * --gold/silver/bronze  place colors from the in-game scoreboard
+ */
+
+/* ---------------------------------------------------------------- HUD (default) */
+:root,
+:root[data-theme="hud"] {
+	--radius: 0px;
+	--background: rgb(14 14 14);
+	--foreground: rgb(255 255 255);
+	--card: rgb(20 20 20 / 0.78);
+	--card-foreground: rgb(255 255 255);
+	--popover: rgb(24 24 24);
+	--popover-foreground: rgb(255 255 255);
+	--primary: rgb(255 255 255);
+	--primary-foreground: rgb(14 14 14);
+	--secondary: rgb(32 32 32);
+	--secondary-foreground: rgb(255 255 255);
+	--muted: rgb(32 32 32);
+	--muted-foreground: rgb(180 180 180);
+	--accent: rgb(40 40 40);
+	--accent-foreground: rgb(255 255 255);
+	--destructive: rgb(200 25 25);
+	--destructive-foreground: rgb(255 90 90);
+	--border: rgb(55 55 55);
+	--input: rgb(55 55 55);
+	--ring: rgb(0 230 0);
+	--hl: rgb(0 230 0);
+	--hl-foreground: rgb(0 0 0);
+	--edge: rgb(230 230 230);
+	--gold: rgb(255 215 0);
+	--silver: rgb(192 192 192);
+	--bronze: rgb(205 127 50);
+	--scanlines: 0.06;
+}
+
+/* ---------------------------------------------------------------- Courses menu, dark */
+:root[data-theme="courses-dark"] {
+	--radius: 6px;
+	--background: rgb(40 40 40);
+	--foreground: rgb(255 255 255);
+	--card: rgb(58 58 58);
+	--card-foreground: rgb(255 255 255);
+	--popover: rgb(50 50 50);
+	--popover-foreground: rgb(255 255 255);
+	--primary: rgb(255 60 60);
+	--primary-foreground: rgb(255 255 255);
+	--secondary: rgb(72 72 72);
+	--secondary-foreground: rgb(255 255 255);
+	--muted: rgb(50 50 50);
+	--muted-foreground: rgb(180 180 180);
+	--accent: rgb(95 95 95);
+	--accent-foreground: rgb(255 255 255);
+	--destructive: rgb(183 28 28);
+	--destructive-foreground: rgb(255 110 110);
+	--border: rgb(80 80 80);
+	--input: rgb(75 75 75);
+	--ring: rgb(220 60 60);
+	--hl: rgb(255 60 60);
+	--hl-foreground: rgb(255 255 255);
+	--edge: rgb(255 60 60);
+	--gold: rgb(255 215 0);
+	--silver: rgb(192 192 192);
+	--bronze: rgb(205 127 50);
+	--scanlines: 0;
+}
+
+/* ---------------------------------------------------------------- Courses menu, light */
+:root[data-theme="courses-light"] {
+	--radius: 6px;
+	--background: rgb(245 247 250);
+	--foreground: rgb(0 0 0);
+	--card: rgb(255 255 255);
+	--card-foreground: rgb(0 0 0);
+	--popover: rgb(255 255 255);
+	--popover-foreground: rgb(0 0 0);
+	--primary: rgb(33 150 243);
+	--primary-foreground: rgb(255 255 255);
+	--secondary: rgb(225 229 235);
+	--secondary-foreground: rgb(0 0 0);
+	--muted: rgb(230 233 238);
+	--muted-foreground: rgb(110 110 110);
+	--accent: rgb(200 210 220);
+	--accent-foreground: rgb(0 0 0);
+	--destructive: rgb(229 57 53);
+	--destructive-foreground: rgb(198 40 40);
+	--border: rgb(210 214 220);
+	--input: rgb(210 214 220);
+	--ring: rgb(25 118 210);
+	--hl: rgb(25 118 210);
+	--hl-foreground: rgb(255 255 255);
+	--edge: rgb(33 150 243);
+	--gold: rgb(184 134 11);
+	--silver: rgb(120 120 130);
+	--bronze: rgb(160 82 45);
+	--scanlines: 0;
+}
+
+/* ---------------------------------------------------------------- Purist (Mirror's Edge) */
+:root[data-theme="purist"] {
+	--radius: 0px;
+	--background: rgb(236 236 234);
+	--foreground: rgb(17 17 17);
+	--card: rgb(250 250 249);
+	--card-foreground: rgb(17 17 17);
+	--popover: rgb(250 250 249);
+	--popover-foreground: rgb(17 17 17);
+	--primary: rgb(17 17 17);
+	--primary-foreground: rgb(250 250 249);
+	--secondary: rgb(226 226 224);
+	--secondary-foreground: rgb(17 17 17);
+	--muted: rgb(226 226 224);
+	--muted-foreground: rgb(100 100 100);
+	--accent: rgb(220 218 216);
+	--accent-foreground: rgb(17 17 17);
+	--destructive: rgb(200 25 25);
+	--destructive-foreground: rgb(200 25 25);
+	--border: rgb(205 205 202);
+	--input: rgb(205 205 202);
+	--ring: rgb(218 37 29);
+	--hl: rgb(218 37 29);
+	--hl-foreground: rgb(255 255 255);
+	--edge: rgb(218 37 29);
+	--gold: rgb(184 134 11);
+	--silver: rgb(120 120 130);
+	--bronze: rgb(160 82 45);
+	--scanlines: 0;
+}
+
+/* ---------------------------------------------------------------- Infection */
+:root[data-theme="infection"] {
+	--radius: 0px;
+	--background: rgb(14 8 8);
+	--foreground: rgb(245 235 235);
+	--card: rgb(26 14 14 / 0.8);
+	--card-foreground: rgb(245 235 235);
+	--popover: rgb(30 16 16);
+	--popover-foreground: rgb(245 235 235);
+	--primary: rgb(200 25 25);
+	--primary-foreground: rgb(255 255 255);
+	--secondary: rgb(40 20 20);
+	--secondary-foreground: rgb(245 235 235);
+	--muted: rgb(40 20 20);
+	--muted-foreground: rgb(185 150 150);
+	--accent: rgb(55 25 25);
+	--accent-foreground: rgb(245 235 235);
+	--destructive: rgb(200 25 25);
+	--destructive-foreground: rgb(255 90 90);
+	--border: rgb(75 32 32);
+	--input: rgb(75 32 32);
+	--ring: rgb(255 60 60);
+	--hl: rgb(255 60 60);
+	--hl-foreground: rgb(0 0 0);
+	--edge: rgb(200 25 25);
+	--gold: rgb(255 215 0);
+	--silver: rgb(192 192 192);
+	--bronze: rgb(205 127 50);
+	--scanlines: 0.05;
+}

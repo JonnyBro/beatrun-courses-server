@@ -1,12 +1,16 @@
 import config from "@/../config.json" with { type: "json" };
 import pkg from "@/../package.json" with { type: "json" };
-import { coursesRouter, usersRouter } from "@/routes/api/index.js";
+import { adminRouter, coursesRouter, leaderboardRouter, usersRouter } from "@/routes/api/index.js";
 import authRouter from "@/routes/auth.js";
 import indexRouter from "@/routes/index.js";
 import fastifyCookie from "@fastify/cookie";
 import fastifyFormbody from "@fastify/formbody";
 import fastifySession from "@fastify/session";
+import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
+import { existsSync } from "fs";
+import { dirname, resolve } from "path";
+import { fileURLToPath } from "url";
 import { mongoPlugin } from "./plugins/mongo.js";
 
 const fastify = Fastify({
@@ -31,9 +35,26 @@ fastify.register(fastifyFormbody);
 
 // Routers
 fastify.register(authRouter);
+fastify.register(adminRouter);
 fastify.register(coursesRouter);
-fastify.register(indexRouter);
+fastify.register(leaderboardRouter);
 fastify.register(usersRouter);
+
+const frontendPath = resolve(dirname(fileURLToPath(import.meta.url)), "../../frontend/dist");
+
+if (existsSync(resolve(frontendPath, "index.html"))) {
+	fastify.register(fastifyStatic, { root: frontendPath });
+
+	fastify.setNotFoundHandler((req, reply) => {
+		if (req.method === "GET" && !req.url.startsWith("/api") && !req.url.startsWith("/auth")) {
+			return reply.sendFile("index.html");
+		}
+
+		reply.status(404).send({ code: 404, message: "Not found" });
+	});
+} else {
+	fastify.register(indexRouter);
+}
 
 fastify.listen(
 	{

@@ -7,6 +7,13 @@ declare module "@fastify/session" {
 		// eslint-disable-next-line
 		profile?: SteamUser | string;
 		user?: User;
+		returnTo?: string;
+	}
+}
+
+declare module "fastify" {
+	interface FastifyRequest {
+		webUser?: User;
 	}
 }
 
@@ -26,6 +33,7 @@ export interface User extends mongodb.WithId<mongodb.BSON.Document> {
 	steamId: string;
 	createdAt: number;
 	username?: string;
+	avatar?: string;
 	key?: string;
 	admin?: boolean;
 }
@@ -34,13 +42,28 @@ export interface Course extends mongodb.WithId<mongodb.BSON.Document> {
 	code: string;
 	data?: mongodb.Binary;
 	downloadCount: number;
+	runsCount?: number;
 	mapName: string;
 	name: string;
-	objectCount: number;
+	elementsCount: number;
 	uploadedAt: number;
 	uploadedBy: {
 		steamId: string;
 		username: string;
 	};
-	workshopId: string;
+	workshopId: string | null;
+	/** CRC32 of the course JSON as a decimal string, same as util.CRC() in GMod */
+	crc?: string;
+}
+
+/** Best time of a player on a course. One document per (courseCode, steamId) pair. */
+export interface CourseRecord extends mongodb.WithId<mongodb.BSON.Document> {
+	courseCode: string;
+	steamId: string;
+	/** Best time in seconds */
+	time: number;
+	/** How many times the player has finished the course */
+	runs: number;
+	createdAt: number;
+	updatedAt: number;
 }

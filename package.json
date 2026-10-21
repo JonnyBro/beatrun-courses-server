@@ -4,8 +4,9 @@
 	"description": "Beatrun courses database",
 	"type": "module",
 	"scripts": {
-		"dev": "pnpm -r --parallel run dev",
 		"build": "pnpm -r --parallel run build",
+		"dev": "pnpm -r --parallel run dev",
+		"start": "pnpm -r --parallel run start",
 		"lint": "eslint --cache --fix .",
 		"format": "prettier --write --cache .",
 		"prepare": "husky"
@@ -32,6 +33,7 @@
 		"husky": "^9.1.7",
 		"lint-staged": "^16.0.0",
 		"prettier": "^3.5.3",
+		"prettier-eslint": "^17.1.2",
 		"typescript": "~5.8.0"
 	},
 	"lint-staged": {
