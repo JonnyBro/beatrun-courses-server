@@ -27,7 +27,7 @@ Course file structure (from 0 to 6):
 	Entities,
 	Restrict player's speed (0 is default, 325) | undefined,
 */
-export type CourseData = [Array<object>, Array<object>, string, number, string, Array<object>, number?];
+export type CourseData = [Array<object>, Array<object>, string, number, string, Array<object>, number?, Array<object>?];
 
 export interface User extends mongodb.WithId<mongodb.BSON.Document> {
 	steamId: string;
