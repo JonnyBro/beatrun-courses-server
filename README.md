@@ -77,7 +77,7 @@ Response: `{ code, message, data: { code, name, personalBest: boolean, best: num
 | PATCH       | `/api/admin/courses/:code`                               | Admin                                                           |
 | GET, DELETE | `/api/admin/records`, `/api/admin/records/:id`           | Admin                                                           |
 
-`/auth?redirect=/path` returns to the website after login; without `redirect` it shows the key as plain text like before.
+`/auth?redirect=/path` signs in through Steam and returns to that page, `/profile` (with the game key) by default.
 
 ### Bans
 

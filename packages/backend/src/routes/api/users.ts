@@ -1,13 +1,5 @@
-import { type SteamUser } from "@/modules/steam.js";
 import { Course, CourseRecord } from "@/types.js";
-import {
-	createUser,
-	generateRandomString,
-	getUserFromKey,
-	getUserFromSteamId,
-	randomNum,
-	sanitize,
-} from "@/utils/functions.js";
+import { generateRandomString, getUserFromKey, getUserFromSteamId, randomNum } from "@/utils/functions.js";
 import {
 	calculateStandings,
 	getBannedSteamIds,
@@ -22,39 +14,6 @@ import {
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/api/users/register", async (req, reply) => {
-		if (!req.session.profile) return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
-
-		const profile = req.session.profile as SteamUser | string;
-
-		let user;
-
-		if (typeof profile === "string") user = await getUserFromSteamId(fastify, profile);
-		else user = await getUserFromSteamId(fastify, profile.steamid);
-
-		if (!user) user = await createUser(fastify, profile);
-
-		if (typeof profile !== "string") {
-			const update = { username: sanitize(profile.personaname) ?? user.username, avatar: profile.avatarfull };
-			await fastify.getUsersCollection()?.updateOne({ steamId: user.steamId }, { $set: update });
-			user = { ...user, ...update };
-		}
-
-		req.session.user = user;
-
-		const returnTo = req.session.returnTo;
-		if (returnTo) {
-			req.session.returnTo = undefined;
-			return reply.redirect(returnTo);
-		}
-
-		return reply
-			.status(200)
-			.send(
-				`User: ${user.username || "null"}\nKey: ${user.key}\nCopy the key above and paste it into the box in-game.`,
-			);
-	});
-
 	fastify.get("/api/users/get/:id", { preHandler: requireAdmin(fastify) }, async (req, reply) => {
 		const params = req.params as { id: string };
 		const user = await getUserFromSteamId(fastify, params.id);
@@ -130,6 +89,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/api/users/me", async (req, reply) => {
 		const user = await getSessionUser(fastify, req);
 
+		/* eslint-disable @stylistic/indent */
 		reply.status(200).send({
 			code: reply.statusCode,
 			data: user
@@ -140,6 +100,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					}
 				: null,
 		});
+		/* eslint-enable @stylistic/indent */
 	});
 
 	fastify.post("/api/users/me/key", { preHandler: requireUser(fastify) }, async (req, reply) => {

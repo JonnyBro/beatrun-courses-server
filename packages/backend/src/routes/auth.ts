@@ -1,30 +1,53 @@
 import config from "@/../config.json" with { type: "json" };
 import { buildAuthUrl, checkLogin, getSteamProfile } from "@/modules/steam.js";
-import { createUser } from "@/utils/functions.js";
-import { FastifyInstance } from "fastify";
+import { createUser, sanitize } from "@/utils/functions.js";
+import { FastifyInstance, FastifyRequest } from "fastify";
+
+const getRedirect = (req: FastifyRequest) => {
+	const { redirect } = req.query as { redirect?: string };
+
+	return redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/profile";
+};
 
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/auth", (req, reply) => {
-		const { redirect } = req.query as { redirect?: string };
-		if (redirect && redirect.startsWith("/") && !redirect.startsWith("//")) req.session.returnTo = redirect;
+		const callback = `${config.domain}/auth/callback?redirect=${encodeURIComponent(getRedirect(req))}`;
 
-		const url = buildAuthUrl(config.domain, `${config.domain}/auth/callback`);
-
-		reply.redirect(url);
+		reply.redirect(buildAuthUrl(config.domain, callback));
 	});
 
 	fastify.get("/auth/callback", async (req, reply) => {
+		let steamId: string;
+
 		try {
-			const steamId = (await checkLogin(req.url, config.domain)).getBigIntID().toString();
-
-			if (!config.steamApiKey) req.session.profile = steamId;
-			else req.session.profile = await getSteamProfile(steamId, config.steamApiKey);
-
-			reply.redirect("/api/users/register");
+			steamId = (await checkLogin(req.url, config.domain)).getBigIntID().toString();
 		} catch (e) {
-			reply.status(500).send({ code: reply.statusCode, message: e });
 			console.error(e);
+			return reply.redirect("/");
 		}
+
+		/* eslint-disable @stylistic/indent */
+		const profile = config.steamApiKey
+			? await getSteamProfile(steamId, config.steamApiKey).catch((e: unknown) => {
+					console.error(e);
+					return undefined;
+				})
+			: undefined;
+		/* eslint-enable @stylistic/indent */
+
+		if (!(await fastify.getUser(steamId))) await createUser(fastify, profile ?? steamId);
+
+		if (profile) {
+			const username = sanitize(profile.personaname);
+
+			await fastify
+				.getUsersCollection()
+				?.updateOne({ steamId }, { $set: { avatar: profile.avatarfull, ...(username && { username }) } });
+		}
+
+		req.session.user = await fastify.getUser(steamId);
+
+		reply.redirect(getRedirect(req));
 	});
 
 	if (!config.production) {
@@ -43,11 +66,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				await fastify.getUsersCollection()?.updateOne({ steamId: dev.steamId }, { $set: { admin: dev.admin } });
 			}
 
-			req.session.profile = dev.steamId;
 			req.session.user = await fastify.getUser(dev.steamId);
 
-			const { redirect } = req.query as { redirect?: string };
-			reply.redirect(redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/");
+			reply.redirect(getRedirect(req));
 		});
 	}
 
@@ -55,14 +76,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		await req.session.destroy();
 
 		reply.redirect("/");
-	});
-
-	fastify.get("/auth/info", async (req, reply) => {
-		reply.status(200).send({
-			code: reply.statusCode,
-			profile: req.session.profile || {},
-			user: req.session.user || {},
-		});
 	});
 };
 

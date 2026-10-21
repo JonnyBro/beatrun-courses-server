@@ -2,7 +2,6 @@ import config from "@/../config.json" with { type: "json" };
 import pkg from "@/../package.json" with { type: "json" };
 import { adminRouter, coursesRouter, leaderboardRouter, usersRouter } from "@/routes/api/index.js";
 import authRouter from "@/routes/auth.js";
-import indexRouter from "@/routes/index.js";
 import fastifyCookie from "@fastify/cookie";
 import fastifyFormbody from "@fastify/formbody";
 import fastifySession from "@fastify/session";
@@ -52,8 +51,6 @@ if (existsSync(resolve(frontendPath, "index.html"))) {
 
 		reply.status(404).send({ code: 404, message: "Not found" });
 	});
-} else {
-	fastify.register(indexRouter);
 }
 
 fastify.listen(

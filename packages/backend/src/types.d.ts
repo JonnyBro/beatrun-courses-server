@@ -1,13 +1,9 @@
-import { type SteamUser } from "@/modules/steam";
 import { mongodb } from "@fastify/mongodb";
 import "@fastify/session";
 
 declare module "@fastify/session" {
 	interface FastifySessionObject {
-		// eslint-disable-next-line
-		profile?: SteamUser | string;
 		user?: User;
-		returnTo?: string;
 	}
 }
 
