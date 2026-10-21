@@ -6,7 +6,7 @@ import { computed, watchEffect } from "vue";
  * `colors` are only used for the preview in the theme picker: background, panel, highlight
  */
 export const themes = [
-	{ name: "hud", label: "HUD", dark: true, colors: ["rgb(14 14 14)", "rgb(255 255 255)", "rgb(0 230 0)"] },
+	{ name: "beatrun", label: "Beatrun", dark: true, colors: ["rgb(14 14 14)", "rgb(255 255 255)", "rgb(235 45 45)"] },
 	{
 		name: "courses-dark",
 		label: "Courses Dark",
@@ -27,7 +27,7 @@ export type ThemeName = (typeof themes)[number]["name"];
 
 export const THEME_STORAGE_KEY = "br-theme";
 
-const theme = useStorage<ThemeName>(THEME_STORAGE_KEY, "hud");
+const theme = useStorage<ThemeName>(THEME_STORAGE_KEY, "beatrun");
 
 let applied = false;
 

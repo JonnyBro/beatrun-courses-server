@@ -2,14 +2,14 @@
  * Themes are presets taken from the game itself, set as data-theme="<name>" on <html>.
  * Dark themes also get the "dark" class. Keep this list in sync with src/lib/theme.ts and index.html
  *
- * --hl      highlight, used for hover and active states (AEUI hover green in the HUD theme)
+ * --hl      highlight, used for hover and active states (the main red of the gamemode in the Beatrun theme)
  * --edge    the solid block on the left of HUD panels
  * --gold/silver/bronze  place colors from the in-game scoreboard
  */
 
-/* ---------------------------------------------------------------- HUD (default) */
+/* ---------------------------------------------------------------- Beatrun (default), same as the in-game menus */
 :root,
-:root[data-theme="hud"] {
+:root[data-theme="beatrun"] {
 	--radius: 0px;
 	--background: rgb(14 14 14);
 	--foreground: rgb(255 255 255);
@@ -29,9 +29,9 @@
 	--destructive-foreground: rgb(255 90 90);
 	--border: rgb(55 55 55);
 	--input: rgb(55 55 55);
-	--ring: rgb(0 230 0);
-	--hl: rgb(0 230 0);
-	--hl-foreground: rgb(0 0 0);
+	--ring: rgb(235 45 45);
+	--hl: rgb(235 45 45);
+	--hl-foreground: rgb(255 255 255);
 	--edge: rgb(230 230 230);
 	--gold: rgb(255 215 0);
 	--silver: rgb(192 192 192);

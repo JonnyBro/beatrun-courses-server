@@ -12,8 +12,8 @@
 		<!-- Apply the saved theme before the app loads to avoid a flash, keep in sync with src/lib/theme.ts -->
 		<script>
 			(function () {
-				var themes = { hud: 1, "courses-dark": 1, "courses-light": 0, purist: 0, infection: 1 };
-				var theme = "hud";
+				var themes = { beatrun: 1, "courses-dark": 1, "courses-light": 0, purist: 0, infection: 1 };
+				var theme = "beatrun";
 				try {
 					var saved = localStorage.getItem("br-theme");
 					if (saved && saved in themes) theme = saved;
