@@ -33,15 +33,26 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			console.log("[backend] Created 'records' collection");
 		}
 
-		await db?.collection("users").createIndex({ steamId: 1 });
-		await db?.collection("courses").createIndex({ code: 1 });
-		await db?.collection("courses").createIndex({ "uploadedBy.steamId": 1 });
-		await db?.collection("records").createIndex({ courseCode: 1, steamId: 1 }, { unique: true });
-		await db?.collection("records").createIndex({ courseCode: 1, time: 1 });
-		await db?.collection("records").createIndex({ steamId: 1 });
-		await db?.collection("courses").createIndex({ crc: 1 });
+		const ensureIndex = async (
+			collection: string,
+			keys: mongodb.IndexSpecification,
+			options?: mongodb.CreateIndexesOptions,
+		) => {
+			try {
+				await db?.collection(collection).createIndex(keys, options);
+			} catch (e) {
+				if (!(e instanceof mongodb.MongoServerError) || (e.code !== 85 && e.code !== 86)) throw e;
+			}
+		};
 
-		// Courses uploaded before records existed don't have a CRC, the game identifies loaded courses by it
+		await ensureIndex("users", { steamId: 1 });
+		await ensureIndex("courses", { code: 1 }, { unique: true });
+		await ensureIndex("courses", { "uploadedBy.steamId": 1 });
+		await ensureIndex("courses", { crc: 1 });
+		await ensureIndex("records", { courseCode: 1, steamId: 1 }, { unique: true });
+		await ensureIndex("records", { courseCode: 1, time: 1 });
+		await ensureIndex("records", { steamId: 1 });
+
 		const withoutCrc = db
 			?.collection("courses")
 			.find({ crc: { $exists: false } }, { projection: { code: 1, data: 1 } });
