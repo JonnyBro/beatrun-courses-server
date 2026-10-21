@@ -5,7 +5,6 @@
 		"moduleResolution": "NodeNext",
 		"strict": true,
 		"sourceMap": true,
-		"baseUrl": ".",
 		"skipLibCheck": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,

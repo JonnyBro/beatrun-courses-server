@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { DropdownMenuSubTriggerProps } from "reka-ui";
 import type { HTMLAttributes } from "vue";
-import { reactiveOmit } from "@vueuse/core";
 import { ChevronRight } from "lucide-vue-next";
-import { DropdownMenuSubTrigger, useForwardProps } from "reka-ui";
+import { reactiveOmit } from "@vueuse/core";
 import { cn } from "@/lib/utils";
+import { DropdownMenuSubTrigger, useForwardProps } from "reka-ui";
 
 const props = defineProps<DropdownMenuSubTriggerProps & { class?: HTMLAttributes["class"]; inset?: boolean }>();
 
@@ -16,9 +16,10 @@ const forwardedProps = useForwardProps(delegatedProps);
 	<DropdownMenuSubTrigger
 		data-slot="dropdown-menu-sub-trigger"
 		v-bind="forwardedProps"
+		:data-inset="inset ? '' : undefined"
 		:class="
 			cn(
-				'focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 text-sm outline-hidden select-none data-[inset]:pl-8',
+				`relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-hidden select-none focus:bg-foreground/5 focus:text-hl data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:pl-8 data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 data-[variant=destructive]:focus:text-destructive dark:data-[variant=destructive]:focus:bg-destructive/20 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg:not([class*='text-'])]:text-muted-foreground data-[variant=destructive]:*:[svg]:text-destructive!`,
 				props.class,
 			)
 		"

@@ -1,0 +1,296 @@
+{
+	"meta": {
+		"name": "English"
+	},
+	"common": {
+		"unknown": "Unknown",
+		"loading": "Loading...",
+		"somethingWrong": "Something went wrong",
+		"loadError": "Couldn't load this",
+		"tryAgain": "Try again",
+		"cancel": "Cancel",
+		"confirm": "Confirm",
+		"save": "Save",
+		"delete": "Delete",
+		"open": "Open",
+		"edit": "Edit",
+		"actions": "Actions",
+		"copied": "Copied to clipboard",
+		"copyFailed": "Couldn't copy to clipboard",
+		"previous": "Previous",
+		"next": "Next",
+		"signIn": "Sign in",
+		"signInSteam": "Sign in through Steam",
+		"steamProfile": "Steam profile",
+		"backToCourses": "Back to courses",
+		"admin": "Admin",
+		"points": "{n} pts"
+	},
+	"header": {
+		"courses": "Courses",
+		"leaderboard": "Leaderboard",
+		"admin": "Admin",
+		"subtitle": "/ courses",
+		"menu": "Menu",
+		"github": "Beatrun on GitHub",
+		"discord": "Discord",
+		"theme": "Theme",
+		"language": "Language",
+		"languageAuto": "Browser language"
+	},
+	"userMenu": {
+		"account": "Account",
+		"profile": "Profile",
+		"gameKey": "Game key",
+		"admin": "Admin",
+		"signOut": "Sign out"
+	},
+	"footer": {
+		"tagline": "Beatrun courses · {key} in-game",
+		"source": "Source code"
+	},
+	"hud": {
+		"rank": "Rank #{rank}",
+		"unranked": "Unranked",
+		"freeplay": "Freeplay",
+		"notSignedIn": "Not signed in",
+		"signInHint": "Sign in through Steam to get your game key and save your times.",
+		"completed": "{done}/{total} courses completed",
+		"gameKey": "Game key",
+		"profile": "Profile"
+	},
+	"home": {
+		"intro": "Courses made by Beatrun players. Copy a code, open the courses menu in-game with {key} and load it. Finished runs go to the leaderboard.",
+		"stats": {
+			"courses": "Courses",
+			"maps": "Maps",
+			"players": "Players",
+			"runs": "Runs",
+			"downloads": "Downloads"
+		},
+		"title": "Courses",
+		"found": "{n} found",
+		"searchPlaceholder": "Name, code, map or author",
+		"allMaps": "All maps",
+		"sort": {
+			"newest": "Newest",
+			"oldest": "Oldest",
+			"downloads": "Most downloaded",
+			"runs": "Most played",
+			"name": "Name"
+		},
+		"empty": "No courses",
+		"emptyFiltered": "Nothing matches the search or map.",
+		"emptyAll": "Nobody has uploaded a course yet.",
+		"clearFilters": "Clear filters"
+	},
+	"card": {
+		"open": "Open {name}",
+		"copyCode": "Copy code",
+		"codeCopied": "Code {code} copied",
+		"downloadsTip": "Downloads: {n}",
+		"runsTip": "Finished runs: {n}",
+		"elementsTip": "Objects on the course: {n}",
+		"downloadFile": "Download course file"
+	},
+	"course": {
+		"notFound": "Course not found",
+		"notFoundText": "There is no course with code {code}. It may have been deleted.",
+		"speedLimit": "speed limit {n}",
+		"byline": "by {author} · {when}",
+		"codeCopied": "Code copied, paste it in the courses menu",
+		"workshop": "Workshop",
+		"howTo": "Load the map {map}, press {key}, paste the code and start the course.",
+		"stats": {
+			"record": "Record",
+			"average": "Average",
+			"players": "Players",
+			"runs": "Runs",
+			"downloads": "Downloads",
+			"checkpoints": "Checkpoints",
+			"elements": "Elements",
+			"elementsHint": "{props} props, {entities} entities",
+			"uploaded": "Uploaded"
+		},
+		"tips": {
+			"record": "Fastest time anyone has finished this course in",
+			"average": "Average of every player's best time",
+			"players": "How many players have finished this course",
+			"runs": "Every finished run, repeats included",
+			"downloads": "Downloads from the game and from this site",
+			"checkpoints": "Checkpoints you have to pass to finish",
+			"elements": "Props and entities placed on the course"
+		},
+		"leaderboard": "Leaderboard",
+		"leaderboardHint": "Best time of everyone who finished this course.",
+		"you": "You",
+		"noRuns": "No runs yet",
+		"noRunsText": "Finish this course in-game with your key set and your time shows up here.",
+		"deleteTitle": "Delete this course?",
+		"deleteText": "{name} ({code}) and all times on it will be removed. This can't be undone.",
+		"deleted": "Course deleted",
+		"downloadFile": "Download file",
+		"fileHint": "Put the file into {path} and it shows up in the local courses list (F4)."
+	},
+	"table": {
+		"place": "#",
+		"placeLong": "Place",
+		"player": "Player",
+		"creator": "Creator",
+		"user": "User",
+		"time": "Time",
+		"gap": "Gap",
+		"points": "Points",
+		"runs": "Runs",
+		"runsOn": "Runs on them",
+		"when": "When",
+		"course": "Course",
+		"courses": "Courses",
+		"map": "Map",
+		"author": "Author",
+		"records": "Records",
+		"downloads": "Downloads",
+		"steamId": "Steam ID",
+		"times": "Times",
+		"joined": "Joined",
+		"uploaded": "Uploaded",
+		"updated": "Updated"
+	},
+	"leaderboard": {
+		"title": "Leaderboard",
+		"scoring": "Each course is worth up to 1000 points. The record holder gets all of them, everyone else gets {formula}.",
+		"formula": "1000 × record / your time",
+		"players": "Players",
+		"creators": "Creators",
+		"emptyPlayers": "Nobody here yet",
+		"emptyPlayersText": "Finish any course in-game with your key set to show up here.",
+		"emptyCreators": "No courses uploaded yet"
+	},
+	"profile": {
+		"notFound": "Player not found",
+		"notFoundText": "This player has never signed in on this site.",
+		"courses": "{done}/{total} courses",
+		"joined": "joined {date}",
+		"steam": "Steam",
+		"stats": {
+			"rank": "Rank",
+			"rankOf": "of {n}",
+			"noRuns": "no runs yet",
+			"points": "Points",
+			"records": "Records",
+			"recordsHint": "1st place",
+			"completed": "Completed",
+			"runs": "{n} run | {n} runs",
+			"made": "Made",
+			"madeHint": "courses",
+			"downloads": "Downloads",
+			"runsOnThem": "{n} run on them | {n} runs on them"
+		},
+		"tips": {
+			"rank": "Place among all players by points",
+			"points": "Sum of points from every finished course, up to 1000 per course",
+			"records": "Courses where this player holds the fastest time",
+			"completed": "Different courses finished at least once",
+			"made": "Courses this player has uploaded",
+			"downloads": "Downloads of this player's courses",
+			"progress": "{percent}% of all courses completed"
+		},
+		"tabs": {
+			"times": "Times",
+			"courses": "Courses"
+		},
+		"noTimes": "No finished courses",
+		"noTimesOwn": "Finish a course in-game with your key set and the time shows up here.",
+		"noCourses": "No courses uploaded",
+		"noCoursesOwn": "Build a course in-game and upload it from the courses menu ({key})."
+	},
+	"key": {
+		"title": "Game key",
+		"text": "Paste it into the courses menu in-game ({key}, Profile tab) to upload courses and save your times. Don't share it.",
+		"show": "Show key",
+		"hide": "Hide key",
+		"copy": "Copy",
+		"copied": "Key copied",
+		"new": "New key",
+		"confirmTitle": "Generate a new key?",
+		"confirmText": "Your current key stops working right away. You'll have to paste the new one into the game.",
+		"confirm": "Generate",
+		"generated": "New key generated, paste it into the game again."
+	},
+	"signIn": {
+		"title": "Sign in",
+		"text": "Sign in through Steam to get your game key. With it you can upload courses from the game and your finished runs go to the leaderboard. Only your Steam ID, name and avatar are saved."
+	},
+	"notFound": {
+		"text": "You fell off the map"
+	},
+	"admin": {
+		"subtitle": "Manage users, courses and leaderboard times.",
+		"title": "Admin",
+		"tabs": {
+			"users": "Users",
+			"courses": "Courses",
+			"times": "Times"
+		},
+		"stats": {
+			"users": "Users",
+			"courses": "Courses",
+			"maps": "Maps",
+			"times": "Times",
+			"runs": "Runs",
+			"downloads": "Downloads"
+		},
+		"tips": {
+			"users": "Everyone who has signed in on the site",
+			"courses": "Courses in the database",
+			"maps": "Different maps that have courses",
+			"times": "Best times saved, one per player and course",
+			"runs": "Every finished run on every course",
+			"downloads": "Course downloads from the game and the site",
+			"userCourses": "Courses uploaded by the user",
+			"userTimes": "Courses the user has a time on"
+		},
+		"users": {
+			"search": "Search by name or Steam ID",
+			"empty": "No users found",
+			"makeAdmin": "Make admin",
+			"removeAdmin": "Remove admin",
+			"nowAdmin": "{name} is now an admin",
+			"noLongerAdmin": "{name} is no longer an admin",
+			"delete": "Delete user",
+			"deleteTitle": "Delete {name}?",
+			"deleteText": "Their key stops working. They can sign in again later and get a new account.",
+			"purge": "Also delete their content",
+			"purgeText": "Removes {courses} (with all times on them) and their {times}.",
+			"purgeCourses": "{n} course | {n} courses",
+			"purgeTimes": "{n} time | {n} times",
+			"deleted": "User deleted"
+		},
+		"courses": {
+			"search": "Name, code, map or author",
+			"empty": "No courses found",
+			"editTitle": "Edit course",
+			"editText": "{code} · the course file itself is not changed.",
+			"name": "Name",
+			"map": "Map",
+			"workshopId": "Workshop ID",
+			"workshopPlaceholder": "Empty for base maps",
+			"digitsOnly": "Only digits are allowed.",
+			"updated": "Course updated",
+			"deleteTitle": "Delete {name}?",
+			"deleteText": "Course {code} and all times on it will be removed. This can't be undone.",
+			"deleteConfirm": "Delete course",
+			"deleted": "Course deleted"
+		},
+		"records": {
+			"courseFilter": "Course code (exact)",
+			"playerFilter": "Steam ID (exact)",
+			"empty": "No times found",
+			"deletedCourse": "Deleted course",
+			"delete": "Delete time",
+			"deleteTitle": "Delete this time?",
+			"deleteText": "{time} by {player} on {course}. Use this for cheated or broken runs.",
+			"deleted": "Time deleted"
+		}
+	}
+}
