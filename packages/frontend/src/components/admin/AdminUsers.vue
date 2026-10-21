@@ -137,45 +137,52 @@ const removal = useMutation({
 								</Hint>
 							</TableCell>
 							<TableCell>
-								<DropdownMenu>
-									<Hint :text="$t('common.actions')">
-										<DropdownMenuTrigger as-child>
-											<Button variant="ghost" size="icon-sm" :aria-label="$t('common.actions')"
-												><Ellipsis
-											/></Button>
-										</DropdownMenuTrigger>
-									</Hint>
-									<DropdownMenuContent align="end">
-										<DropdownMenuItem
-											as="a"
-											:href="steamProfileUrl(user.steamId)"
-											target="_blank"
-											rel="noopener"
-										>
-											<ExternalLink />
-											{{ $t("common.steamProfile") }}
-										</DropdownMenuItem>
-										<DropdownMenuItem
-											:disabled="user.steamId === me?.steamId"
-											@select="toggleAdmin.mutate(user)"
-										>
-											<ShieldOff v-if="user.admin" />
-											<Shield v-else />
-											{{
-												user.admin ? $t("admin.users.removeAdmin") : $t("admin.users.makeAdmin")
-											}}
-										</DropdownMenuItem>
-										<DropdownMenuSeparator />
-										<DropdownMenuItem
-											variant="destructive"
-											:disabled="user.steamId === me?.steamId"
-											@select="toDelete = user"
-										>
-											<Trash2 />
-											{{ $t("admin.users.delete") }}
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
+								<Hint :text="$t('common.actions')">
+									<span class="inline-flex">
+										<DropdownMenu>
+											<DropdownMenuTrigger as-child>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													:aria-label="$t('common.actions')"
+													><Ellipsis
+												/></Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuItem
+													as="a"
+													:href="steamProfileUrl(user.steamId)"
+													target="_blank"
+													rel="noopener"
+												>
+													<ExternalLink />
+													{{ $t("common.steamProfile") }}
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													:disabled="user.steamId === me?.steamId"
+													@select="toggleAdmin.mutate(user)"
+												>
+													<ShieldOff v-if="user.admin" />
+													<Shield v-else />
+													{{
+														user.admin
+															? $t("admin.users.removeAdmin")
+															: $t("admin.users.makeAdmin")
+													}}
+												</DropdownMenuItem>
+												<DropdownMenuSeparator />
+												<DropdownMenuItem
+													variant="destructive"
+													:disabled="user.steamId === me?.steamId"
+													@select="toDelete = user"
+												>
+													<Trash2 />
+													{{ $t("admin.users.delete") }}
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									</span>
+								</Hint>
 							</TableCell>
 						</TableRow>
 					</TableBody>

@@ -176,32 +176,37 @@ const removal = useMutation({
 								</Hint>
 							</TableCell>
 							<TableCell>
-								<DropdownMenu>
-									<Hint :text="$t('common.actions')">
-										<DropdownMenuTrigger as-child>
-											<Button variant="ghost" size="icon-sm" :aria-label="$t('common.actions')"
-												><Ellipsis
-											/></Button>
-										</DropdownMenuTrigger>
-									</Hint>
-									<DropdownMenuContent align="end">
-										<DropdownMenuItem as-child>
-											<RouterLink :to="{ name: 'course', params: { code: course.code } }">
-												<ExternalLink />
-												{{ $t("common.open") }}
-											</RouterLink>
-										</DropdownMenuItem>
-										<DropdownMenuItem @select="startEdit(course)">
-											<Pencil />
-											{{ $t("common.edit") }}
-										</DropdownMenuItem>
-										<DropdownMenuSeparator />
-										<DropdownMenuItem variant="destructive" @select="toDelete = course">
-											<Trash2 />
-											{{ $t("common.delete") }}
-										</DropdownMenuItem>
-									</DropdownMenuContent>
-								</DropdownMenu>
+								<Hint :text="$t('common.actions')">
+									<span class="inline-flex">
+										<DropdownMenu>
+											<DropdownMenuTrigger as-child>
+												<Button
+													variant="ghost"
+													size="icon-sm"
+													:aria-label="$t('common.actions')"
+													><Ellipsis
+												/></Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end">
+												<DropdownMenuItem as-child>
+													<RouterLink :to="{ name: 'course', params: { code: course.code } }">
+														<ExternalLink />
+														{{ $t("common.open") }}
+													</RouterLink>
+												</DropdownMenuItem>
+												<DropdownMenuItem @select="startEdit(course)">
+													<Pencil />
+													{{ $t("common.edit") }}
+												</DropdownMenuItem>
+												<DropdownMenuSeparator />
+												<DropdownMenuItem variant="destructive" @select="toDelete = course">
+													<Trash2 />
+													{{ $t("common.delete") }}
+												</DropdownMenuItem>
+											</DropdownMenuContent>
+										</DropdownMenu>
+									</span>
+								</Hint>
 							</TableCell>
 						</TableRow>
 					</TableBody>
