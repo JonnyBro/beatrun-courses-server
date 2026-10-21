@@ -1,6 +1,6 @@
 import { getWorkshopItems } from "@/modules/workshop.js";
 import { Course, CourseData, CourseRecord, User } from "@/types.js";
-import { FastifyInstance, FastifyRequest, preHandlerHookHandler } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest, preHandlerHookHandler } from "fastify";
 import { brotliDecompressSync } from "zlib";
 
 export interface PublicUser {
@@ -8,6 +8,7 @@ export interface PublicUser {
 	username: string | null;
 	avatar: string | null;
 	admin: boolean;
+	banned: boolean;
 	createdAt: number | null;
 }
 
@@ -33,21 +34,30 @@ export const getSessionUser = async (fastify: FastifyInstance, req: FastifyReque
 	return fastify.getUser(steamId);
 };
 
-const sessionGuard =
-	(fastify: FastifyInstance, check: (user: User) => boolean = () => true): preHandlerHookHandler =>
-	(req, reply, done) => {
-		getSessionUser(fastify, req)
-			.then(user => {
-				if (!user || !check(user)) {
-					reply.status(401).send({ code: 401, message: "Unauthorized" });
+// Eslint doesn't like this function :shrug:
+function sessionGuard(fastify: FastifyInstance, check?: (user: User) => boolean): preHandlerHookHandler {
+	return function (req, reply, done) {
+		getSessionUser(fastify, req).then(
+			user => {
+				if (!user || (check && !check(user))) {
+					void reply.status(401).send({ code: 401, message: "Unauthorized" });
 					return;
 				}
 
 				req.webUser = user;
 				done();
-			})
-			.catch((e: Error) => done(e));
+			},
+			(e: Error) => done(e),
+		);
 	};
+}
+
+export const sendBanned = (reply: FastifyReply, user: User) =>
+	reply.status(403).send({
+		code: 403,
+		message: `Access to the courses database is blocked: ${user.ban!.reason}`,
+		data: { banned: true, reason: user.ban!.reason, at: user.ban!.at },
+	});
 
 export const requireUser = (fastify: FastifyInstance) => sessionGuard(fastify);
 
@@ -71,6 +81,7 @@ export const toPublicUser = (
 		username: user?.username ?? fallback?.username ?? null,
 		avatar: user?.avatar ?? null,
 		admin: Boolean(user?.admin),
+		banned: Boolean(user?.ban),
 		createdAt: user?.createdAt ?? null,
 	}) satisfies PublicUser;
 
@@ -133,10 +144,14 @@ export interface PlayerStanding {
 	runs: number;
 }
 
+export const getBannedSteamIds = async (fastify: FastifyInstance) =>
+	((await fastify.getUsersCollection()?.distinct("steamId", { ban: { $exists: true } })) ?? []) as string[];
+
 export const calculateStandings = async (fastify: FastifyInstance) => {
+	const banned = await getBannedSteamIds(fastify);
 	const records = (await fastify
 		.getCollection("records")
-		?.find({}, { projection: { courseCode: 1, steamId: 1, time: 1, runs: 1 } })
+		?.find({ steamId: { $nin: banned } }, { projection: { courseCode: 1, steamId: 1, time: 1, runs: 1 } })
 		.toArray()) as CourseRecord[] | undefined;
 
 	const best = new Map<string, number>();

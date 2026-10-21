@@ -3,11 +3,19 @@ export type PublicUser = {
 	username: string | null;
 	avatar: string | null;
 	admin: boolean;
+	banned: boolean;
 	createdAt: number | null;
+};
+
+export type UserBan = {
+	reason: string;
+	at: number;
+	by?: string;
 };
 
 export type Me = PublicUser & {
 	key: string | null;
+	ban: UserBan | null;
 };
 
 export type Course = {
@@ -126,6 +134,7 @@ export type CreatorStanding = {
 };
 
 export type AdminUser = PublicUser & {
+	ban: UserBan | null;
 	courses: number;
 	records: number;
 };

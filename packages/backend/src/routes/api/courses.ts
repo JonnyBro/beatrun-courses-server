@@ -3,11 +3,13 @@ import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/ut
 import {
 	decodeCourseData,
 	escapeRegex,
+	getBannedSteamIds,
 	getSessionUser,
 	getUsersMap,
 	parsePagination,
 	recordPoints,
 	requireUser,
+	sendBanned,
 	toPublicCourses,
 	toPublicUser,
 } from "@/utils/web.js";
@@ -144,6 +146,8 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
+			if (user.ban) return sendBanned(reply, user);
+
 			if (!courseJSON) {
 				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
 			}
@@ -224,6 +228,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		async (req, reply) => {
 			const user = await getUserFromKey(fastify, req.headers.authorization!);
 			if (!user) return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+			if (user.ban) return sendBanned(reply, user);
 
 			const code = req.headers.code as string;
 			const course = await fastify.getCourse(code);
@@ -397,6 +402,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		async (req, reply) => {
 			const user = await getUserFromKey(fastify, req.headers.authorization!);
 			if (!user) return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+			if (user.ban) return sendBanned(reply, user);
 
 			// The game knows a loaded course only by its CRC (Course_ID), the code is optional
 			const { code: codeHeader, hash } = req.headers as { code?: string; hash?: string };
@@ -440,7 +446,10 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			await fastify.getCoursesCollection()?.updateOne({ code }, { $inc: { runsCount: 1 } });
 
 			const best = isPersonalBest ? time : previous.time;
-			const position = (await records.countDocuments({ courseCode: code, time: { $lt: best } })) + 1;
+			const banned = await getBannedSteamIds(fastify);
+			const position =
+				(await records.countDocuments({ courseCode: code, steamId: { $nin: banned }, time: { $lt: best } })) +
+				1;
 
 			reply.status(200).send({
 				code: reply.statusCode,
@@ -527,7 +536,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		const stats = await fastify
 			.getCollection("records")
 			?.aggregate([
-				{ $match: { courseCode: code } },
+				{ $match: { courseCode: code, steamId: { $nin: await getBannedSteamIds(fastify) } } },
 				{
 					$group: {
 						_id: null,
@@ -562,10 +571,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		const { page, limit, skip } = parsePagination(req.query as object, 50);
 
 		const records = fastify.getCollection("records")!;
+		const filter = { courseCode: code, steamId: { $nin: await getBannedSteamIds(fastify) } };
 		const [items, total, best] = await Promise.all([
-			records.find({ courseCode: code }).sort({ time: 1, updatedAt: 1 }).skip(skip).limit(limit).toArray(),
-			records.countDocuments({ courseCode: code }),
-			records.find({ courseCode: code }).sort({ time: 1 }).limit(1).next(),
+			records.find(filter).sort({ time: 1, updatedAt: 1 }).skip(skip).limit(limit).toArray(),
+			records.countDocuments(filter),
+			records.find(filter).sort({ time: 1 }).limit(1).next(),
 		]);
 
 		const users = await getUsersMap(
@@ -582,7 +592,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			if (own) {
 				mine = {
 					id: own._id.toString(),
-					position: (await records.countDocuments({ courseCode: code, time: { $lt: own.time } })) + 1,
+					position: (await records.countDocuments({ ...filter, time: { $lt: own.time } })) + 1,
 					time: own.time,
 					runs: own.runs,
 					updatedAt: own.updatedAt,
@@ -629,6 +639,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		async (req, reply) => {
 			const { code } = req.params as { code: string };
 			const user = req.webUser!;
+			if (user.ban) return sendBanned(reply, user);
 
 			const course = await fastify.getCourse(code);
 			if (!course) return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });

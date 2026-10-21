@@ -36,6 +36,13 @@ export interface User extends mongodb.WithId<mongodb.BSON.Document> {
 	avatar?: string;
 	key?: string;
 	admin?: boolean;
+	ban?: UserBan;
+}
+
+export interface UserBan {
+	reason: string;
+	at: number;
+	by: string;
 }
 
 export interface Course extends mongodb.WithId<mongodb.BSON.Document> {

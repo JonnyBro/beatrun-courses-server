@@ -1,4 +1,4 @@
-import { calculateStandings, getUsersMap, parsePagination, toPublicUser } from "@/utils/web.js";
+import { calculateStandings, getBannedSteamIds, getUsersMap, parsePagination, toPublicUser } from "@/utils/web.js";
 import { FastifyInstance } from "fastify";
 
 const router = (fastify: FastifyInstance, _options: object) => {
@@ -66,10 +66,12 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 	fastify.get("/api/leaderboard/creators", async (req, reply) => {
 		const { page, limit, skip } = parsePagination(req.query as object, 50);
+		const banned = await getBannedSteamIds(fastify);
 
 		const [result] = await fastify
 			.getCoursesCollection()!
 			.aggregate([
+				{ $match: { "uploadedBy.steamId": { $nin: banned } } },
 				{
 					$group: {
 						_id: "$uploadedBy.steamId",

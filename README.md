@@ -18,6 +18,8 @@ When `packages/frontend/dist` exists the backend serves the website itself, so t
 `pnpm dev` starts the backend on `:6547` and Vite on `:5173`. Vite proxies `/api` and `/auth` to the backend.
 For Steam login to come back to the dev server set `"domain": "http://localhost:5173"` and `"production": false` in the backend config.
 
+With `"production": false` the backend also has test accounts that don't need Steam: `/auth/dev/admin`, `/auth/dev/user` and `/auth/dev/user2`. The dev site shows them under the DEV button in the header.
+
 ## Translating the website
 
 Translations live in `packages/frontend/src/locales`, one JSON file per language. To add a language:
@@ -76,6 +78,12 @@ Response: `{ code, message, data: { code, name, personalBest: boolean, best: num
 | GET, DELETE | `/api/admin/records`, `/api/admin/records/:id`           | Admin                                                           |
 
 `/auth?redirect=/path` returns to the website after login; without `redirect` it shows the key as plain text like before.
+
+### Bans
+
+Admins ban users with `PATCH /api/admin/users/:steamId` and `{ "ban": { "reason": "..." } }`, `{ "ban": null }` unbans. Admins can't be banned until their admin rights are removed.
+
+A banned user can't upload or update courses or submit times. These endpoints answer `403` with `data: { banned: true, reason, at }`, the game shows the reason and a link to the site. `GET /api/key/validate` and `GET /api/users/me` return the ban too, the site shows it on every page.
 
 Points: the record holder on a course gets 1000 points, everyone else gets `1000 × record / their time`.
 

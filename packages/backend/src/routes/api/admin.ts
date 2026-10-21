@@ -51,6 +51,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			data: {
 				items: (items as User[]).map(u => ({
 					...toPublicUser(u),
+					ban: u.ban ?? null,
 					courses: coursesMap.get(u.steamId) ?? 0,
 					records: recordsMap.get(u.steamId) ?? 0,
 				})),
@@ -71,27 +72,61 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					properties: {
 						admin: { type: "boolean" },
 						username: { type: "string", maxLength: 64 },
+						ban: {
+							anyOf: [
+								{
+									type: "object",
+									required: ["reason"],
+									properties: { reason: { type: "string", minLength: 1, maxLength: 500 } },
+								},
+								{ type: "null" },
+							],
+						},
 					},
 				},
 			},
 		},
 		async (req, reply) => {
 			const { steamId } = req.params as { steamId: string };
-			const body = req.body as { admin?: boolean; username?: string };
+			const body = req.body as { admin?: boolean; username?: string; ban?: { reason: string } | null };
 
-			if (steamId === req.webUser!.steamId && body.admin === false) {
-				return reply
-					.status(403)
-					.send({ code: reply.statusCode, message: "You can't remove your own admin rights" });
+			if (steamId === req.webUser!.steamId && (body.admin === false || body.ban)) {
+				return reply.status(403).send({ code: reply.statusCode, message: "You can't do this to yourself" });
 			}
 
-			const update: Record<string, unknown> = {};
-			if (body.admin !== undefined) update.admin = body.admin;
-			if (body.username !== undefined) update.username = sanitize(body.username);
+			const target = await fastify.getUser(steamId);
+			if (!target) return reply.status(404).send({ code: reply.statusCode, message: "User not found" });
 
-			const res = await fastify
-				.getUsersCollection()
-				?.findOneAndUpdate({ steamId }, { $set: update }, { returnDocument: "after", projection: { key: 0 } });
+			if (body.ban && (target.admin || body.admin)) {
+				return reply
+					.status(400)
+					.send({ code: reply.statusCode, message: "Remove admin rights before banning" });
+			}
+
+			if (body.admin && target.ban && body.ban !== null) {
+				return reply.status(400).send({ code: reply.statusCode, message: "Unban the user first" });
+			}
+
+			const set: Record<string, unknown> = {};
+			const unset: Record<string, ""> = {};
+
+			if (body.admin !== undefined) set.admin = body.admin;
+			if (body.username !== undefined) set.username = sanitize(body.username);
+			if (body.ban) set.ban = { reason: body.ban.reason.trim(), at: Date.now(), by: req.webUser!.steamId };
+			if (body.ban === null) unset.ban = "";
+
+			if (!Object.keys(set).length && !Object.keys(unset).length) {
+				return reply.status(200).send({ code: reply.statusCode, data: toPublicUser(target) });
+			}
+
+			const res = await fastify.getUsersCollection()?.findOneAndUpdate(
+				{ steamId },
+				{
+					...(Object.keys(set).length && { $set: set }),
+					...(Object.keys(unset).length && { $unset: unset }),
+				},
+				{ returnDocument: "after", projection: { key: 0 } },
+			);
 			if (!res) return reply.status(404).send({ code: reply.statusCode, message: "User not found" });
 
 			reply.status(200).send({ code: reply.statusCode, data: toPublicUser(res as User) });

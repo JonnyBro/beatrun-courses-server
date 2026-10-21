@@ -10,6 +10,14 @@ import UserLink from "@/components/common/UserLink.vue";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
+	Dialog,
+	DialogContent,
+	DialogDescription,
+	DialogFooter,
+	DialogHeader,
+	DialogTitle,
+} from "@/components/ui/dialog";
+import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
@@ -25,7 +33,7 @@ import { displayName, formatDate, formatDateTime, steamProfileUrl } from "@/lib/
 import { getErrorMessage } from "@/plugins/axios";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { refDebounced } from "@vueuse/core";
-import { Ellipsis, ExternalLink, Search, Shield, ShieldOff, Trash2 } from "lucide-vue-next";
+import { Ban, Ellipsis, ExternalLink, LoaderCircle, Search, Shield, ShieldOff, Trash2, Undo2 } from "lucide-vue-next";
 import { computed, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { toast } from "vue-sonner";
@@ -56,6 +64,39 @@ const toggleAdmin = useMutation({
 		toast.success(
 			t(user.admin ? "admin.users.nowAdmin" : "admin.users.noLongerAdmin", { name: displayName(user) }),
 		);
+		await invalidate();
+	},
+	onError: error => toast.error(getErrorMessage(error)),
+});
+
+const toBan = ref<AdminUser | null>(null);
+const banReason = ref("");
+const banOpen = computed({
+	get: () => Boolean(toBan.value),
+	set: value => {
+		if (!value) toBan.value = null;
+	},
+});
+
+const startBan = (user: AdminUser) => {
+	banReason.value = "";
+	toBan.value = user;
+};
+
+const ban = useMutation({
+	mutationFn: (user: AdminUser) => adminUpdateUser(user.steamId, { ban: { reason: banReason.value.trim() } }),
+	onSuccess: async user => {
+		toast.success(t("admin.users.banned", { name: displayName(user) }));
+		toBan.value = null;
+		await invalidate();
+	},
+	onError: error => toast.error(getErrorMessage(error)),
+});
+
+const unban = useMutation({
+	mutationFn: (user: AdminUser) => adminUpdateUser(user.steamId, { ban: null }),
+	onSuccess: async user => {
+		toast.success(t("admin.users.unbanned", { name: displayName(user) }));
 		await invalidate();
 	},
 	onError: error => toast.error(getErrorMessage(error)),
@@ -124,6 +165,19 @@ const removal = useMutation({
 									<Badge v-if="user.admin" variant="secondary"
 										><Shield /> {{ $t("common.admin") }}</Badge
 									>
+									<Hint
+										v-if="user.ban"
+										:text="
+											$t('admin.users.banHint', {
+												reason: user.ban.reason,
+												date: formatDateTime(user.ban.at),
+											})
+										"
+									>
+										<Badge variant="destructive" class="cursor-help"
+											><Ban /> {{ $t("ban.badge") }}</Badge
+										>
+									</Hint>
 								</div>
 							</TableCell>
 							<TableCell class="hidden font-hud text-sm text-muted-foreground md:table-cell">{{
@@ -170,6 +224,19 @@ const removal = useMutation({
 															: $t("admin.users.makeAdmin")
 													}}
 												</DropdownMenuItem>
+												<DropdownMenuItem v-if="user.ban" @select="unban.mutate(user)">
+													<Undo2 />
+													{{ $t("admin.users.unban") }}
+												</DropdownMenuItem>
+												<DropdownMenuItem
+													v-else
+													variant="destructive"
+													:disabled="user.steamId === me?.steamId || user.admin"
+													@select="startBan(user)"
+												>
+													<Ban />
+													{{ $t("admin.users.ban") }}
+												</DropdownMenuItem>
 												<DropdownMenuSeparator />
 												<DropdownMenuItem
 													variant="destructive"
@@ -190,6 +257,38 @@ const removal = useMutation({
 			</div>
 			<PaginationBar v-model="page" :total="users.data.value.total" :per-page="PER_PAGE" />
 		</template>
+
+		<Dialog v-model:open="banOpen">
+			<DialogContent>
+				<DialogHeader>
+					<DialogTitle>{{ $t("admin.users.banTitle", { name: displayName(toBan) }) }}</DialogTitle>
+					<DialogDescription>{{ $t("admin.users.banText") }}</DialogDescription>
+				</DialogHeader>
+				<form id="ban-user" class="space-y-2" @submit.prevent="toBan && banReason.trim() && ban.mutate(toBan)">
+					<Label for="ban-reason">{{ $t("admin.users.banReason") }}</Label>
+					<textarea
+						id="ban-reason"
+						v-model="banReason"
+						rows="3"
+						maxlength="500"
+						:placeholder="$t('admin.users.banPlaceholder')"
+						class="w-full resize-y rounded-md border border-input bg-card px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:border-hl"
+					/>
+				</form>
+				<DialogFooter>
+					<Button variant="outline" @click="toBan = null">{{ $t("common.cancel") }}</Button>
+					<Button
+						type="submit"
+						form="ban-user"
+						variant="destructive"
+						:disabled="!banReason.trim() || ban.isPending.value"
+					>
+						<LoaderCircle v-if="ban.isPending.value" class="animate-spin" />
+						{{ $t("admin.users.ban") }}
+					</Button>
+				</DialogFooter>
+			</DialogContent>
+		</Dialog>
 
 		<ConfirmDialog
 			v-model:open="deleteOpen"

@@ -7,9 +7,12 @@ import { Menu } from "lucide-vue-next";
 import { computed, ref, watch } from "vue";
 import { useRoute } from "vue-router";
 import { DiscordIcon, GitHubIcon } from "vue3-simple-icons";
+import DevLogin from "./DevLogin.vue";
 import LanguagePicker from "./LanguagePicker.vue";
 import ThemePicker from "./ThemePicker.vue";
 import UserMenu from "./UserMenu.vue";
+
+const isDev = import.meta.env.DEV;
 
 const { isAdmin } = useAuth();
 const route = useRoute();
@@ -78,6 +81,7 @@ const isActive = (name: string) => route.matched.some(r => r.name === name || r.
 				</Button>
 				<LanguagePicker />
 				<ThemePicker />
+				<DevLogin v-if="isDev" />
 				<UserMenu />
 
 				<Sheet v-model:open="mobileOpen">

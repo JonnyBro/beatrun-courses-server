@@ -54,8 +54,10 @@ export const getProfileRecords = (steamId: string, params: PageParams) =>
 // Admin
 export const adminGetUsers = (params: PageParams & { q?: string }) =>
 	get<Paginated<AdminUser>>("/api/admin/users", params);
-export const adminUpdateUser = async (steamId: string, body: { admin?: boolean; username?: string }) =>
-	(await api.patch<Response<PublicUser>>(`/api/admin/users/${encodeURIComponent(steamId)}`, body)).data.data;
+export const adminUpdateUser = async (
+	steamId: string,
+	body: { admin?: boolean; username?: string; ban?: { reason: string } | null },
+) => (await api.patch<Response<PublicUser>>(`/api/admin/users/${encodeURIComponent(steamId)}`, body)).data.data;
 export const adminDeleteUser = async (steamId: string, purge: boolean) =>
 	(
 		await api.delete<Response<never>>(`/api/users/delete/${encodeURIComponent(steamId)}`, {

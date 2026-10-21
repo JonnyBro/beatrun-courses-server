@@ -128,6 +128,7 @@ watchEffect(() => {
 							| {{ $t("common.points", { n: formatNumber(profile.data.value.stats.points) }) }}
 						</span>
 						<Badge v-if="profile.data.value.user.admin">{{ $t("common.admin") }}</Badge>
+						<Badge v-if="profile.data.value.user.banned" variant="destructive">{{ $t("ban.badge") }}</Badge>
 					</div>
 					<Hint :text="$t('profile.tips.progress', { percent: Math.round(completion * 100) })">
 						<div class="hud-bar w-48 cursor-help"><span :style="{ width: `${completion * 100}%` }" /></div>

@@ -282,7 +282,16 @@
 			"purgeText": "Removes {courses} (with all times on them) and their {times}.",
 			"purgeCourses": "{n} course | {n} courses",
 			"purgeTimes": "{n} time | {n} times",
-			"deleted": "User deleted"
+			"deleted": "User deleted",
+			"ban": "Ban",
+			"unban": "Unban",
+			"banTitle": "Ban {name}?",
+			"banText": "They won't be able to upload or update courses or submit times. The reason is shown to them on the site and in the game.",
+			"banReason": "Reason",
+			"banPlaceholder": "What they did",
+			"banHint": "{reason} · {date}",
+			"banned": "{name} is banned",
+			"unbanned": "{name} is unbanned"
 		},
 		"courses": {
 			"search": "Name, code, map or author",
@@ -310,5 +319,11 @@
 			"deleteText": "{time} by {player} on {course}. Use this for cheated or broken runs.",
 			"deleted": "Time deleted"
 		}
+	},
+	"ban": {
+		"title": "Your account is blocked",
+		"reason": "Reason: ",
+		"badge": "Banned",
+		"text": "Blocked on {date}. You can't upload or update courses and your times are not saved. You can still browse the site and delete your own courses."
 	}
 }

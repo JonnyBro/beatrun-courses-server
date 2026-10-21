@@ -10,6 +10,7 @@ import {
 } from "@/utils/functions.js";
 import {
 	calculateStandings,
+	getBannedSteamIds,
 	getSessionUser,
 	parsePagination,
 	recordPoints,
@@ -81,7 +82,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const user = await getUserFromKey(fastify, key);
 			if (!user) return reply.status(200).send({ code: reply.statusCode, data: false });
 
-			reply.status(200).send({ code: reply.statusCode, data: true });
+			reply.status(200).send({
+				code: reply.statusCode,
+				data: true,
+				ban: user.ban ? { reason: user.ban.reason, at: user.ban.at } : null,
+			});
 		},
 	);
 
@@ -127,7 +132,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		reply.status(200).send({
 			code: reply.statusCode,
-			data: user ? { ...toPublicUser(user), key: user.key ?? null } : null,
+			data: user
+				? {
+						...toPublicUser(user),
+						key: user.key ?? null,
+						ban: user.ban ? { reason: user.ban.reason, at: user.ban.at } : null,
+					}
+				: null,
 		});
 	});
 
@@ -200,6 +211,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		]);
 		const records = items as CourseRecord[];
 		const codes = records.map(r => r.courseCode);
+		const banned = await getBannedSteamIds(fastify);
 
 		const [courses, bests] = await Promise.all([
 			fastify
@@ -208,7 +220,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				.toArray(),
 			recordsCollection
 				.aggregate([
-					{ $match: { courseCode: { $in: codes } } },
+					{ $match: { courseCode: { $in: codes }, steamId: { $nin: banned } } },
 					{ $group: { _id: "$courseCode", best: { $min: "$time" } } },
 				])
 				.toArray(),
@@ -228,7 +240,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				runs: r.runs,
 				updatedAt: r.updatedAt,
 				position:
-					(await recordsCollection.countDocuments({ courseCode: r.courseCode, time: { $lt: r.time } })) + 1,
+					(await recordsCollection.countDocuments({
+						courseCode: r.courseCode,
+						steamId: { $nin: banned },
+						time: { $lt: r.time },
+					})) + 1,
 				points: recordPoints(r.time, bestMap.get(r.courseCode) ?? r.time),
 			})),
 		);
