@@ -34,23 +34,16 @@ export const getSessionUser = async (fastify: FastifyInstance, req: FastifyReque
 	return fastify.getUser(steamId);
 };
 
-// Eslint doesn't like this function :shrug:
-function sessionGuard(fastify: FastifyInstance, check?: (user: User) => boolean): preHandlerHookHandler {
-	return function (req, reply, done) {
-		getSessionUser(fastify, req).then(
-			user => {
-				if (!user || (check && !check(user))) {
-					void reply.status(401).send({ code: 401, message: "Unauthorized" });
-					return;
-				}
+/* eslint-disable @stylistic/indent */
+const sessionGuard =
+	(fastify: FastifyInstance, check: (user: User) => boolean = () => true): preHandlerHookHandler =>
+	async (req, reply) => {
+		const user = await getSessionUser(fastify, req);
+		if (!user || !check(user)) return reply.status(401).send({ code: 401, message: "Unauthorized" });
 
-				req.webUser = user;
-				done();
-			},
-			(e: Error) => done(e),
-		);
+		req.webUser = user;
 	};
-}
+/* eslint-enable @stylistic/indent */
 
 export const sendBanned = (reply: FastifyReply, user: User) =>
 	reply.status(403).send({
