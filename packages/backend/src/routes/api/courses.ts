@@ -119,7 +119,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					$set: {
 						code,
 						name: courseJSON[4],
-						elementsCount: courseJSON[0].length + courseJSON[5].length,
+						elementsCount: courseJSON[0].length + courseJSON[5].length + (courseJSON[7]?.length ?? 0),
 						uploadedBy: {
 							steamId: user.steamId,
 							username: user.username,
@@ -442,7 +442,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				...publicCourse,
 				props: data ? data[0].length : null,
 				checkpoints: data ? data[1].length : null,
-				entities: data ? data[5].length : null,
+				entities: data ? data[5].length + (data[7]?.length ?? 0) : null,
 				speedLimit: data ? (data[6] ?? 0) : null,
 				players: stats?.[0]?.players ?? 0,
 				bestTime: stats?.[0]?.best ?? null,
