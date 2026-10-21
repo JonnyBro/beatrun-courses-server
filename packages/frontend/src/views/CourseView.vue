@@ -10,6 +10,7 @@ import SectionTitle from "@/components/common/SectionTitle.vue";
 import StatTile from "@/components/common/StatTile.vue";
 import UserLink from "@/components/common/UserLink.vue";
 import CoursePreview from "@/components/course/CoursePreview.vue";
+import UpdateCourseDialog from "@/components/course/UpdateCourseDialog.vue";
 import HudIcon from "@/components/icons/HudIcon.vue";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -29,7 +30,7 @@ import {
 import { getErrorMessage } from "@/plugins/axios";
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/vue-query";
 import { AxiosError } from "axios";
-import { ExternalLink, Trash2 } from "lucide-vue-next";
+import { ExternalLink, FileUp, Trash2 } from "lucide-vue-next";
 import { computed, ref, watchEffect } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
@@ -67,6 +68,7 @@ watchEffect(() => {
 });
 
 const deleteOpen = ref(false);
+const updateOpen = ref(false);
 const removal = useMutation({
 	mutationFn: () => deleteCourse(code.value),
 	onSuccess: async () => {
@@ -134,6 +136,14 @@ const isMine = (steamId: string) => me.value?.steamId === steamId;
 								</Hint>
 							</template>
 						</i18n-t>
+						<template v-if="course.data.value.updatedAt">
+							·
+							<Hint :text="formatDateTime(course.data.value.updatedAt)">
+								<span class="cursor-help underline decoration-dotted underline-offset-4">
+									{{ $t("course.updated", { when: formatRelative(course.data.value.updatedAt) }) }}
+								</span>
+							</Hint>
+						</template>
 						<template v-if="course.data.value.mapTitle"> · {{ course.data.value.mapTitle }}</template>
 					</p>
 				</div>
@@ -169,6 +179,15 @@ const isMine = (steamId: string) => me.value?.steamId === steamId;
 					>
 						<ExternalLink />
 						{{ $t("course.workshop") }}
+					</Button>
+					<Button
+						v-if="course.data.value.canDelete"
+						variant="outline"
+						class="h-auto"
+						@click="updateOpen = true"
+					>
+						<FileUp />
+						{{ $t("course.update.button") }}
 					</Button>
 					<Button
 						v-if="course.data.value.canDelete"
@@ -327,6 +346,8 @@ const isMine = (steamId: string) => me.value?.steamId === steamId;
 				<PaginationBar v-model="page" :total="records.data.value.total" :per-page="PER_PAGE" />
 			</template>
 		</section>
+
+		<UpdateCourseDialog v-model:open="updateOpen" :course="course.data.value" />
 
 		<ConfirmDialog
 			v-model:open="deleteOpen"

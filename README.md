@@ -32,6 +32,16 @@ The new file shows up in the language picker automatically, and visitors whose b
 
 Endpoints used by the game are unchanged: `GET /api/courses/list`, `POST /api/courses/upload`, `GET /api/courses/download`, `DELETE /api/courses/delete`, `GET /api/key/validate`.
 
+### Updating a course (game)
+
+```http
+POST /api/courses/update
+Headers: authorization: <user key>, code: <course code>, mapname: <map>, workshopid: <id, optional>
+Body:    data=<base64 course file>   (same as upload)
+```
+
+Only the author or an admin can update a course, and only from the course's map. The code stays the same, the name, elements and CRC come from the new file. All records on the course are deleted and `runsCount` is reset, because old times don't match the new layout.
+
 ### Submitting a finished run (game)
 
 ```http
@@ -56,6 +66,7 @@ Response: `{ code, message, data: { code, name, personalBest: boolean, best: num
 | GET         | `/api/courses/info/:code/records?page&limit`             | Course leaderboard                                |
 | GET         | `/api/courses/file/:code`                                | Course file as the game saves it, no login needed |
 | DELETE      | `/api/courses/info/:code`                                | Session, owner or admin                           |
+| PUT         | `/api/courses/info/:code/file`                           | Session, owner or admin. Body `{ data: base64 }`, wipes records |
 | GET         | `/api/leaderboard/players` / `/api/leaderboard/creators` | Global leaderboards                               |
 | GET         | `/api/users/me`                                          | Current session user with key, `null` for guests  |
 | POST        | `/api/users/me/key`                                      | Generate a new key                                |

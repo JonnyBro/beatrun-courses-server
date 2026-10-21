@@ -22,6 +22,58 @@ const encodeCourseForGame = (course: Course) => {
 	return Buffer.from(LZMA.compress(decompressed));
 };
 
+const COURSE_BODY_LIMIT = 16 * 1024 * 1024;
+
+const decodeUploadedCourse = (data: string) => {
+	const raw = Buffer.from(data, "base64");
+
+	try {
+		return LZMA.decompress(raw) as string;
+	} catch {
+		return raw.toString("utf-8");
+	}
+};
+
+const parseCourse = (courseString: string) => {
+	try {
+		const json = JSON.parse(courseString) as CourseData;
+		return isCourseFileValid(json) ? json : undefined;
+	} catch {
+		return;
+	}
+};
+
+const elementsCount = (json: CourseData) => json[0].length + json[5].length + (json[7]?.length ?? 0);
+
+const replaceCourseData = async (
+	fastify: FastifyInstance,
+	code: string,
+	courseString: string,
+	json: CourseData,
+	map?: { mapName: string; workshopId: string | null },
+) => {
+	const buffer = Buffer.from(courseString, "utf-8");
+
+	await fastify.getCoursesCollection()?.updateOne(
+		{ code },
+		{
+			$set: {
+				name: json[4],
+				elementsCount: elementsCount(json),
+				data: new mongodb.Binary(brotliCompressSync(buffer)),
+				crc: String(crc32(buffer)),
+				updatedAt: Date.now(),
+				runsCount: 0,
+				...map,
+			},
+		},
+	);
+
+	const removed = await fastify.getCollection("records")?.deleteMany({ courseCode: code });
+
+	return removed?.deletedCount ?? 0;
+};
+
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get(
 		"/api/courses/list",
@@ -84,22 +136,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const workshopId = req.headers.workshopid as string | null;
 			const courseData = (req.body as { data: string }).data;
 
-			let courseString: string;
-
-			try {
-				courseString = LZMA.decompress(Buffer.from(courseData, "base64")) as string;
-			} catch {
-				courseString = Buffer.from(courseData, "base64").toString("utf-8");
-			}
-
-			const courseJSON = JSON.parse(courseString) as CourseData;
+			const courseString = decodeUploadedCourse(courseData);
+			const courseJSON = parseCourse(courseString);
 
 			const user = await getUserFromKey(fastify, key);
 			if (!user) {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
 
-			if (!isCourseFileValid(courseString)) {
+			if (!courseJSON) {
 				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
 			}
 
@@ -119,7 +164,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					$set: {
 						code,
 						name: courseJSON[4],
-						elementsCount: courseJSON[0].length + courseJSON[5].length + (courseJSON[7]?.length ?? 0),
+						elementsCount: elementsCount(courseJSON),
 						uploadedBy: {
 							steamId: user.steamId,
 							username: user.username,
@@ -148,6 +193,66 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			reply.status(200).send({
 				code: reply.statusCode,
 				message: `Course uploaded successfully. Code: ${res.code}`,
+			});
+		},
+	);
+
+	fastify.post(
+		"/api/courses/update",
+		{
+			bodyLimit: COURSE_BODY_LIMIT,
+			schema: {
+				headers: {
+					type: "object",
+					required: ["authorization", "code", "mapname"],
+					properties: {
+						authorization: { type: "string" },
+						code: { type: "string" },
+						mapname: { type: "string" },
+						workshopid: { type: ["string", "null"] },
+					},
+				},
+				body: {
+					type: "object",
+					required: ["data"],
+					properties: {
+						data: { type: "string" },
+					},
+				},
+			},
+		},
+		async (req, reply) => {
+			const user = await getUserFromKey(fastify, req.headers.authorization!);
+			if (!user) return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
+
+			const code = req.headers.code as string;
+			const course = await fastify.getCourse(code);
+			if (!course) return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+
+			if (!user.admin && course.uploadedBy.steamId !== user.steamId) {
+				return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
+			}
+
+			const mapName = req.headers.mapname as string;
+			if (mapName !== course.mapName) {
+				return reply
+					.status(400)
+					.send({ code: reply.statusCode, message: `Course ${code} is made for ${course.mapName}` });
+			}
+
+			const courseString = decodeUploadedCourse((req.body as { data: string }).data);
+			const courseJSON = parseCourse(courseString);
+			if (!courseJSON) {
+				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
+			}
+
+			const workshopId = (req.headers.workshopid as string | undefined) ?? course.workshopId;
+			const removed = await replaceCourseData(fastify, code, courseString, courseJSON, { mapName, workshopId });
+
+			reply.status(200).send({
+				code: reply.statusCode,
+				message: `Course ${code} updated, ${removed} records removed`,
+				data: { code, removedRecords: removed },
 			});
 		},
 	);
@@ -505,6 +610,44 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			},
 		});
 	});
+
+	fastify.put(
+		"/api/courses/info/:code/file",
+		{
+			preHandler: requireUser(fastify),
+			bodyLimit: COURSE_BODY_LIMIT,
+			schema: {
+				body: {
+					type: "object",
+					required: ["data"],
+					properties: {
+						data: { type: "string" },
+					},
+				},
+			},
+		},
+		async (req, reply) => {
+			const { code } = req.params as { code: string };
+			const user = req.webUser!;
+
+			const course = await fastify.getCourse(code);
+			if (!course) return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+
+			if (!user.admin && course.uploadedBy.steamId !== user.steamId) {
+				return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
+			}
+
+			const courseString = decodeUploadedCourse((req.body as { data: string }).data);
+			const courseJSON = parseCourse(courseString);
+			if (!courseJSON) {
+				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
+			}
+
+			const removed = await replaceCourseData(fastify, code, courseString, courseJSON);
+
+			reply.status(200).send({ code: reply.statusCode, data: { code, removedRecords: removed } });
+		},
+	);
 
 	fastify.delete("/api/courses/info/:code", { preHandler: requireUser(fastify) }, async (req, reply) => {
 		const { code } = req.params as { code: string };

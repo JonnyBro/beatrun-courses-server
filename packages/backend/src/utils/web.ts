@@ -20,6 +20,7 @@ export interface PublicCourse {
 	downloadCount: number;
 	runsCount: number;
 	uploadedAt: number;
+	updatedAt: number | null;
 	author: PublicUser;
 	preview: string | null;
 	mapTitle: string | null;
@@ -101,6 +102,7 @@ export const toPublicCourses = async (fastify: FastifyInstance, courses: Course[
 			downloadCount: c.downloadCount ?? 0,
 			runsCount: c.runsCount ?? 0,
 			uploadedAt: c.uploadedAt,
+			updatedAt: c.updatedAt ?? null,
 			author: toPublicUser(users.get(c.uploadedBy?.steamId), c.uploadedBy),
 			preview: item?.preview ?? null,
 			mapTitle: item?.title ?? null,

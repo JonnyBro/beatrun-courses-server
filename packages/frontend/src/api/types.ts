@@ -19,6 +19,7 @@ export type Course = {
 	downloadCount: number;
 	runsCount: number;
 	uploadedAt: number;
+	updatedAt: number | null;
 	author: PublicUser;
 	preview: string | null;
 	mapTitle: string | null;

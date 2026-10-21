@@ -73,7 +73,7 @@ export const sanitize = (string?: string, forceLowercase = false, strict = false
 
 export const isCourseFileValid = (content: CourseData | string) => {
 	if (typeof content === "string") content = JSON.parse(content);
-	if (content.length !== 6 && content.length !== 7) return false;
+	if (content.length < 6 || content.length > 8) return false;
 
 	return (
 		typeof content[0] === "object" &&
@@ -82,7 +82,8 @@ export const isCourseFileValid = (content: CourseData | string) => {
 		typeof content[3] === "number" &&
 		typeof content[4] === "string" &&
 		typeof content[5] === "object" &&
-		(content[6] === undefined || typeof content[6] === "number")
+		(content[6] === undefined || typeof content[6] === "number") &&
+		(content[7] === undefined || typeof content[7] === "object")
 	);
 };
 

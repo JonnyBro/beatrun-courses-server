@@ -130,7 +130,24 @@
 		"deleteText": "{name} ({code}) and all times on it will be removed. This can't be undone.",
 		"deleted": "Course deleted",
 		"downloadFile": "Download file",
-		"fileHint": "Put the file into {path} and it shows up in the local courses list (F4)."
+		"fileHint": "Put the file into {path} and it shows up in the local courses list (F4).",
+		"updated": "updated {when}",
+		"update": {
+			"button": "Update",
+			"title": "Update course file",
+			"text": "Replace {name} ({code}) with a new version. The code and the link stay the same.",
+			"warningTitle": "The leaderboard will be wiped",
+			"lostRecords": "All {n} players' times on this course are deleted",
+			"lostRuns": "The runs counter ({n}) is reset to zero",
+			"lostTimes": "Record and average time are gone until people play again",
+			"lostPoints": "Players lose the leaderboard points they had from this course",
+			"kept": "Kept: code, author, upload date and downloads. The name and speed limit come from the new file.",
+			"file": "Course file",
+			"fileHint": "The file the game saved in garrysmod/data/beatrun/courses/<map>/",
+			"confirm": "I understand that every time on this course will be deleted and can't be restored",
+			"submit": "Update and wipe times",
+			"done": "Course updated, {n} times removed"
+		}
 	},
 	"table": {
 		"place": "#",

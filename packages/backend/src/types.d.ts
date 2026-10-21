@@ -47,6 +47,7 @@ export interface Course extends mongodb.WithId<mongodb.BSON.Document> {
 	name: string;
 	elementsCount: number;
 	uploadedAt: number;
+	updatedAt?: number;
 	uploadedBy: {
 		steamId: string;
 		username: string;

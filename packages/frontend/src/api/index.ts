@@ -29,6 +29,13 @@ export const getCourseRecords = (code: string, params: PageParams) =>
 	get<CourseRecords>(`/api/courses/info/${encodeURIComponent(code)}/records`, params);
 export const deleteCourse = async (code: string) =>
 	(await api.delete<Response<never>>(`/api/courses/info/${encodeURIComponent(code)}`)).data;
+export const updateCourseFile = async (code: string, data: string) =>
+	(
+		await api.put<Response<{ code: string; removedRecords: number }>>(
+			`/api/courses/info/${encodeURIComponent(code)}/file`,
+			{ data },
+		)
+	).data.data;
 
 // Stats & leaderboards
 export const getStats = () => get<SiteStats>("/api/stats");
