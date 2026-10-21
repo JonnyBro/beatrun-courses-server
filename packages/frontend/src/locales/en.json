@@ -177,6 +177,7 @@
 		"title": "Leaderboard",
 		"scoring": "Each course is worth up to 1000 points. The record holder gets all of them, everyone else gets {formula}.",
 		"formula": "1000 × record / your time",
+		"creatorsScoring": "Creators are ranked by how many times their courses were downloaded, then by how many courses they made.",
 		"players": "Players",
 		"creators": "Creators",
 		"emptyPlayers": "Nobody here yet",

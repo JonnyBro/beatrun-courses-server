@@ -44,11 +44,17 @@ const rowClass = (steamId: string) => cn(me.value?.steamId === steamId && "bg-hl
 	<div class="space-y-6">
 		<div class="space-y-2">
 			<h1 class="hud-title text-4xl">{{ $t("leaderboard.title") }}</h1>
-			<i18n-t keypath="leaderboard.scoring" tag="p" class="max-w-3xl text-muted-foreground">
+			<i18n-t
+				v-if="tab === 'players'"
+				keypath="leaderboard.scoring"
+				tag="p"
+				class="max-w-3xl text-muted-foreground"
+			>
 				<template #formula>
 					<span class="font-hud text-foreground">{{ $t("leaderboard.formula") }}</span>
 				</template>
 			</i18n-t>
+			<p v-else class="max-w-3xl text-muted-foreground">{{ $t("leaderboard.creatorsScoring") }}</p>
 		</div>
 
 		<Tabs v-model="tab" class="space-y-4">
