@@ -57,23 +57,23 @@ Response: `{ code, message, data: { code, name, personalBest: boolean, best: num
 
 ### Website
 
-| Method      | Path                                                     | Notes                                             |
-| ----------- | -------------------------------------------------------- | ------------------------------------------------- |
-| GET         | `/api/stats`                                             | Totals                                            |
-| GET         | `/api/courses/search?q&map&author&sort&page&limit`       | `sort`: newest, oldest, downloads, runs, name     |
-| GET         | `/api/courses/maps`                                      | Maps with course counts                           |
-| GET         | `/api/courses/info/:code`                                | Course details and stats                          |
-| GET         | `/api/courses/info/:code/records?page&limit`             | Course leaderboard                                |
-| GET         | `/api/courses/file/:code`                                | Course file as the game saves it, no login needed |
-| DELETE      | `/api/courses/info/:code`                                | Session, owner or admin                           |
+| Method      | Path                                                     | Notes                                                           |
+| ----------- | -------------------------------------------------------- | --------------------------------------------------------------- |
+| GET         | `/api/stats`                                             | Totals                                                          |
+| GET         | `/api/courses/search?q&map&author&sort&page&limit`       | `sort`: newest, oldest, downloads, runs, name                   |
+| GET         | `/api/courses/maps`                                      | Maps with course counts                                         |
+| GET         | `/api/courses/info/:code`                                | Course details and stats                                        |
+| GET         | `/api/courses/info/:code/records?page&limit`             | Course leaderboard                                              |
+| GET         | `/api/courses/file/:code`                                | Course file as the game saves it, no login needed               |
+| DELETE      | `/api/courses/info/:code`                                | Session, owner or admin                                         |
 | PUT         | `/api/courses/info/:code/file`                           | Session, owner or admin. Body `{ data: base64 }`, wipes records |
-| GET         | `/api/leaderboard/players` / `/api/leaderboard/creators` | Global leaderboards                               |
-| GET         | `/api/users/me`                                          | Current session user with key, `null` for guests  |
-| POST        | `/api/users/me/key`                                      | Generate a new key                                |
-| GET         | `/api/users/profile/:steamId` (`/records`)               | Public profile                                    |
-| GET, PATCH  | `/api/admin/users`, `/api/admin/users/:steamId`          | Admin                                             |
-| PATCH       | `/api/admin/courses/:code`                               | Admin                                             |
-| GET, DELETE | `/api/admin/records`, `/api/admin/records/:id`           | Admin                                             |
+| GET         | `/api/leaderboard/players` / `/api/leaderboard/creators` | Global leaderboards                                             |
+| GET         | `/api/users/me`                                          | Current session user with key, `null` for guests                |
+| POST        | `/api/users/me/key`                                      | Generate a new key                                              |
+| GET         | `/api/users/profile/:steamId` (`/records`)               | Public profile                                                  |
+| GET, PATCH  | `/api/admin/users`, `/api/admin/users/:steamId`          | Admin                                                           |
+| PATCH       | `/api/admin/courses/:code`                               | Admin                                                           |
+| GET, DELETE | `/api/admin/records`, `/api/admin/records/:id`           | Admin                                                           |
 
 `/auth?redirect=/path` returns to the website after login; without `redirect` it shows the key as plain text like before.
 
