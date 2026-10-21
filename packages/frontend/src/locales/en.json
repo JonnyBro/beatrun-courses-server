@@ -100,7 +100,12 @@
 		"byline": "by {author} · {when}",
 		"codeCopied": "Code copied, paste it in the courses menu",
 		"workshop": "Workshop",
-		"howTo": "Load the map {map}, press {key}, paste the code and start the course.",
+		"play": {
+			"title": "How to play",
+			"map": "Load the map {map}",
+			"code": "Press {key}, paste the code {code} and start the course",
+			"file": "Or download the file and put it into {path}, the course shows up in the local courses list."
+		},
 		"stats": {
 			"record": "Record",
 			"average": "Average",
@@ -130,7 +135,6 @@
 		"deleteText": "{name} ({code}) and all times on it will be removed. This can't be undone.",
 		"deleted": "Course deleted",
 		"downloadFile": "Download file",
-		"fileHint": "Put the file into {path} and it shows up in the local courses list (F4).",
 		"updated": "updated {when}",
 		"update": {
 			"button": "Update",

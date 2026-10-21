@@ -26,7 +26,11 @@ const stats = computed<Array<{ icon: HudIconName; value: number; tip: string }>>
 			<span class="sr-only">{{ $t("card.open", { name: course.name }) }}</span>
 		</RouterLink>
 
-		<CoursePreview :preview="course.preview" :map-name="course.mapName" class="aspect-video w-full border-b">
+		<CoursePreview
+			:preview="course.preview"
+			:map-name="course.mapName"
+			class="pointer-events-none aspect-video w-full border-b"
+		>
 			<span
 				class="absolute bottom-0 left-0 max-w-full truncate bg-black/70 px-2 py-0.5 font-hud text-sm text-white"
 				:title="course.mapName"

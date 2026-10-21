@@ -200,19 +200,35 @@ const isMine = (steamId: string) => me.value?.steamId === steamId;
 					</Button>
 				</div>
 
-				<i18n-t keypath="course.howTo" tag="p" class="text-muted-foreground">
-					<template #map
-						><span class="font-hud text-foreground">{{ course.data.value.mapName }}</span></template
-					>
-					<template #key><kbd>F4</kbd></template>
-				</i18n-t>
-				<i18n-t keypath="course.fileHint" tag="p" class="text-sm text-muted-foreground">
-					<template #path>
-						<span class="font-hud break-all text-foreground"
-							>garrysmod/data/beatrun/courses/{{ course.data.value.mapName }}/</span
-						>
-					</template>
-				</i18n-t>
+				<div class="space-y-3 border-t pt-4">
+					<p class="hud-title text-base">{{ $t("course.play.title") }}</p>
+					<ol class="space-y-1.5">
+						<li class="flex gap-3">
+							<span class="w-4 shrink-0 text-muted-foreground">1.</span>
+							<i18n-t keypath="course.play.map" tag="span">
+								<template #map
+									><b class="font-semibold">{{ course.data.value.mapName }}</b></template
+								>
+							</i18n-t>
+						</li>
+						<li class="flex gap-3">
+							<span class="w-4 shrink-0 text-muted-foreground">2.</span>
+							<i18n-t keypath="course.play.code" tag="span">
+								<template #key><b class="font-semibold">F4</b></template>
+								<template #code
+									><b class="font-semibold">{{ course.data.value.code }}</b></template
+								>
+							</i18n-t>
+						</li>
+					</ol>
+					<i18n-t keypath="course.play.file" tag="p" class="text-sm text-muted-foreground">
+						<template #path>
+							<span class="rounded-sm bg-muted px-1 py-0.5 break-all text-foreground"
+								>garrysmod/data/beatrun/courses/{{ course.data.value.mapName }}/</span
+							>
+						</template>
+					</i18n-t>
+				</div>
 			</div>
 		</section>
 
