@@ -85,7 +85,7 @@ Admins ban users with `PATCH /api/admin/users/:steamId` and `{ "ban": { "reason"
 
 A banned user can't upload or update courses or submit times. These endpoints answer `403` with `data: { banned: true, reason, at }`, the game shows the reason and a link to the site. `GET /api/key/validate` and `GET /api/users/me` return the ban too, the site shows it on every page.
 
-Points: the record holder on a course gets 1000 points, everyone else gets `1000 × record / their time`.
+Points: a course is worth 100 points for every (not banned) player who finished it, up to 1000. The record holder gets all of them, everyone else gets `worth × record / their time`. Tune it with `POINTS_PER_PLAYER` and `MAX_COURSE_POINTS` in `utils/web.ts`.
 
 ## License
 

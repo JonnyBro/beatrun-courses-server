@@ -128,6 +128,7 @@
 		},
 		"leaderboard": "Leaderboard",
 		"leaderboardHint": "Best time of everyone who finished this course.",
+		"worth": "The course is worth {n} points now: 100 for every player who finished it, up to 1000.",
 		"you": "You",
 		"noRuns": "No runs yet",
 		"noRunsText": "Finish this course in-game with your key set and your time shows up here.",
@@ -179,8 +180,8 @@
 	},
 	"leaderboard": {
 		"title": "Leaderboard",
-		"scoring": "Each course is worth up to 1000 points. The record holder gets all of them, everyone else gets {formula}.",
-		"formula": "1000 × record / your time",
+		"scoring": "A course is worth 100 points for every player who finished it, up to 1000 from 10 players. The record holder gets all of them, everyone else gets {formula}.",
+		"formula": "course points × record / your time",
 		"creatorsScoring": "Creators are ranked by how many times their courses were downloaded, then by how many courses they made.",
 		"players": "Players",
 		"creators": "Creators",

@@ -1,6 +1,7 @@
 import { Course, CourseData, CourseRecord } from "@/types.js";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions.js";
 import {
+	courseWorth,
 	decodeCourseData,
 	escapeRegex,
 	getBannedSteamIds,
@@ -596,7 +597,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					time: own.time,
 					runs: own.runs,
 					updatedAt: own.updatedAt,
-					points: recordPoints(own.time, best?.time ?? own.time),
+					points: recordPoints(own.time, best?.time ?? own.time, total),
 				};
 			}
 		}
@@ -611,9 +612,10 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					time: r.time,
 					runs: r.runs,
 					updatedAt: r.updatedAt,
-					points: recordPoints(r.time, best?.time ?? r.time),
+					points: recordPoints(r.time, best?.time ?? r.time, total),
 				})),
 				total,
+				worth: courseWorth(total),
 				page,
 				pages: Math.max(1, Math.ceil(total / limit)),
 				mine,

@@ -289,7 +289,14 @@ const isMine = (steamId: string) => me.value?.steamId === steamId;
 		</section>
 
 		<section class="space-y-4">
-			<SectionTitle :title="$t('course.leaderboard')" :subtitle="$t('course.leaderboardHint')">
+			<SectionTitle
+				:title="$t('course.leaderboard')"
+				:subtitle="
+					records.data.value
+						? `${$t('course.leaderboardHint')} ${$t('course.worth', { n: records.data.value.worth })}`
+						: $t('course.leaderboardHint')
+				"
+			>
 				<div
 					v-if="records.data.value?.mine"
 					class="hud-panel hud-edge flex items-center gap-3 px-3 py-1.5 font-hud text-base"

@@ -182,7 +182,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			recordsCollection
 				.aggregate([
 					{ $match: { courseCode: { $in: codes }, steamId: { $nin: banned } } },
-					{ $group: { _id: "$courseCode", best: { $min: "$time" } } },
+					{ $group: { _id: "$courseCode", best: { $min: "$time" }, players: { $sum: 1 } } },
 				])
 				.toArray(),
 		]);
@@ -191,6 +191,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			(await toPublicCourses(fastify, (courses ?? []) as Course[])).map(c => [c.code, c]),
 		);
 		const bestMap = new Map(bests.map(b => [b._id as string, b.best as number]));
+		const playersMap = new Map(bests.map(b => [b._id as string, b.players as number]));
 
 		const data = await Promise.all(
 			records.map(async r => ({
@@ -206,7 +207,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 						steamId: { $nin: banned },
 						time: { $lt: r.time },
 					})) + 1,
-				points: recordPoints(r.time, bestMap.get(r.courseCode) ?? r.time),
+				points: recordPoints(r.time, bestMap.get(r.courseCode) ?? r.time, playersMap.get(r.courseCode) ?? 1),
 			})),
 		);
 

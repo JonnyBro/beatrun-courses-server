@@ -79,6 +79,7 @@ export type CourseRecord = {
 
 export type CourseRecords = Paginated<CourseRecord> & {
 	mine: Omit<CourseRecord, "player"> | null;
+	worth: number;
 };
 
 export type UserRecord = {

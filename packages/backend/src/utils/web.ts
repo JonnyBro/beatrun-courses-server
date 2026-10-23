@@ -127,7 +127,13 @@ export const decodeCourseData = (course: Course) => {
 	}
 };
 
-export const recordPoints = (time: number, bestTime: number) => Math.round((1000 * bestTime) / time);
+export const MAX_COURSE_POINTS = 1000;
+export const POINTS_PER_PLAYER = 100;
+
+export const courseWorth = (players: number) => Math.min(MAX_COURSE_POINTS, POINTS_PER_PLAYER * players);
+
+export const recordPoints = (time: number, bestTime: number, players: number) =>
+	Math.round((courseWorth(players) * bestTime) / time);
 
 export interface PlayerStanding {
 	steamId: string;
@@ -148,9 +154,12 @@ export const calculateStandings = async (fastify: FastifyInstance) => {
 		.toArray()) as CourseRecord[] | undefined;
 
 	const best = new Map<string, number>();
+	const players = new Map<string, number>();
 	for (const r of records ?? []) {
 		const current = best.get(r.courseCode);
 		if (current === undefined || r.time < current) best.set(r.courseCode, r.time);
+
+		players.set(r.courseCode, (players.get(r.courseCode) ?? 0) + 1);
 	}
 
 	const standings = new Map<string, PlayerStanding>();
@@ -163,7 +172,7 @@ export const calculateStandings = async (fastify: FastifyInstance) => {
 			standings.set(r.steamId, s);
 		}
 
-		s.points += recordPoints(r.time, bestTime);
+		s.points += recordPoints(r.time, bestTime, players.get(r.courseCode)!);
 		s.completed++;
 		s.runs += r.runs ?? 1;
 		if (r.time === bestTime) s.worldRecords++;
