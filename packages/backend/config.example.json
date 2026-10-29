@@ -7,6 +7,5 @@
 	"domain": "http://localhost:6547",
 	"secret": "very-strong-secret",
 	"_comment_steamApiKey": "Leave empty if you don't have an api key",
-	"steamApiKey": "",
-	"webhookUrl": ""
+	"steamApiKey": ""
 }
