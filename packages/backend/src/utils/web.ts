@@ -102,7 +102,7 @@ export const toPublicCourses = async (fastify: FastifyInstance, courses: Course[
 			name: c.name,
 			mapName: c.mapName,
 			workshopId: isWorkshopId(c.workshopId) ? c.workshopId : null,
-			elementsCount: c.elementsCount ?? c.objectCount ?? 0,
+			elementsCount: c.elementsCount ?? 0,
 			downloadCount: c.downloadCount ?? 0,
 			runsCount: c.runsCount ?? 0,
 			uploadedAt: c.uploadedAt,
