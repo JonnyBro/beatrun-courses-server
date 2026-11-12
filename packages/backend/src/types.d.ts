@@ -71,3 +71,14 @@ export interface CourseRecord extends mongodb.WithId<mongodb.BSON.Document> {
 	createdAt: number;
 	updatedAt: number;
 }
+
+/** A run that failed the speed check, hidden from every list until an admin approves it */
+export interface PendingRecord extends mongodb.WithId<mongodb.BSON.Document> {
+	courseCode: string;
+	steamId: string;
+	time: number;
+	/** Time between checkpoints, the first one is from the start */
+	splits: number[];
+	reason: string;
+	createdAt: number;
+}

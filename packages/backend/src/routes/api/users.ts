@@ -81,6 +81,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			await fastify
 				.getCollection("records")
 				?.deleteMany({ $or: [{ steamId: params.id }, { courseCode: { $in: codes ?? [] } }] });
+			await fastify
+				.getCollection("pendingRecords")
+				?.deleteMany({ $or: [{ steamId: params.id }, { courseCode: { $in: codes ?? [] } }] });
 		}
 
 		reply.status(200).send({ code: reply.statusCode, message: `User ${user.steamId} deleted successfully` });

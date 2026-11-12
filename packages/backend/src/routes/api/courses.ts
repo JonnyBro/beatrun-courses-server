@@ -1,5 +1,6 @@
 import { Course, CourseData, CourseRecord } from "@/types.js";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions.js";
+import { checkRun, parseSplits, savePendingRecord, saveRecord } from "@/utils/records.js";
 import {
 	courseWorth,
 	decodeCourseData,
@@ -73,6 +74,7 @@ const replaceCourseData = async (
 	);
 
 	const removed = await fastify.getCollection("records")?.deleteMany({ courseCode: code });
+	await fastify.getCollection("pendingRecords")?.deleteMany({ courseCode: code });
 
 	return removed?.deletedCount ?? 0;
 };
@@ -371,6 +373,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			await fastify.getCollection("records")?.deleteMany({ courseCode: code });
+			await fastify.getCollection("pendingRecords")?.deleteMany({ courseCode: code });
 
 			reply
 				.status(200)
@@ -396,6 +399,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					required: ["time"],
 					properties: {
 						time: { type: "number" },
+						splits: { type: "string", maxLength: 16384 },
 					},
 				},
 			},
@@ -413,7 +417,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			else if (hash) {
 				course = ((await fastify
 					.getCoursesCollection()
-					?.find({ crc: hash }, { projection: { data: 0 } })
+					?.find({ crc: hash })
 					.sort({ uploadedAt: 1 })
 					.limit(1)
 					.next()) ?? undefined) as Course | undefined;
@@ -422,35 +426,39 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			if (!course) return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 
 			const code = course.code;
-			const time = (req.body as { time: number }).time;
+			const body = req.body as { time: number; splits?: string };
+			const time = body.time;
 			if (!Number.isFinite(time) || time <= 0 || time > 24 * 60 * 60) {
 				return reply.status(400).send({ code: reply.statusCode, message: "Invalid time" });
 			}
 
-			const records = fastify.getCollection("records")!;
-			const now = Date.now();
-			const previous = (await records.findOne({
-				courseCode: code,
-				steamId: user.steamId,
-			})) as CourseRecord | null;
-			const isPersonalBest = !previous || time < previous.time;
+			if (body.splits === undefined) {
+				return reply.status(400).send({
+					code: reply.statusCode,
+					message: "Update Beatrun, this version doesn't send checkpoint times",
+				});
+			}
 
-			await records.updateOne(
-				{ courseCode: code, steamId: user.steamId },
-				{
-					$inc: { runs: 1 },
-					$setOnInsert: { createdAt: now },
-					...(isPersonalBest ? { $set: { time, updatedAt: now } } : {}),
-				},
-				{ upsert: true },
-			);
-			await fastify.getCoursesCollection()?.updateOne({ code }, { $inc: { runsCount: 1 } });
+			const splits = parseSplits(body.splits);
+			if (!splits) return reply.status(400).send({ code: reply.statusCode, message: "Invalid checkpoint times" });
 
-			const best = isPersonalBest ? time : previous.time;
-			const banned = await getBannedSteamIds(fastify);
-			const position =
-				(await records.countDocuments({ courseCode: code, steamId: { $nin: banned }, time: { $lt: best } })) +
-				1;
+			const check = checkRun(decodeCourseData(course), time, splits);
+
+			if (!check.ok && "reject" in check) {
+				return reply.status(400).send({ code: reply.statusCode, message: check.reject });
+			}
+
+			if (!check.ok) {
+				await savePendingRecord(fastify, code, user.steamId, time, splits, check.flag);
+
+				return reply.status(202).send({
+					code: reply.statusCode,
+					message: "The run is waiting for review",
+					data: { code, name: course.name, pending: true },
+				});
+			}
+
+			const { isPersonalBest, best, position } = await saveRecord(fastify, code, user.steamId, time);
 
 			reply.status(200).send({
 				code: reply.statusCode,
@@ -675,6 +683,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 		await fastify.getCoursesCollection()?.deleteOne({ code });
 		await fastify.getCollection("records")?.deleteMany({ courseCode: code });
+		await fastify.getCollection("pendingRecords")?.deleteMany({ courseCode: code });
 
 		reply.status(200).send({ code: reply.statusCode, message: `Course with code '${code}' deleted successfully` });
 	});

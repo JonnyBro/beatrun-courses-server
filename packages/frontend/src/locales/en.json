@@ -253,7 +253,8 @@
 		"tabs": {
 			"users": "Users",
 			"courses": "Courses",
-			"times": "Times"
+			"times": "Times",
+			"pending": "Review"
 		},
 		"stats": {
 			"users": "Users",
@@ -323,6 +324,17 @@
 			"deleteTitle": "Delete this time?",
 			"deleteText": "{time} by {player} on {course}. Use this for cheated or broken runs.",
 			"deleted": "Time deleted"
+		},
+		"pending": {
+			"hint": "Times that came in faster than the engine allows between checkpoints. They stay hidden until approved. Teleports on the map or a raised sv_maxvelocity can make a real run land here, hover the time to see each checkpoint.",
+			"empty": "Nothing to review",
+			"reason": "Reason",
+			"approve": "Approve time",
+			"reject": "Reject time",
+			"rejectTitle": "Reject this time?",
+			"rejectText": "{time} by {player} on {course} won't be added to the leaderboard.",
+			"approved": "Time approved",
+			"rejected": "Time rejected"
 		}
 	},
 	"ban": {

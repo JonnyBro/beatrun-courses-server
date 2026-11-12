@@ -1,5 +1,6 @@
-import { CourseRecord, User } from "@/types.js";
+import { CourseRecord, PendingRecord, User } from "@/types.js";
 import { sanitize } from "@/utils/functions.js";
+import { saveRecord } from "@/utils/records.js";
 import { escapeRegex, getUsersMap, isWorkshopId, parsePagination, requireAdmin, toPublicUser } from "@/utils/web.js";
 import { mongodb } from "@fastify/mongodb";
 import { FastifyInstance } from "fastify";
@@ -227,6 +228,84 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		if (!res?.deletedCount) return reply.status(404).send({ code: reply.statusCode, message: "Record not found" });
 
 		reply.status(200).send({ code: reply.statusCode, message: "Record deleted" });
+	});
+
+	fastify.get("/api/admin/records/pending", { preHandler: requireAdmin(fastify) }, async (req, reply) => {
+		const { page, limit, skip } = parsePagination(req.query as object, 25);
+
+		const collection = fastify.getCollection("pendingRecords")!;
+		const [items, total] = await Promise.all([
+			collection.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit).toArray(),
+			collection.countDocuments({}),
+		]);
+		const records = items as PendingRecord[];
+
+		const [users, courses] = await Promise.all([
+			getUsersMap(
+				fastify,
+				records.map(r => r.steamId),
+			),
+			fastify
+				.getCoursesCollection()
+				?.find({ code: { $in: records.map(r => r.courseCode) } }, { projection: { code: 1, name: 1 } })
+				.toArray(),
+		]);
+		const names = new Map((courses ?? []).map(c => [c.code as string, c.name as string]));
+
+		reply.status(200).send({
+			code: reply.statusCode,
+			data: {
+				items: records.map(r => ({
+					id: r._id.toString(),
+					courseCode: r.courseCode,
+					courseName: names.get(r.courseCode) ?? null,
+					player: toPublicUser(users.get(r.steamId), { steamId: r.steamId }),
+					time: r.time,
+					splits: r.splits,
+					reason: r.reason,
+					createdAt: r.createdAt,
+				})),
+				total,
+				page,
+				pages: Math.max(1, Math.ceil(total / limit)),
+			},
+		});
+	});
+
+	fastify.post(
+		"/api/admin/records/pending/:id/approve",
+		{ preHandler: requireAdmin(fastify) },
+		async (req, reply) => {
+			const { id } = req.params as { id: string };
+			if (!mongodb.ObjectId.isValid(id)) {
+				return reply.status(400).send({ code: reply.statusCode, message: "Invalid record id" });
+			}
+
+			const pending = (await fastify
+				.getCollection("pendingRecords")
+				?.findOneAndDelete({ _id: new mongodb.ObjectId(id) })) as PendingRecord | null;
+			if (!pending) return reply.status(404).send({ code: reply.statusCode, message: "Record not found" });
+
+			if (!(await fastify.getCourse(pending.courseCode))) {
+				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+			}
+
+			await saveRecord(fastify, pending.courseCode, pending.steamId, pending.time);
+
+			reply.status(200).send({ code: reply.statusCode, message: "Record approved" });
+		},
+	);
+
+	fastify.delete("/api/admin/records/pending/:id", { preHandler: requireAdmin(fastify) }, async (req, reply) => {
+		const { id } = req.params as { id: string };
+		if (!mongodb.ObjectId.isValid(id)) {
+			return reply.status(400).send({ code: reply.statusCode, message: "Invalid record id" });
+		}
+
+		const res = await fastify.getCollection("pendingRecords")?.deleteOne({ _id: new mongodb.ObjectId(id) });
+		if (!res?.deletedCount) return reply.status(404).send({ code: reply.statusCode, message: "Record not found" });
+
+		reply.status(200).send({ code: reply.statusCode, message: "Record rejected" });
 	});
 };
 

@@ -10,6 +10,7 @@ import type {
 	MapInfo,
 	Me,
 	Paginated,
+	PendingRecord,
 	PlayerStanding,
 	Profile,
 	PublicUser,
@@ -72,6 +73,12 @@ export const adminGetRecords = (params: PageParams & { course?: string; player?:
 	get<Paginated<AdminRecord>>("/api/admin/records", params);
 export const adminDeleteRecord = async (id: string) =>
 	(await api.delete<Response<never>>(`/api/admin/records/${encodeURIComponent(id)}`)).data;
+export const adminGetPendingRecords = (params: PageParams) =>
+	get<Paginated<PendingRecord>>("/api/admin/records/pending", params);
+export const adminApprovePendingRecord = async (id: string) =>
+	(await api.post<Response<never>>(`/api/admin/records/pending/${encodeURIComponent(id)}/approve`)).data;
+export const adminRejectPendingRecord = async (id: string) =>
+	(await api.delete<Response<never>>(`/api/admin/records/pending/${encodeURIComponent(id)}`)).data;
 
 /** Course file the way the game saves it, works without signing in */
 export const courseFileUrl = (code: string) => `/api/courses/file/${encodeURIComponent(code)}`;

@@ -149,3 +149,14 @@ export type AdminRecord = {
 	runs: number;
 	updatedAt: number;
 };
+
+export type PendingRecord = {
+	id: string;
+	courseCode: string;
+	courseName: string | null;
+	player: PublicUser;
+	time: number;
+	splits: number[];
+	reason: string;
+	createdAt: number;
+};
