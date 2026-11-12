@@ -62,16 +62,17 @@ The new language shows up in the picker by itself and is picked by default for b
 
 ### Game
 
-The game uses `GET /api/courses/list`, `POST /api/courses/upload`, `GET /api/courses/download`, `DELETE /api/courses/delete` and `GET /api/key/validate`. On top of that:
+The game uses `GET /api/courses/search`, `GET /api/courses/info/:code`, `POST /api/courses/upload`, `GET /api/courses/download`, `DELETE /api/courses/delete`, `GET /api/users/profile/:steamId` and `GET /api/key/validate`. Uploading a course that is already in the database (same CRC) answers `409` with the existing code in `data.duplicate`. On top of that:
 
 ```http
 POST /api/courses/records
-Headers: authorization: <user key>, hash: <Course_ID>   (or code: <course code>)
-Body:    time=<seconds>
+Headers: authorization: <user key>, hash: <Course_ID>, code: <course code, optional>
+Body:    time=<seconds>, splits=<JSON array of seconds between checkpoints>
 ```
 
 Saves a finished run. The game knows a loaded course only by `Course_ID` (`util.CRC()` of the course JSON), so every course stores the same CRC32 in `crc`. Only the best time per player is kept, every call counts as a run.
 Answers `{ code, message, data: { code, name, personalBest, best, position } }`, or `404` if the course isn't in the database.
+`code` is only used when that course has the same CRC, courses with the same content share it. A run whose splits don't add up to the time or don't match the checkpoints is rejected with `400`. A run faster than `sv_maxvelocity` allows between two checkpoints answers `202` and waits for an admin in `pendingRecords`.
 
 ```http
 POST /api/courses/update
@@ -83,23 +84,25 @@ Replaces the course file and keeps the code. Only for the author or an admin and
 
 ### Website
 
-| Method      | Path                                                     | Notes                                                        |
-| ----------- | -------------------------------------------------------- | ------------------------------------------------------------ |
-| GET         | `/api/stats`                                             | Totals                                                       |
-| GET         | `/api/courses/search?q&map&author&sort&page&limit`       | `sort`: newest, oldest, downloads, runs, name                |
-| GET         | `/api/courses/maps`                                      | Maps with course counts                                      |
-| GET         | `/api/courses/info/:code`                                | Course details and stats                                     |
-| GET         | `/api/courses/info/:code/records?page&limit`             | Course leaderboard                                           |
-| GET         | `/api/courses/file/:code`                                | Course file as the game saves it                             |
-| PUT         | `/api/courses/info/:code/file`                           | Owner or admin, `{ data: base64 }`, wipes the leaderboard    |
-| DELETE      | `/api/courses/info/:code`                                | Owner or admin                                               |
-| GET         | `/api/leaderboard/players` / `/api/leaderboard/creators` | Global leaderboards                                          |
-| GET         | `/api/users/me`                                          | Current user with key and ban, `null` for guests             |
-| POST        | `/api/users/me/key`                                      | New key                                                      |
-| GET         | `/api/users/profile/:steamId` (`/records`)               | Public profile                                               |
-| GET, PATCH  | `/api/admin/users`, `/api/admin/users/:steamId`          | Admin, `{ "ban": { "reason": "..." } }` or `{ "ban": null }` |
-| PATCH       | `/api/admin/courses/:code`                               | Admin                                                        |
-| GET, DELETE | `/api/admin/records`, `/api/admin/records/:id`           | Admin                                                        |
+| Method       | Path                                                                       | Notes                                                        |
+| ------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| GET          | `/api/stats`                                                               | Totals                                                       |
+| GET          | `/api/courses/search?q&map&author&sort&page&limit`                         | `sort`: newest, oldest, downloads, runs, name                |
+| GET          | `/api/courses/maps`                                                        | Maps with course counts                                      |
+| GET          | `/api/courses/info/:code`                                                  | Course details and stats                                     |
+| GET          | `/api/courses/info/:code/records?page&limit`                               | Course leaderboard                                           |
+| GET          | `/api/courses/file/:code`                                                  | Course file as the game saves it                             |
+| PUT          | `/api/courses/info/:code/file`                                             | Owner or admin, `{ data: base64 }`, wipes the leaderboard    |
+| DELETE       | `/api/courses/info/:code`                                                  | Owner or admin                                               |
+| GET          | `/api/leaderboard/players` / `/api/leaderboard/creators`                   | Global leaderboards                                          |
+| GET          | `/api/users/me`                                                            | Current user with key and ban, `null` for guests             |
+| POST         | `/api/users/me/key`                                                        | New key                                                      |
+| GET          | `/api/users/profile/:steamId` (`/records`)                                 | Public profile                                               |
+| GET, PATCH   | `/api/admin/users`, `/api/admin/users/:steamId`                            | Admin, `{ "ban": { "reason": "..." } }` or `{ "ban": null }` |
+| PATCH        | `/api/admin/courses/:code`                                                 | Admin                                                        |
+| GET, DELETE  | `/api/admin/records`, `/api/admin/records/:id`                             | Admin                                                        |
+| GET          | `/api/admin/records/pending`                                               | Admin, runs waiting for review                               |
+| POST, DELETE | `/api/admin/records/pending/:id/approve`, `/api/admin/records/pending/:id` | Admin, approve or reject a run                               |
 
 `/auth?redirect=/path` signs in through Steam and comes back to that page, `/profile` by default.
 

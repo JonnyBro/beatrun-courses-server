@@ -105,7 +105,10 @@ const statItems = computed(() => [
 					</div>
 					<Select v-model="map">
 						<SelectTrigger class="w-full sm:w-48">
-							<SelectValue :placeholder="$t('home.allMaps')" />
+							<!-- reka-ui takes the label from the item's text, which would glue the course count to the name -->
+							<SelectValue :placeholder="$t('home.allMaps')">
+								{{ map === "all" ? $t("home.allMaps") : map }}
+							</SelectValue>
 						</SelectTrigger>
 						<SelectContent>
 							<SelectItem value="all">{{ $t("home.allMaps") }}</SelectItem>

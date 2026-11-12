@@ -35,14 +35,6 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			return course as Course;
 		});
 
-		fastify.decorate("getCoursesArray", async () => {
-			const collection = fastify.getCollection("courses");
-			if (!collection) return;
-
-			const array = await collection.find({}).toArray();
-			return array as Course[];
-		});
-
 		fastify.decorate("getCoursesCollection", () => {
 			const collection = fastify.getCollection("courses");
 			return collection;
@@ -56,14 +48,6 @@ export const mongoPlugin = fastifyPlugin(async (fastify: FastifyInstance) => {
 			if (!user) return;
 
 			return user as User;
-		});
-
-		fastify.decorate("getUsersArray", async () => {
-			const collection = fastify.getCollection("users");
-			if (!collection) return;
-
-			const array = await collection.find({}).toArray();
-			return array as User[];
 		});
 
 		fastify.decorate("getUsersCollection", () => {
@@ -84,10 +68,8 @@ declare module "fastify" {
 	interface FastifyInstance {
 		getCollection: (name: string) => mongodb.Collection | undefined;
 		getCourse: (code: string) => Promise<Course | undefined>;
-		getCoursesArray: () => Promise<Course[] | undefined>;
 		getCoursesCollection: () => mongodb.Collection | undefined;
 		getUser: (steamId: string) => Promise<User | undefined>;
-		getUsersArray: () => Promise<User[] | undefined>;
 		getUsersCollection: () => mongodb.Collection | undefined;
 	}
 }

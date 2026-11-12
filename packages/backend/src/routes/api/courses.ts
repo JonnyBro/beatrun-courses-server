@@ -1,5 +1,6 @@
 import { Course, CourseData, CourseRecord } from "@/types.js";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions.js";
+import { compressCourse, CourseTooBigError, decompressCourse, MAX_COURSE_SIZE } from "@/utils/lzma.js";
 import { checkRun, parseSplits, savePendingRecord, saveRecord } from "@/utils/records.js";
 import {
 	courseWorth,
@@ -16,27 +17,15 @@ import {
 	toPublicUser,
 } from "@/utils/web.js";
 import { mongodb } from "@fastify/mongodb";
-import { FastifyInstance } from "fastify";
-import LZMA from "lzma";
+import { FastifyInstance, FastifyReply } from "fastify";
 import { brotliCompressSync, brotliDecompressSync, crc32 } from "zlib";
 
 /** Course data the way the game stores it: LZMA compressed JSON (same bytes as a saved course file) */
-const encodeCourseForGame = (course: Course) => {
-	const decompressed = Buffer.from(brotliDecompressSync(course.data!.buffer)).toString("utf-8");
-	return Buffer.from(LZMA.compress(decompressed));
-};
+const encodeCourseForGame = (course: Course) =>
+	compressCourse(Buffer.from(brotliDecompressSync(course.data!.buffer)).toString("utf-8"));
 
-const COURSE_BODY_LIMIT = 16 * 1024 * 1024;
-
-const decodeUploadedCourse = (data: string) => {
-	const raw = Buffer.from(data, "base64");
-
-	try {
-		return LZMA.decompress(raw) as string;
-	} catch {
-		return raw.toString("utf-8");
-	}
-};
+// Base64 of an uncompressed course of the biggest allowed size
+const COURSE_BODY_LIMIT = Math.ceil((MAX_COURSE_SIZE * 4) / 3) + 1024;
 
 const parseCourse = (courseString: string) => {
 	try {
@@ -46,6 +35,53 @@ const parseCourse = (courseString: string) => {
 		return;
 	}
 };
+
+type UploadedCourse = { courseString: string; courseJSON: CourseData } | { status: number; message: string };
+
+/** The game sends LZMA, the website also takes the plain JSON from a course file */
+const readUploadedCourse = async (data: string): Promise<UploadedCourse> => {
+	const raw = Buffer.from(data, "base64");
+	let courseString: string | undefined;
+
+	if (raw.toString("utf-8", 0, 16).trimStart().startsWith("[")) {
+		courseString = raw.toString("utf-8");
+	} else {
+		try {
+			courseString = await decompressCourse(raw);
+		} catch (e) {
+			if (!(e instanceof CourseTooBigError)) throw e;
+
+			return { status: 413, message: "Course is too big" };
+		}
+	}
+
+	const courseJSON = courseString !== undefined ? parseCourse(courseString) : undefined;
+	if (!courseString || !courseJSON) return { status: 400, message: "Course file is invalid" };
+
+	return { courseString, courseJSON };
+};
+
+/** Another course with exactly the same content, the same file uploaded again gets the old code instead */
+const findSameCourse = async (fastify: FastifyInstance, courseString: string, exceptCode?: string) =>
+	(await fastify
+		.getCoursesCollection()
+		?.find(
+			{
+				crc: String(crc32(Buffer.from(courseString, "utf-8"))),
+				...(exceptCode && { code: { $ne: exceptCode } }),
+			},
+			{ projection: { code: 1 } },
+		)
+		.sort({ uploadedAt: 1 })
+		.limit(1)
+		.next()) as { code: string } | null | undefined;
+
+const sendDuplicate = (reply: FastifyReply, code: string) =>
+	reply.status(409).send({
+		code: 409,
+		message: `This course is already in the database: ${code}`,
+		data: { duplicate: code },
+	});
 
 const elementsCount = (json: CourseData) => json[0].length + json[5].length + (json[7]?.length ?? 0);
 
@@ -80,42 +116,10 @@ const replaceCourseData = async (
 };
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get(
-		"/api/courses/list",
-		{
-			schema: {
-				headers: {
-					type: "object",
-					properties: {
-						mapname: { type: "string" },
-						game: { type: "string" },
-					},
-				},
-			},
-		},
-		async (req, reply) => {
-			const courses = await fastify.getCoursesArray();
-
-			let strippedCourses = courses?.map(course => {
-				if (req.headers.game === "yes") delete course.data;
-
-				return course;
-			});
-
-			if (req.headers.mapname) {
-				strippedCourses = strippedCourses?.filter(c => c.mapName === req.headers.mapname);
-			}
-
-			reply.status(200).send({
-				code: reply.statusCode,
-				data: strippedCourses,
-			});
-		},
-	);
-
 	fastify.post(
 		"/api/courses/upload",
 		{
+			bodyLimit: COURSE_BODY_LIMIT,
 			schema: {
 				headers: {
 					type: "object",
@@ -139,10 +143,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const key = req.headers.authorization!;
 			const mapName = req.headers.mapname as string;
 			const workshopId = req.headers.workshopid as string | null;
-			const courseData = (req.body as { data: string }).data;
-
-			const courseString = decodeUploadedCourse(courseData);
-			const courseJSON = parseCourse(courseString);
 
 			const user = await getUserFromKey(fastify, key);
 			if (!user) {
@@ -151,9 +151,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			if (user.ban) return sendBanned(reply, user);
 
-			if (!courseJSON) {
-				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
+			const upload = await readUploadedCourse((req.body as { data: string }).data);
+			if ("message" in upload) {
+				return reply.status(upload.status).send({ code: upload.status, message: upload.message });
 			}
+
+			const { courseString, courseJSON } = upload;
+
+			const same = await findSameCourse(fastify, courseString);
+			if (same) return sendDuplicate(reply, same.code);
 
 			const courses = fastify.getCollection("courses");
 
@@ -248,11 +254,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					.send({ code: reply.statusCode, message: `Course ${code} is made for ${course.mapName}` });
 			}
 
-			const courseString = decodeUploadedCourse((req.body as { data: string }).data);
-			const courseJSON = parseCourse(courseString);
-			if (!courseJSON) {
-				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
+			const upload = await readUploadedCourse((req.body as { data: string }).data);
+			if ("message" in upload) {
+				return reply.status(upload.status).send({ code: upload.status, message: upload.message });
 			}
+
+			const { courseString, courseJSON } = upload;
+
+			const same = await findSameCourse(fastify, courseString, code);
+			if (same) return sendDuplicate(reply, same.code);
 
 			const workshopId = (req.headers.workshopid as string | undefined) ?? course.workshopId;
 			const removed = await replaceCourseData(fastify, code, courseString, courseJSON, { mapName, workshopId });
@@ -290,7 +300,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 			}
 
-			const base64lzma = encodeCourseForGame(course as Course).toString("base64");
+			const base64lzma = (await encodeCourseForGame(course as Course)).toString("base64");
 
 			if (!base64lzma) {
 				return reply
@@ -311,7 +321,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		const course = await fastify.getCourse(code);
 		if (!course?.data) return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
 
-		const file = encodeCourseForGame(course);
+		const file = await encodeCourseForGame(course);
 
 		await fastify.getCoursesCollection()?.updateOne({ code }, { $inc: { downloadCount: 1 } });
 
@@ -413,8 +423,14 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const { code: codeHeader, hash } = req.headers as { code?: string; hash?: string };
 			let course: Course | undefined;
 
-			if (codeHeader) course = await fastify.getCourse(codeHeader);
-			else if (hash) {
+			if (codeHeader) {
+				course = await fastify.getCourse(codeHeader);
+
+				// The game remembers codes by CRC, a code that doesn't match the loaded course must not get its record
+				if (course && hash && course.crc !== hash) course = undefined;
+			}
+
+			if (!course && hash) {
 				course = ((await fastify
 					.getCoursesCollection()
 					?.find({ crc: hash })
@@ -658,11 +674,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
 			}
 
-			const courseString = decodeUploadedCourse((req.body as { data: string }).data);
-			const courseJSON = parseCourse(courseString);
-			if (!courseJSON) {
-				return reply.status(400).send({ code: reply.statusCode, message: "Course file is invalid" });
+			const upload = await readUploadedCourse((req.body as { data: string }).data);
+			if ("message" in upload) {
+				return reply.status(upload.status).send({ code: upload.status, message: upload.message });
 			}
+
+			const { courseString, courseJSON } = upload;
+
+			const same = await findSameCourse(fastify, courseString, code);
+			if (same) return sendDuplicate(reply, same.code);
 
 			const removed = await replaceCourseData(fastify, code, courseString, courseJSON);
 
