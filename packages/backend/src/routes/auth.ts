@@ -10,6 +10,14 @@ const getRedirect = (req: FastifyRequest) => {
 	return redirect && redirect.startsWith("/") && !redirect.startsWith("//") ? redirect : "/profile";
 };
 
+// A new session id on every login, so an id planted before it (session fixation) is worthless
+const logIn = async (req: FastifyRequest, steamId: string) => {
+	await req.session.regenerate();
+
+	req.session.user = { steamId };
+	req.session.renewedAt = Date.now();
+};
+
 const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get("/auth", { config: limits.auth }, (req, reply) => {
 		const callback = `${config.domain}/auth/callback?redirect=${encodeURIComponent(getRedirect(req))}`;
@@ -46,7 +54,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				?.updateOne({ steamId }, { $set: { avatar: profile.avatarfull, ...(username && { username }) } });
 		}
 
-		req.session.user = await fastify.getUser(steamId);
+		await logIn(req, steamId);
 
 		reply.redirect(getRedirect(req));
 	});
@@ -67,7 +75,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				await fastify.getUsersCollection()?.updateOne({ steamId: dev.steamId }, { $set: { admin: dev.admin } });
 			}
 
-			req.session.user = await fastify.getUser(dev.steamId);
+			await logIn(req, dev.steamId);
 
 			reply.redirect(getRedirect(req));
 		});

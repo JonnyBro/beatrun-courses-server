@@ -3,7 +3,9 @@ import "@fastify/session";
 
 declare module "@fastify/session" {
 	interface FastifySessionObject {
-		user?: User;
+		/** Only the id, the user is read from the database on every request so bans and admin changes apply at once */
+		user?: { steamId: string };
+		renewedAt?: number;
 	}
 }
 

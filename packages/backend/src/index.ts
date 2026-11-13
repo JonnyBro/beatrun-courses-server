@@ -2,9 +2,7 @@ import config from "@/../config.json" with { type: "json" };
 import pkg from "@/../package.json" with { type: "json" };
 import { adminRouter, coursesRouter, leaderboardRouter, usersRouter } from "@/routes/api/index.js";
 import authRouter from "@/routes/auth.js";
-import fastifyCookie from "@fastify/cookie";
 import fastifyFormbody from "@fastify/formbody";
-import fastifySession from "@fastify/session";
 import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { existsSync } from "fs";
@@ -12,6 +10,7 @@ import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { mongoPlugin } from "./plugins/mongo.js";
 import { rateLimitPlugin } from "./plugins/rateLimit.js";
+import { sessionPlugin } from "./plugins/session.js";
 
 const fastify = Fastify({
 	trustProxy: config.isBehindProxy,
@@ -24,14 +23,7 @@ const fastify = Fastify({
 // Plugins
 fastify.register(rateLimitPlugin);
 fastify.register(mongoPlugin);
-fastify.register(fastifyCookie);
-fastify.register(fastifySession, {
-	secret: config.secret,
-	cookie: {
-		secure: config.production,
-		maxAge: 72 * 60 * 60 * 1000, // 72 hours
-	},
-});
+fastify.register(sessionPlugin);
 fastify.register(fastifyFormbody);
 
 // Routers

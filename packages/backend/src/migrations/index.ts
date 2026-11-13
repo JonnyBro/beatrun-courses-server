@@ -4,10 +4,11 @@ import courseCrc from "./002-course-crc.js";
 import elementsCount from "./003-elements-count.js";
 import uniqueUsers from "./004-unique-users.js";
 import pendingRecords from "./005-pending-records.js";
+import sessions from "./006-sessions.js";
 import { Migration } from "./types.js";
 
 // Append only, never reorder or edit migrations that have already been applied
-const migrations: Migration[] = [initialIndexes, courseCrc, elementsCount, uniqueUsers, pendingRecords];
+const migrations: Migration[] = [initialIndexes, courseCrc, elementsCount, uniqueUsers, pendingRecords, sessions];
 
 type AppliedMigration = { _id: string; appliedAt: Date };
 
