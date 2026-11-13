@@ -160,3 +160,23 @@ export type PendingRecord = {
 	reason: string;
 	createdAt: number;
 };
+
+export type AdminAction =
+	| "user.update"
+	| "user.delete"
+	| "course.update"
+	| "course.replace"
+	| "course.delete"
+	| "record.delete"
+	| "pending.approve"
+	| "pending.reject";
+
+export type AdminLogEntry = {
+	id: string;
+	at: number;
+	admin: PublicUser;
+	action: AdminAction;
+	/** steamId for user actions, course code for the rest */
+	target: string;
+	details: Record<string, unknown>;
+};

@@ -1,5 +1,5 @@
 import { SteamUser } from "@/modules/steam.js";
-import { CourseData, User } from "@/types.js";
+import { User } from "@/types.js";
 import { createHash, randomBytes, randomInt } from "crypto";
 import { FastifyInstance } from "fastify";
 
@@ -75,22 +75,6 @@ export const sanitize = (string?: string, forceLowercase = false, strict = false
 	if (strict) clean = clean.replace(/\s+/g, "_").replace(/[^\u0400-\u04FF\w-]/g, "");
 
 	return forceLowercase ? clean.toLowerCase() : clean;
-};
-
-export const isCourseFileValid = (content: CourseData | string) => {
-	if (typeof content === "string") content = JSON.parse(content);
-	if (content.length < 6 || content.length > 8) return false;
-
-	return (
-		typeof content[0] === "object" &&
-		typeof content[1] === "object" &&
-		typeof content[2] === "string" &&
-		typeof content[3] === "number" &&
-		typeof content[4] === "string" &&
-		typeof content[5] === "object" &&
-		(content[6] === undefined || typeof content[6] === "number") &&
-		(content[7] === undefined || typeof content[7] === "object")
-	);
 };
 
 export const randomNum = (min: number = 0, max: number = 100) => Math.floor(Math.random() * (max - min + 1)) + min;

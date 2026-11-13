@@ -258,7 +258,8 @@
 			"users": "Users",
 			"courses": "Courses",
 			"times": "Times",
-			"pending": "Review"
+			"pending": "Review",
+			"log": "Log"
 		},
 		"stats": {
 			"users": "Users",
@@ -339,6 +340,44 @@
 			"rejectText": "{time} by {player} on {course} won't be added to the leaderboard.",
 			"approved": "Time approved",
 			"rejected": "Time rejected"
+		},
+		"log": {
+			"hint": "Everything admins did to other people's users, courses and times. Owners managing their own courses aren't listed.",
+			"empty": "Nothing yet",
+			"when": "When",
+			"admin": "Admin",
+			"target": "Target",
+			"action": "Action",
+			"actions": {
+				"user": {
+					"update": "Changed user",
+					"delete": "Deleted user"
+				},
+				"course": {
+					"update": "Edited course",
+					"replace": "Replaced course file",
+					"delete": "Deleted course"
+				},
+				"record": {
+					"delete": "Deleted time"
+				},
+				"pending": {
+					"approve": "Approved time",
+					"reject": "Rejected time"
+				}
+			},
+			"details": {
+				"madeAdmin": "made admin",
+				"removedAdmin": "removed admin",
+				"banned": "banned: {reason}",
+				"unbanned": "unbanned (was: {reason})",
+				"renamed": "renamed to {name}",
+				"purged": "with all their content",
+				"removedRecords": "{n} time removed | {n} times removed",
+				"change": "{field}: {from} → {to}",
+				"time": "{time} by {player}",
+				"by": "author {author}"
+			}
 		}
 	},
 	"ban": {

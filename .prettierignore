@@ -8,3 +8,5 @@
 
 pnpm*
 .pnpm*
+
+dist

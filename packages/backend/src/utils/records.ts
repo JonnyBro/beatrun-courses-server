@@ -1,4 +1,5 @@
 import { CourseData, CourseRecord } from "@/types.js";
+import { parseVector } from "@/utils/courseValidation.js";
 import { getBannedSteamIds } from "@/utils/web.js";
 import { FastifyInstance } from "fastify";
 
@@ -14,18 +15,6 @@ const TOTAL_TOLERANCE = 0.05;
 const MAX_SPLITS = 512;
 
 export type RunCheck = { ok: true } | { ok: false; reject: string } | { ok: false; flag: string };
-
-/** util.TableToJSON stores vectors as "[x y z]" strings */
-const parseVector = (value: unknown) => {
-	if (typeof value !== "string") return;
-
-	const match = value.match(/^\[\s*(\S+)\s+(\S+)\s+(\S+)\s*\]$/);
-	if (!match) return;
-
-	const xyz = match.slice(1).map(Number);
-
-	return xyz.every(Number.isFinite) ? xyz : undefined;
-};
 
 export const parseSplits = (raw: unknown) => {
 	if (typeof raw !== "string") return;

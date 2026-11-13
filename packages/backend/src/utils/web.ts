@@ -114,7 +114,7 @@ export const toPublicCourses = async (fastify: FastifyInstance, courses: Course[
 	});
 };
 
-export const isWorkshopId = (id: unknown): id is string => typeof id === "string" && /^\d+$/.test(id);
+export const isWorkshopId = (id: unknown): id is string => typeof id === "string" && /^\d{1,20}$/.test(id);
 
 export const decodeCourseData = (course: Course) => {
 	if (!course.data) return;

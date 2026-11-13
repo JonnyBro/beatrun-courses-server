@@ -60,11 +60,13 @@ The new language shows up in the picker by itself and is picked by default for b
 
 ## API
 
+The backend sends security headers with a Content Security Policy (inline scripts are allowed by hash, read from the built `index.html` on startup). HSTS is only sent when `DOMAIN` is `https://`.
+
 Requests are limited per IP and answer `429` past the limit: 300 a minute for the API in general, 10 for uploading or replacing a course, 30 for records, 60 for downloads, 20 for key checks and the Steam login. Behind a proxy set `BEHIND_PROXY=true`, otherwise everyone shares the proxy's IP.
 
 ### Game
 
-The game uses `GET /api/courses/search`, `GET /api/courses/info/:code`, `POST /api/courses/upload`, `GET /api/courses/download`, `DELETE /api/courses/delete`, `GET /api/users/profile/:steamId` and `GET /api/key/validate`. Uploading a course that is already in the database (same CRC) answers `409` with the existing code in `data.duplicate`. On top of that:
+The game uses `GET /api/courses/search`, `GET /api/courses/info/:code`, `POST /api/courses/upload`, `GET /api/courses/download`, `DELETE /api/courses/delete`, `GET /api/users/profile/:steamId` and `GET /api/key/validate`. Uploading a course that is already in the database (same CRC) answers `409` with the existing code in `data.duplicate`. Courses are checked the same way the game checks them before loading (limits, coordinates, entity classes, model paths, name, map name and Workshop id), a bad one answers `400` with the reason. `pnpm --filter ./packages/backend check-courses` runs this check over every course already in the database. On top of that:
 
 ```http
 POST /api/courses/records
@@ -105,6 +107,7 @@ Replaces the course file and keeps the code. Only for the author or an admin and
 | GET, DELETE  | `/api/admin/records`, `/api/admin/records/:id`                             | Admin                                                        |
 | GET          | `/api/admin/records/pending`                                               | Admin, runs waiting for review                               |
 | POST, DELETE | `/api/admin/records/pending/:id/approve`, `/api/admin/records/pending/:id` | Admin, approve or reject a run                               |
+| GET          | `/api/admin/log`                                                           | Admin actions on other people's users, courses and times     |
 
 `/auth?redirect=/path` signs in through Steam and comes back to that page, `/profile` by default.
 

@@ -1,5 +1,6 @@
 import { limits } from "@/plugins/rateLimit.js";
 import { Course, CourseRecord } from "@/types.js";
+import { logAdminAction } from "@/utils/adminLog.js";
 import { generateKey, getUserFromKey, getUserFromSteamId } from "@/utils/functions.js";
 import {
 	calculateStandings,
@@ -87,6 +88,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				.getCollection("pendingRecords")
 				?.deleteMany({ $or: [{ steamId: params.id }, { courseCode: { $in: codes ?? [] } }] });
 		}
+
+		await logAdminAction(fastify, req.webUser!, "user.delete", user.steamId, {
+			username: user.username,
+			purge: purge === "1" || purge === "true",
+		});
 
 		reply.status(200).send({ code: reply.statusCode, message: `User ${user.steamId} deleted successfully` });
 	});

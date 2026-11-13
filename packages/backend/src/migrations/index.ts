@@ -6,6 +6,7 @@ import uniqueUsers from "./004-unique-users.js";
 import pendingRecords from "./005-pending-records.js";
 import sessions from "./006-sessions.js";
 import hashedKeys from "./007-hashed-keys.js";
+import adminLog from "./008-admin-log.js";
 import { Migration } from "./types.js";
 
 // Append only, never reorder or edit migrations that have already been applied
@@ -17,6 +18,7 @@ const migrations: Migration[] = [
 	pendingRecords,
 	sessions,
 	hashedKeys,
+	adminLog,
 ];
 
 type AppliedMigration = { _id: string; appliedAt: Date };

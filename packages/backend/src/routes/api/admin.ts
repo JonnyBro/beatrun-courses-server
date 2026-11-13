@@ -1,4 +1,5 @@
-import { CourseRecord, PendingRecord, User } from "@/types.js";
+import { Course, CourseRecord, PendingRecord, User } from "@/types.js";
+import { AdminLogEntry, logAdminAction } from "@/utils/adminLog.js";
 import { sanitize } from "@/utils/functions.js";
 import { saveRecord } from "@/utils/records.js";
 import { escapeRegex, getUsersMap, isWorkshopId, parsePagination, requireAdmin, toPublicUser } from "@/utils/web.js";
@@ -130,6 +131,14 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			);
 			if (!res) return reply.status(404).send({ code: reply.statusCode, message: "User not found" });
 
+			await logAdminAction(fastify, req.webUser!, "user.update", steamId, {
+				username: target.username,
+				...(body.admin !== undefined && body.admin !== Boolean(target.admin) && { admin: body.admin }),
+				...(set.username !== undefined && set.username !== target.username && { newUsername: set.username }),
+				...(body.ban && { ban: (set.ban as { reason: string }).reason }),
+				...(body.ban === null && target.ban && { unban: target.ban.reason }),
+			});
+
 			reply.status(200).send({ code: reply.statusCode, data: toPublicUser(res as User) });
 		},
 	);
@@ -163,9 +172,18 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				update.workshopId = body.workshopId || null;
 			}
 
-			const res = await fastify.getCoursesCollection()?.updateOne({ code }, { $set: update });
-			if (!res?.matchedCount) {
-				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+			const before = (await fastify
+				.getCoursesCollection()
+				?.findOneAndUpdate({ code }, { $set: update }, { returnDocument: "before" })) as Course | null;
+			if (!before) return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
+
+			const changes = Object.fromEntries(
+				Object.entries(update)
+					.filter(([field, value]) => before[field] !== value)
+					.map(([field, value]) => [field, { from: before[field] as unknown, to: value }]),
+			);
+			if (Object.keys(changes).length) {
+				await logAdminAction(fastify, req.webUser!, "course.update", code, { name: before.name, changes });
 			}
 
 			reply.status(200).send({ code: reply.statusCode, message: "Course updated" });
@@ -224,8 +242,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(400).send({ code: reply.statusCode, message: "Invalid record id" });
 		}
 
-		const res = await fastify.getCollection("records")?.deleteOne({ _id: new mongodb.ObjectId(id) });
-		if (!res?.deletedCount) return reply.status(404).send({ code: reply.statusCode, message: "Record not found" });
+		const record = (await fastify
+			.getCollection("records")
+			?.findOneAndDelete({ _id: new mongodb.ObjectId(id) })) as CourseRecord | null;
+		if (!record) return reply.status(404).send({ code: reply.statusCode, message: "Record not found" });
+
+		await logAdminAction(fastify, req.webUser!, "record.delete", record.courseCode, {
+			player: record.steamId,
+			time: record.time,
+		});
 
 		reply.status(200).send({ code: reply.statusCode, message: "Record deleted" });
 	});
@@ -291,6 +316,11 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			await saveRecord(fastify, pending.courseCode, pending.steamId, pending.time);
+			await logAdminAction(fastify, req.webUser!, "pending.approve", pending.courseCode, {
+				player: pending.steamId,
+				time: pending.time,
+				reason: pending.reason,
+			});
 
 			reply.status(200).send({ code: reply.statusCode, message: "Record approved" });
 		},
@@ -302,10 +332,56 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			return reply.status(400).send({ code: reply.statusCode, message: "Invalid record id" });
 		}
 
-		const res = await fastify.getCollection("pendingRecords")?.deleteOne({ _id: new mongodb.ObjectId(id) });
-		if (!res?.deletedCount) return reply.status(404).send({ code: reply.statusCode, message: "Record not found" });
+		const pending = (await fastify
+			.getCollection("pendingRecords")
+			?.findOneAndDelete({ _id: new mongodb.ObjectId(id) })) as PendingRecord | null;
+		if (!pending) return reply.status(404).send({ code: reply.statusCode, message: "Record not found" });
+
+		await logAdminAction(fastify, req.webUser!, "pending.reject", pending.courseCode, {
+			player: pending.steamId,
+			time: pending.time,
+			reason: pending.reason,
+		});
 
 		reply.status(200).send({ code: reply.statusCode, message: "Record rejected" });
+	});
+
+	fastify.get("/api/admin/log", { preHandler: requireAdmin(fastify) }, async (req, reply) => {
+		const query = req.query as { admin?: string; target?: string; page?: string; limit?: string };
+		const { page, limit, skip } = parsePagination(query, 50);
+
+		const filter: Record<string, unknown> = {};
+		if (query.admin) filter.admin = query.admin;
+		if (query.target) filter.target = query.target;
+
+		const collection = fastify.getCollection("adminLog")!;
+		const [items, total] = await Promise.all([
+			collection.find(filter).sort({ at: -1 }).skip(skip).limit(limit).toArray(),
+			collection.countDocuments(filter),
+		]);
+		const entries = items as unknown as (AdminLogEntry & { _id: mongodb.ObjectId })[];
+
+		const admins = await getUsersMap(
+			fastify,
+			entries.map(e => e.admin),
+		);
+
+		reply.status(200).send({
+			code: reply.statusCode,
+			data: {
+				items: entries.map(e => ({
+					id: e._id.toString(),
+					at: e.at,
+					admin: toPublicUser(admins.get(e.admin), { steamId: e.admin }),
+					action: e.action,
+					target: e.target,
+					details: e.details,
+				})),
+				total,
+				page,
+				pages: Math.max(1, Math.ceil(total / limit)),
+			},
+		});
 	});
 };
 

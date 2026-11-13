@@ -1,4 +1,4 @@
-import config from "@/config.js";
+import config, { frontendPath } from "@/config.js";
 import pkg from "@/../package.json" with { type: "json" };
 import { adminRouter, coursesRouter, leaderboardRouter, usersRouter } from "@/routes/api/index.js";
 import authRouter from "@/routes/auth.js";
@@ -6,10 +6,10 @@ import fastifyFormbody from "@fastify/formbody";
 import fastifyStatic from "@fastify/static";
 import Fastify from "fastify";
 import { existsSync } from "fs";
-import { dirname, resolve } from "path";
-import { fileURLToPath } from "url";
+import { resolve } from "path";
 import { mongoPlugin } from "./plugins/mongo.js";
 import { rateLimitPlugin } from "./plugins/rateLimit.js";
+import { securityPlugin } from "./plugins/security.js";
 import { sessionPlugin } from "./plugins/session.js";
 
 const fastify = Fastify({
@@ -21,6 +21,7 @@ const fastify = Fastify({
 });
 
 // Plugins
+fastify.register(securityPlugin);
 fastify.register(rateLimitPlugin);
 fastify.register(mongoPlugin);
 fastify.register(sessionPlugin);
@@ -32,8 +33,6 @@ fastify.register(adminRouter);
 fastify.register(coursesRouter);
 fastify.register(leaderboardRouter);
 fastify.register(usersRouter);
-
-const frontendPath = resolve(dirname(fileURLToPath(import.meta.url)), "../../frontend/dist");
 
 if (existsSync(resolve(frontendPath, "index.html"))) {
 	fastify.register(fastifyStatic, { root: frontendPath });

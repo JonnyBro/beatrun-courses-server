@@ -1,5 +1,6 @@
 import { api, type Response } from "@/plugins/axios";
 import type {
+	AdminLogEntry,
 	AdminRecord,
 	AdminUser,
 	Course,
@@ -79,6 +80,7 @@ export const adminApprovePendingRecord = async (id: string) =>
 	(await api.post<Response<never>>(`/api/admin/records/pending/${encodeURIComponent(id)}/approve`)).data;
 export const adminRejectPendingRecord = async (id: string) =>
 	(await api.delete<Response<never>>(`/api/admin/records/pending/${encodeURIComponent(id)}`)).data;
+export const adminGetLog = (params: PageParams) => get<Paginated<AdminLogEntry>>("/api/admin/log", params);
 
 /** Course file the way the game saves it, works without signing in */
 export const courseFileUrl = (code: string) => `/api/courses/file/${encodeURIComponent(code)}`;

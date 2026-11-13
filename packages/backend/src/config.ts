@@ -2,8 +2,12 @@ import { existsSync } from "fs";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 
-// src/ and dist/ are at the same depth, so this is the repository root from both
-const envPath = resolve(dirname(fileURLToPath(import.meta.url)), "../../../.env");
+// src/ and dist/ are at the same depth, so these paths work from both
+const here = dirname(fileURLToPath(import.meta.url));
+const envPath = resolve(here, "../../../.env");
+
+/** The built website, served by the backend when it exists */
+export const frontendPath = resolve(here, "../../frontend/dist");
 
 // Variables that are already set (docker, pm2, the shell) win over the file
 if (existsSync(envPath)) process.loadEnvFile(envPath);

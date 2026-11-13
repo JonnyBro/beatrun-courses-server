@@ -1,5 +1,7 @@
 import { Course, CourseData, CourseRecord } from "@/types.js";
-import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions.js";
+import { isActingAsAdmin, logAdminAction } from "@/utils/adminLog.js";
+import { isMapName, validateCourse } from "@/utils/courseValidation.js";
+import { generateCode, getUserFromKey, randomNum } from "@/utils/functions.js";
 import { limits } from "@/plugins/rateLimit.js";
 import { compressCourse, CourseTooBigError, decompressCourse, MAX_COURSE_SIZE } from "@/utils/lzma.js";
 import { checkRun, parseSplits, savePendingRecord, saveRecord } from "@/utils/records.js";
@@ -10,6 +12,7 @@ import {
 	getBannedSteamIds,
 	getSessionUser,
 	getUsersMap,
+	isWorkshopId,
 	parsePagination,
 	recordPoints,
 	requireUser,
@@ -29,12 +32,22 @@ const encodeCourseForGame = (course: Course) =>
 const COURSE_BODY_LIMIT = Math.ceil((MAX_COURSE_SIZE * 4) / 3) + 1024;
 
 const parseCourse = (courseString: string) => {
+	let json: unknown;
+
 	try {
-		const json = JSON.parse(courseString) as CourseData;
-		return isCourseFileValid(json) ? json : undefined;
+		json = JSON.parse(courseString);
 	} catch {
-		return;
+		return { error: "Course file is invalid" };
 	}
+
+	const error = validateCourse(json);
+
+	return error ? { error } : { json: json as CourseData };
+};
+
+const checkMapHeaders = (mapName: unknown, workshopId: unknown) => {
+	if (!isMapName(mapName)) return "Invalid map name";
+	if (workshopId && !isWorkshopId(workshopId)) return "Invalid Workshop id";
 };
 
 type UploadedCourse = { courseString: string; courseJSON: CourseData } | { status: number; message: string };
@@ -56,10 +69,12 @@ const readUploadedCourse = async (data: string): Promise<UploadedCourse> => {
 		}
 	}
 
-	const courseJSON = courseString !== undefined ? parseCourse(courseString) : undefined;
-	if (!courseString || !courseJSON) return { status: 400, message: "Course file is invalid" };
+	if (!courseString) return { status: 400, message: "Course file is invalid" };
 
-	return { courseString, courseJSON };
+	const parsed = parseCourse(courseString);
+	if (parsed.error !== undefined) return { status: 400, message: parsed.error };
+
+	return { courseString, courseJSON: parsed.json };
 };
 
 /** Another course with exactly the same content, the same file uploaded again gets the old code instead */
@@ -153,6 +168,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			if (user.ban) return sendBanned(reply, user);
 
+			const headersError = checkMapHeaders(mapName, workshopId);
+			if (headersError) return reply.status(400).send({ code: 400, message: headersError });
+
 			const upload = await readUploadedCourse((req.body as { data: string }).data);
 			if ("message" in upload) {
 				return reply.status(upload.status).send({ code: upload.status, message: upload.message });
@@ -186,7 +204,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 						},
 						uploadedAt: Date.now(),
 						mapName,
-						workshopId,
+						workshopId: workshopId || null,
 						downloadCount: 0,
 						data: binaryData,
 						crc: String(crc32(buffer)),
@@ -251,6 +269,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			}
 
 			const mapName = req.headers.mapname as string;
+			const headersError = checkMapHeaders(mapName, req.headers.workshopid);
+			if (headersError) return reply.status(400).send({ code: 400, message: headersError });
+
 			if (mapName !== course.mapName) {
 				return reply
 					.status(400)
@@ -267,8 +288,15 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const same = await findSameCourse(fastify, courseString, code);
 			if (same) return sendDuplicate(reply, same.code);
 
-			const workshopId = (req.headers.workshopid as string | undefined) ?? course.workshopId;
+			const workshopId = (req.headers.workshopid as string | undefined) || course.workshopId;
 			const removed = await replaceCourseData(fastify, code, courseString, courseJSON, { mapName, workshopId });
+
+			if (isActingAsAdmin(user, course)) {
+				await logAdminAction(fastify, user, "course.replace", code, {
+					name: course.name,
+					removedRecords: removed,
+				});
+			}
 
 			reply.status(200).send({
 				code: reply.statusCode,
@@ -388,6 +416,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			await fastify.getCollection("records")?.deleteMany({ courseCode: code });
 			await fastify.getCollection("pendingRecords")?.deleteMany({ courseCode: code });
+
+			if (isActingAsAdmin(user, course)) {
+				await logAdminAction(fastify, user, "course.delete", code, {
+					name: course.name,
+					author: course.uploadedBy.steamId,
+				});
+			}
 
 			reply
 				.status(200)
@@ -692,6 +727,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 			const removed = await replaceCourseData(fastify, code, courseString, courseJSON);
 
+			if (isActingAsAdmin(user, course)) {
+				await logAdminAction(fastify, user, "course.replace", code, {
+					name: course.name,
+					removedRecords: removed,
+				});
+			}
+
 			reply.status(200).send({ code: reply.statusCode, data: { code, removedRecords: removed } });
 		},
 	);
@@ -710,6 +752,13 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		await fastify.getCoursesCollection()?.deleteOne({ code });
 		await fastify.getCollection("records")?.deleteMany({ courseCode: code });
 		await fastify.getCollection("pendingRecords")?.deleteMany({ courseCode: code });
+
+		if (isActingAsAdmin(user, course)) {
+			await logAdminAction(fastify, user, "course.delete", code, {
+				name: course.name,
+				author: course.uploadedBy.steamId,
+			});
+		}
 
 		reply.status(200).send({ code: reply.statusCode, message: `Course with code '${code}' deleted successfully` });
 	});

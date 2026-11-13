@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { getStats } from "@/api";
 import AdminCourses from "@/components/admin/AdminCourses.vue";
+import AdminLog from "@/components/admin/AdminLog.vue";
 import AdminPendingRecords from "@/components/admin/AdminPendingRecords.vue";
 import AdminRecords from "@/components/admin/AdminRecords.vue";
 import AdminUsers from "@/components/admin/AdminUsers.vue";
@@ -60,11 +61,13 @@ const { data: stats } = useQuery({ queryKey: ["stats"], queryFn: getStats });
 				<TabsTrigger value="courses">{{ $t("admin.tabs.courses") }}</TabsTrigger>
 				<TabsTrigger value="records">{{ $t("admin.tabs.times") }}</TabsTrigger>
 				<TabsTrigger value="pending">{{ $t("admin.tabs.pending") }}</TabsTrigger>
+				<TabsTrigger value="log">{{ $t("admin.tabs.log") }}</TabsTrigger>
 			</TabsList>
 			<TabsContent value="users"><AdminUsers /></TabsContent>
 			<TabsContent value="courses"><AdminCourses /></TabsContent>
 			<TabsContent value="records"><AdminRecords /></TabsContent>
 			<TabsContent value="pending"><AdminPendingRecords /></TabsContent>
+			<TabsContent value="log"><AdminLog /></TabsContent>
 		</Tabs>
 	</div>
 </template>
