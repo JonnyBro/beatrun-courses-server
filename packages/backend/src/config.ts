@@ -51,6 +51,8 @@ const config = {
 	domain: string("DOMAIN").replace(/\/+$/, ""),
 	secret: string("SESSION_SECRET"),
 	steamApiKey: string("STEAM_API_KEY", ""),
+	geoipAutoUpdate: boolean("GEOIP_AUTO_UPDATE", true),
+	geoipPath: resolve(here, "../../..", string("GEOIP_PATH", "data/dbip-country-lite.mmdb")),
 };
 
 if (config.secret && config.secret.length < 32) errors.push("SESSION_SECRET must be at least 32 characters long");

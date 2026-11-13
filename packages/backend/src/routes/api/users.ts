@@ -1,7 +1,8 @@
 import { limits } from "@/plugins/rateLimit.js";
 import { Course, CourseRecord } from "@/types.js";
 import { logAdminAction } from "@/utils/adminLog.js";
-import { generateKey, getUserFromKey, getUserFromSteamId } from "@/utils/functions.js";
+import { devices, getDeviceFromToken } from "@/utils/devices.js";
+import { getUserFromSteamId } from "@/utils/functions.js";
 import {
 	calculateStandings,
 	getBannedSteamIds,
@@ -9,7 +10,6 @@ import {
 	parsePagination,
 	recordPoints,
 	requireAdmin,
-	requireUser,
 	toPublicCourses,
 	toPublicUser,
 } from "@/utils/web.js";
@@ -41,12 +41,16 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		async (req, reply) => {
 			const key = req.headers.key as string;
 
-			const user = await getUserFromKey(fastify, key);
-			if (!user) return reply.status(200).send({ code: reply.statusCode, data: false });
+			const found = await getDeviceFromToken(fastify, key, req.ip);
+			if (!found) return reply.status(200).send({ code: reply.statusCode, data: false });
+
+			const { user, device } = found;
 
 			reply.status(200).send({
 				code: reply.statusCode,
 				data: true,
+				// Keys from before sign-in were shown on the site and may have leaked, the game asks to replace them
+				legacy: device.kind === "legacy",
 				ban: user.ban ? { reason: user.ban.reason, at: user.ban.at } : null,
 			});
 		},
@@ -71,6 +75,8 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		if (res?.deletedCount === 0) {
 			return reply.status(500).send({ code: reply.statusCode, message: "Error while deleting a user" });
 		}
+
+		await devices(fastify).deleteMany({ steamId: params.id });
 
 		if (purge === "1" || purge === "true") {
 			const codes = (
@@ -99,6 +105,12 @@ const router = (fastify: FastifyInstance, _options: object) => {
 
 	fastify.get("/api/users/me", async (req, reply) => {
 		const user = await getSessionUser(fastify, req);
+		const legacyKey =
+			user &&
+			(await devices(fastify).countDocuments(
+				{ steamId: user.steamId, kind: "legacy", expiresAt: { $gt: new Date() } },
+				{ limit: 1 },
+			)) > 0;
 
 		/* eslint-disable @stylistic/indent */
 		reply.status(200).send({
@@ -106,20 +118,12 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			data: user
 				? {
 						...toPublicUser(user),
-						hasKey: Boolean(user.keyHash),
+						legacyKey,
 						ban: user.ban ? { reason: user.ban.reason, at: user.ban.at } : null,
 					}
 				: null,
 		});
 		/* eslint-enable @stylistic/indent */
-	});
-
-	fastify.post("/api/users/me/key", { preHandler: requireUser(fastify), config: limits.key }, async (req, reply) => {
-		const { key, keyHash } = generateKey();
-
-		await fastify.getUsersCollection()!.updateOne({ steamId: req.webUser!.steamId }, { $set: { keyHash } });
-
-		reply.status(200).send({ code: reply.statusCode, data: { key } });
 	});
 
 	fastify.get("/api/users/profile/:steamId", async (req, reply) => {

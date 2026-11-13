@@ -41,7 +41,7 @@
 	"userMenu": {
 		"account": "Account",
 		"profile": "Profile",
-		"gameKey": "Game key",
+		"devices": "Game",
 		"admin": "Admin",
 		"signOut": "Sign out"
 	},
@@ -54,9 +54,8 @@
 		"unranked": "Unranked",
 		"freeplay": "Freeplay",
 		"notSignedIn": "Not signed in",
-		"signInHint": "Sign in through Steam to get your game key and save your times.",
+		"signInHint": "Sign in through Steam, then in-game, to save your times.",
 		"completed": "{done}/{total} courses completed",
-		"gameKey": "Game key",
 		"profile": "Profile"
 	},
 	"home": {
@@ -131,7 +130,7 @@
 		"worth": "The course is worth {n} points now: 100 for every player who finished it, up to 1000.",
 		"you": "You",
 		"noRuns": "No runs yet",
-		"noRunsText": "Finish this course in-game with your key set and your time shows up here.",
+		"noRunsText": "Finish this course in-game after signing in and your time shows up here.",
 		"deleteTitle": "Delete this course?",
 		"deleteText": "{name} ({code}) and all times on it will be removed. This can't be undone.",
 		"deleted": "Course deleted",
@@ -186,7 +185,7 @@
 		"players": "Players",
 		"creators": "Creators",
 		"emptyPlayers": "Nobody here yet",
-		"emptyPlayersText": "Finish any course in-game with your key set to show up here.",
+		"emptyPlayersText": "Finish any course in-game after signing in to show up here.",
 		"emptyCreators": "No courses uploaded yet"
 	},
 	"profile": {
@@ -223,30 +222,46 @@
 			"courses": "Courses"
 		},
 		"noTimes": "No finished courses",
-		"noTimesOwn": "Finish a course in-game with your key set and the time shows up here.",
+		"noTimesOwn": "Finish a course in-game after signing in and the time shows up here.",
 		"noCourses": "No courses uploaded",
 		"noCoursesOwn": "Build a course in-game and upload it from the courses menu ({key})."
 	},
-	"key": {
-		"title": "Game key",
-		"text": "Paste it into the courses menu in-game ({key}, Profile tab) to upload courses and save your times. Don't share it.",
-		"show": "Show key",
-		"hide": "Hide key",
-		"copy": "Copy",
-		"copied": "Key copied",
-		"new": "New key",
-		"confirmTitle": "Generate a new key?",
-		"confirmText": "Your current key stops working right away. You'll have to paste the new one into the game.",
-		"confirm": "Generate",
-		"generated": "New key generated, paste it into the game again.",
-		"once": "Copy it now: the site only stores a fingerprint of the key and won't show it again.",
-		"hidden": "The key is hidden. If you lost it, create a new one.",
-		"none": "You don't have a key yet.",
-		"create": "Create key"
+	"devices": {
+		"title": "Game sign-in",
+		"text": "To upload courses and save your times, open the courses menu in-game ({key}), go to the Profile tab and press Sign in. This list shows where you're signed in.",
+		"none": "You haven't signed in from the game yet.",
+		"kinds": {
+			"game": "Garry's Mod",
+			"legacy": "Old key"
+		},
+		"legacyHint": "A key from the old site. Sign in from the game again and remove it.",
+		"country": "signed in from {country}",
+		"rename": "Rename",
+		"renameText": "E.g. \"Home PC\" or \"Laptop\". Leave it empty to get the default name back.",
+		"showIp": "Show IP",
+		"hideIp": "Hide IP",
+		"signInIp": "Sign-in",
+		"lastIp": "Last used",
+		"lastUsed": "used {when}",
+		"added": "added {when}",
+		"remove": "Sign out",
+		"removed": "Signed out",
+		"confirmTitle": "Sign out?",
+		"confirmText": "The game won't be able to upload courses or submit times until you sign in from it again.",
+		"expiry": "A sign-in that isn't used for 90 days ends on its own. If you played on servers with a modified courses menu, sign out of anything you don't recognise."
+	},
+	"link": {
+		"title": "Game sign-in",
+		"signIn": "The game asks to sign in to your account. Sign in on the site through Steam first.",
+		"text": "Check that the game shows the same code:",
+		"warning": "Only confirm if you just pressed Sign in in the game yourself. If someone sent you this link, close the page: with this code they get access to your account.",
+		"confirm": "Confirm sign-in",
+		"done": "Done, you can go back to the game.",
+		"expired": "The code has expired or was already used. Press Sign in in the game again."
 	},
 	"signIn": {
 		"title": "Sign in",
-		"text": "Sign in through Steam to get your game key. With it you can upload courses from the game and your finished runs go to the leaderboard. Only your Steam ID, name and avatar are saved."
+		"text": "Sign in through Steam, then sign in from the courses menu in-game. After that you can upload courses from the game and your finished runs go to the leaderboard. We save your Steam ID, name and avatar, and for game sign-ins also the IP address and operating system: only you can see them, so you can spot a sign-in that isn't yours."
 	},
 	"notFound": {
 		"text": "You fell off the map"
@@ -288,7 +303,7 @@
 			"noLongerAdmin": "{name} is no longer an admin",
 			"delete": "Delete user",
 			"deleteTitle": "Delete {name}?",
-			"deleteText": "Their key stops working. They can sign in again later and get a new account.",
+			"deleteText": "They get signed out in the game. They can sign in again later and get a new account.",
 			"purge": "Also delete their content",
 			"purgeText": "Removes {courses} (with all times on them) and their {times}.",
 			"purgeCourses": "{n} course | {n} courses",
@@ -385,5 +400,10 @@
 		"reason": "Reason: ",
 		"badge": "Banned",
 		"text": "Blocked on {date}. You can't upload or update courses and your times are not saved. You can still browse the site and delete your own courses."
+	},
+	"legacyKey": {
+		"title": "Replace your game key",
+		"text": "You still have a key from the old site. It was shown on the page and may have reached other people. Open the courses menu in-game ({key}), go to the Profile tab, sign in again and remove the old key.",
+		"action": "Go to sign-ins"
 	}
 }

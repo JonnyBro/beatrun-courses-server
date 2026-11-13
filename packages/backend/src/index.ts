@@ -1,6 +1,6 @@
 import config, { frontendPath } from "@/config.js";
 import pkg from "@/../package.json" with { type: "json" };
-import { adminRouter, coursesRouter, leaderboardRouter, usersRouter } from "@/routes/api/index.js";
+import { adminRouter, coursesRouter, devicesRouter, leaderboardRouter, usersRouter } from "@/routes/api/index.js";
 import authRouter from "@/routes/auth.js";
 import fastifyFormbody from "@fastify/formbody";
 import fastifyStatic from "@fastify/static";
@@ -11,6 +11,7 @@ import { mongoPlugin } from "./plugins/mongo.js";
 import { rateLimitPlugin } from "./plugins/rateLimit.js";
 import { securityPlugin } from "./plugins/security.js";
 import { sessionPlugin } from "./plugins/session.js";
+import { loadGeoIp } from "./utils/geoip.js";
 
 const fastify = Fastify({
 	trustProxy: config.isBehindProxy,
@@ -33,6 +34,7 @@ fastify.register(adminRouter);
 fastify.register(coursesRouter);
 fastify.register(leaderboardRouter);
 fastify.register(usersRouter);
+fastify.register(devicesRouter);
 
 if (existsSync(resolve(frontendPath, "index.html"))) {
 	fastify.register(fastifyStatic, { root: frontendPath });
@@ -45,6 +47,8 @@ if (existsSync(resolve(frontendPath, "index.html"))) {
 		reply.status(404).send({ code: 404, message: "Not found" });
 	});
 }
+
+await loadGeoIp();
 
 fastify.listen(
 	{

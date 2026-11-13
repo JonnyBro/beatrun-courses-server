@@ -2,6 +2,7 @@
 import AppFooter from "@/components/layout/AppFooter.vue";
 import AppHeader from "@/components/layout/AppHeader.vue";
 import BanNotice from "@/components/layout/BanNotice.vue";
+import LegacyKeyNotice from "@/components/layout/LegacyKeyNotice.vue";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useTheme } from "@/lib/theme";
@@ -16,6 +17,7 @@ const { isDark } = useTheme();
 			<AppHeader />
 			<main class="mx-auto w-full max-w-7xl flex-1 px-4 py-6 sm:py-8">
 				<BanNotice />
+				<LegacyKeyNotice />
 				<RouterView v-slot="{ Component, route }">
 					<component :is="Component" :key="route.path" />
 				</RouterView>

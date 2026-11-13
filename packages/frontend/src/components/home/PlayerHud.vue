@@ -46,18 +46,9 @@ const progress = computed(() => {
 			<p class="font-hud text-base text-muted-foreground">
 				{{ $t("hud.completed", { done: stats?.completed ?? 0, total: totalCourses ?? "?" }) }}
 			</p>
-			<div class="mt-2 flex gap-2">
-				<Button as-child variant="outline" size="sm">
-					<RouterLink :to="{ name: 'user', params: { steamId: me.steamId }, hash: '#key' }">{{
-						$t("hud.gameKey")
-					}}</RouterLink>
-				</Button>
-				<Button as-child variant="ghost" size="sm">
-					<RouterLink :to="{ name: 'user', params: { steamId: me.steamId } }">{{
-						$t("hud.profile")
-					}}</RouterLink>
-				</Button>
-			</div>
+			<Button as-child variant="outline" size="sm" class="mt-2 self-start">
+				<RouterLink :to="{ name: 'user', params: { steamId: me.steamId } }">{{ $t("hud.profile") }}</RouterLink>
+			</Button>
 		</template>
 
 		<template v-else>

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/composables/useAuth";
 import { displayName } from "@/lib/format";
-import { KeyRound, LogOut, Shield, User } from "lucide-vue-next";
+import { Gamepad2, LogOut, Shield, User } from "lucide-vue-next";
 import { useRoute } from "vue-router";
 import { SteamIcon } from "vue3-simple-icons";
 
@@ -45,9 +45,9 @@ const route = useRoute();
 				</RouterLink>
 			</DropdownMenuItem>
 			<DropdownMenuItem as-child>
-				<RouterLink :to="{ name: 'user', params: { steamId: me.steamId }, hash: '#key' }">
-					<KeyRound />
-					{{ $t("userMenu.gameKey") }}
+				<RouterLink :to="{ name: 'user', params: { steamId: me.steamId }, hash: '#devices' }">
+					<Gamepad2 />
+					{{ $t("userMenu.devices") }}
 				</RouterLink>
 			</DropdownMenuItem>
 			<DropdownMenuItem v-if="me.admin" as-child>

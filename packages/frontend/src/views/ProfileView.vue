@@ -9,7 +9,7 @@ import StatTile from "@/components/common/StatTile.vue";
 import UserAvatar from "@/components/common/UserAvatar.vue";
 import CourseCard from "@/components/course/CourseCard.vue";
 import CourseCardSkeleton from "@/components/course/CourseCardSkeleton.vue";
-import GameKeyCard from "@/components/profile/GameKeyCard.vue";
+import DevicesCard from "@/components/profile/DevicesCard.vue";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -78,13 +78,13 @@ const notFound = computed(
 	() => profile.error.value instanceof AxiosError && profile.error.value.response?.status === 404,
 );
 
-// The key card only exists after the profile has loaded, so the router can't scroll to #key by itself
+// The devices card only exists after the profile has loaded, so the router can't scroll to it by itself
 watch(
 	() => Boolean(profile.data.value && me.value),
 	async ready => {
-		if (!ready || route.hash !== "#key") return;
+		if (!ready || route.hash !== "#devices") return;
 		await nextTick();
-		document.getElementById("key")?.scrollIntoView({ behavior: "smooth", block: "start" });
+		document.getElementById("devices")?.scrollIntoView({ behavior: "smooth", block: "start" });
 	},
 	{ immediate: true },
 );
@@ -163,7 +163,7 @@ watchEffect(() => {
 			</Button>
 		</section>
 
-		<GameKeyCard v-if="isOwn && me" :has-key="me.hasKey" />
+		<DevicesCard v-if="isOwn && me" />
 
 		<section class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
 			<StatTile

@@ -8,6 +8,8 @@ import type {
 	CourseRecords,
 	CourseSearchParams,
 	CreatorStanding,
+	Device,
+	DeviceLink,
 	MapInfo,
 	Me,
 	Paginated,
@@ -48,7 +50,14 @@ export const getCreatorsLeaderboard = (params: PageParams) =>
 
 // Users
 export const getMe = () => get<Me | null>("/api/users/me");
-export const regenerateKey = async () => (await api.post<Response<{ key: string }>>("/api/users/me/key")).data.data;
+export const getDevices = () => get<Device[]>("/api/users/me/devices");
+export const removeDevice = async (id: string) =>
+	(await api.delete<Response<never>>(`/api/users/me/devices/${encodeURIComponent(id)}`)).data;
+export const renameDevice = async (id: string, name: string | null) =>
+	(await api.patch<Response<Device>>(`/api/users/me/devices/${encodeURIComponent(id)}`, { name })).data.data;
+export const getLink = (code: string) => get<DeviceLink>(`/api/link/${encodeURIComponent(code)}`);
+export const confirmLink = async (code: string) =>
+	(await api.post<Response<never>>(`/api/link/${encodeURIComponent(code)}/confirm`)).data;
 export const getProfile = (steamId: string) => get<Profile>(`/api/users/profile/${encodeURIComponent(steamId)}`);
 export const getProfileRecords = (steamId: string, params: PageParams) =>
 	get<Paginated<UserRecord>>(`/api/users/profile/${encodeURIComponent(steamId)}/records`, params);

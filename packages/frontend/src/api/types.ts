@@ -13,8 +13,27 @@ export type UserBan = {
 	by?: string;
 };
 
+export type Device = {
+	id: string;
+	kind: "game" | "legacy";
+	name: string | null;
+	/** Reported by the game itself */
+	system: { os: "windows" | "linux" | "osx"; branch: string } | null;
+	signInIp: string | null;
+	/** ISO country code, null when the server has no GeoIP database */
+	signInCountry: string | null;
+	lastIp: string | null;
+	lastCountry: string | null;
+	createdAt: number;
+	lastUsedAt: number;
+	expiresAt: number;
+};
+
+export type DeviceLink = { code: string; confirmed: boolean; expiresAt: number };
+
 export type Me = PublicUser & {
-	hasKey: boolean;
+	/** Still has a game key from before sign-in, it should be replaced */
+	legacyKey: boolean;
 	ban: UserBan | null;
 };
 

@@ -32,8 +32,6 @@ export interface User extends mongodb.WithId<mongodb.BSON.Document> {
 	createdAt: number;
 	username?: string;
 	avatar?: string;
-	/** SHA-256 of the game key, the key itself isn't stored */
-	keyHash?: string;
 	admin?: boolean;
 	ban?: UserBan;
 }

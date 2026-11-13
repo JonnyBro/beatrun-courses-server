@@ -10,7 +10,7 @@ const { me, isLoading } = useAuth();
 const router = useRouter();
 
 watchEffect(() => {
-	if (me.value) void router.replace({ name: "user", params: { steamId: me.value.steamId }, hash: "#key" });
+	if (me.value) void router.replace({ name: "user", params: { steamId: me.value.steamId }, hash: "#devices" });
 });
 </script>
 

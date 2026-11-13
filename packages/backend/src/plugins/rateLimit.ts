@@ -25,5 +25,7 @@ export const limits = {
 	records: perMinute(30),
 	download: perMinute(60),
 	key: perMinute(20),
+	// The game polls every 5 seconds while the player confirms the code
+	poll: perMinute(30),
 	auth: perMinute(20),
 };

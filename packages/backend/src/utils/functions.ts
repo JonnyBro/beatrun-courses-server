@@ -1,6 +1,6 @@
 import { SteamUser } from "@/modules/steam.js";
 import { User } from "@/types.js";
-import { createHash, randomBytes, randomInt } from "crypto";
+import { randomInt } from "crypto";
 import { FastifyInstance } from "fastify";
 
 const charsList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -32,25 +32,6 @@ export const getUserFromSteamId = async (fastify: FastifyInstance, data: SteamUs
 	if (!user) return;
 
 	return user;
-};
-
-// The key is 192 random bits, so a plain fast hash is enough here, a slow one only matters for guessable passwords
-export const hashKey = (key: string) => createHash("sha256").update(key).digest("hex");
-
-/** The key itself is shown to the user once, only its hash is stored */
-export const generateKey = () => {
-	const key = randomBytes(24).toString("base64url");
-
-	return { key, keyHash: hashKey(key) };
-};
-
-export const getUserFromKey = async (fastify: FastifyInstance, key: string) => {
-	if (!key) return;
-
-	const user = await fastify.getUsersCollection()?.findOne({ keyHash: hashKey(key) });
-	if (!user) return;
-
-	return user as User;
 };
 
 export const generateRandomString = (length: number, chars = charsList) => {

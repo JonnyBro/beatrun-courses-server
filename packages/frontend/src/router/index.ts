@@ -54,6 +54,13 @@ const router = createRouter({
 			meta: { title: "userMenu.profile" },
 		},
 		{
+			// Opened by the game to sign it in
+			path: "/link",
+			name: "link",
+			component: () => import("@/views/LinkView.vue"),
+			meta: { title: "link.title" },
+		},
+		{
 			path: "/admin",
 			name: "admin",
 			component: () => import("@/views/AdminView.vue"),

@@ -1,7 +1,8 @@
 import { Course, CourseData, CourseRecord } from "@/types.js";
 import { isActingAsAdmin, logAdminAction } from "@/utils/adminLog.js";
 import { isMapName, validateCourse } from "@/utils/courseValidation.js";
-import { generateCode, getUserFromKey, randomNum } from "@/utils/functions.js";
+import { getUserFromToken } from "@/utils/devices.js";
+import { generateCode, randomNum } from "@/utils/functions.js";
 import { limits } from "@/plugins/rateLimit.js";
 import { compressCourse, CourseTooBigError, decompressCourse, MAX_COURSE_SIZE } from "@/utils/lzma.js";
 import { checkRun, parseSplits, savePendingRecord, saveRecord } from "@/utils/records.js";
@@ -161,7 +162,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			const mapName = req.headers.mapname as string;
 			const workshopId = req.headers.workshopid as string | null;
 
-			const user = await getUserFromKey(fastify, key);
+			const user = await getUserFromToken(fastify, key, req.ip);
 			if (!user) {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
@@ -256,7 +257,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			},
 		},
 		async (req, reply) => {
-			const user = await getUserFromKey(fastify, req.headers.authorization!);
+			const user = await getUserFromToken(fastify, req.headers.authorization, req.ip);
 			if (!user) return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			if (user.ban) return sendBanned(reply, user);
 
@@ -392,7 +393,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 				return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
 			}
 
-			const user = await getUserFromKey(fastify, key);
+			const user = await getUserFromToken(fastify, key, req.ip);
 			if (!user) {
 				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			}
@@ -455,7 +456,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			},
 		},
 		async (req, reply) => {
-			const user = await getUserFromKey(fastify, req.headers.authorization!);
+			const user = await getUserFromToken(fastify, req.headers.authorization, req.ip);
 			if (!user) return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
 			if (user.ban) return sendBanned(reply, user);
 
