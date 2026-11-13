@@ -82,7 +82,7 @@ export const getUsersMap = async (fastify: FastifyInstance, steamIds: string[]) 
 	const unique = [...new Set(steamIds)];
 	const users = (await fastify
 		.getUsersCollection()
-		?.find({ steamId: { $in: unique } }, { projection: { key: 0 } })
+		?.find({ steamId: { $in: unique } }, { projection: { keyHash: 0 } })
 		.toArray()) as User[] | undefined;
 
 	return new Map((users ?? []).map(u => [u.steamId, u]));

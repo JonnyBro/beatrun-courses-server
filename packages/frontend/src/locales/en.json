@@ -238,7 +238,11 @@
 		"confirmTitle": "Generate a new key?",
 		"confirmText": "Your current key stops working right away. You'll have to paste the new one into the game.",
 		"confirm": "Generate",
-		"generated": "New key generated, paste it into the game again."
+		"generated": "New key generated, paste it into the game again.",
+		"once": "Copy it now: the site only stores a fingerprint of the key and won't show it again.",
+		"hidden": "The key is hidden. If you lost it, create a new one.",
+		"none": "You don't have a key yet.",
+		"create": "Create key"
 	},
 	"signIn": {
 		"title": "Sign in",

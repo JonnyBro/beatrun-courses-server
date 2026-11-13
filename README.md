@@ -97,8 +97,8 @@ Replaces the course file and keeps the code. Only for the author or an admin and
 | PUT          | `/api/courses/info/:code/file`                                             | Owner or admin, `{ data: base64 }`, wipes the leaderboard    |
 | DELETE       | `/api/courses/info/:code`                                                  | Owner or admin                                               |
 | GET          | `/api/leaderboard/players` / `/api/leaderboard/creators`                   | Global leaderboards                                          |
-| GET          | `/api/users/me`                                                            | Current user with key and ban, `null` for guests             |
-| POST         | `/api/users/me/key`                                                        | New key                                                      |
+| GET          | `/api/users/me`                                                            | Current user with `hasKey` and ban, `null` for guests        |
+| POST         | `/api/users/me/key`                                                        | New key, the only time it's returned (only its hash is kept) |
 | GET          | `/api/users/profile/:steamId` (`/records`)                                 | Public profile                                               |
 | GET, PATCH   | `/api/admin/users`, `/api/admin/users/:steamId`                            | Admin, `{ "ban": { "reason": "..." } }` or `{ "ban": null }` |
 | PATCH        | `/api/admin/courses/:code`                                                 | Admin                                                        |

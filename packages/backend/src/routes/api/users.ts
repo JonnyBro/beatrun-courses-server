@@ -1,6 +1,6 @@
 import { limits } from "@/plugins/rateLimit.js";
 import { Course, CourseRecord } from "@/types.js";
-import { generateRandomString, getUserFromKey, getUserFromSteamId, randomNum } from "@/utils/functions.js";
+import { generateKey, getUserFromKey, getUserFromSteamId } from "@/utils/functions.js";
 import {
 	calculateStandings,
 	getBannedSteamIds,
@@ -100,7 +100,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			data: user
 				? {
 						...toPublicUser(user),
-						key: user.key ?? null,
+						hasKey: Boolean(user.keyHash),
 						ban: user.ban ? { reason: user.ban.reason, at: user.ban.at } : null,
 					}
 				: null,
@@ -109,13 +109,9 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	});
 
 	fastify.post("/api/users/me/key", { preHandler: requireUser(fastify), config: limits.key }, async (req, reply) => {
-		const users = fastify.getUsersCollection()!;
+		const { key, keyHash } = generateKey();
 
-		let key: string;
-		do key = generateRandomString(randomNum(16, 32));
-		while (await users.findOne({ key }));
-
-		await users.updateOne({ steamId: req.webUser!.steamId }, { $set: { key } });
+		await fastify.getUsersCollection()!.updateOne({ steamId: req.webUser!.steamId }, { $set: { keyHash } });
 
 		reply.status(200).send({ code: reply.statusCode, data: { key } });
 	});

@@ -14,7 +14,7 @@ export type UserBan = {
 };
 
 export type Me = PublicUser & {
-	key: string | null;
+	hasKey: boolean;
 	ban: UserBan | null;
 };
 

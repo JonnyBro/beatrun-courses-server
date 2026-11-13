@@ -19,7 +19,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		const users = fastify.getUsersCollection()!;
 		const [items, total] = await Promise.all([
 			users
-				.find(filter, { projection: { key: 0 } })
+				.find(filter, { projection: { keyHash: 0 } })
 				.sort({ createdAt: -1 })
 				.skip(skip)
 				.limit(limit)
@@ -126,7 +126,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 					...(Object.keys(set).length && { $set: set }),
 					...(Object.keys(unset).length && { $unset: unset }),
 				},
-				{ returnDocument: "after", projection: { key: 0 } },
+				{ returnDocument: "after", projection: { keyHash: 0 } },
 			);
 			if (!res) return reply.status(404).send({ code: reply.statusCode, message: "User not found" });
 

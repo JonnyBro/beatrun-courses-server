@@ -163,7 +163,7 @@ watchEffect(() => {
 			</Button>
 		</section>
 
-		<GameKeyCard v-if="isOwn && me" :game-key="me.key" />
+		<GameKeyCard v-if="isOwn && me" :has-key="me.hasKey" />
 
 		<section class="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-6">
 			<StatTile

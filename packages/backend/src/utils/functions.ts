@@ -1,23 +1,18 @@
 import { SteamUser } from "@/modules/steam.js";
 import { CourseData, User } from "@/types.js";
+import { createHash, randomBytes, randomInt } from "crypto";
 import { FastifyInstance } from "fastify";
 
 const charsList = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 export const createUser = async (fastify: FastifyInstance, data: SteamUser | string, username?: string) => {
 	const users = fastify.getUsersCollection();
-
-	let key: string;
-	do key = generateRandomString(randomNum(16, 32));
-	while (await users?.findOne({ key }));
-
 	const isSUser = isSteamUser(data);
 
 	const res = await users?.findOneAndUpdate(
 		{ steamId: isSUser ? data.steamid : data },
 		{
 			$set: {
-				key,
 				username: isSUser ? sanitize(data.personaname) : sanitize(username),
 				createdAt: Date.now(),
 				admin: false,
@@ -39,9 +34,20 @@ export const getUserFromSteamId = async (fastify: FastifyInstance, data: SteamUs
 	return user;
 };
 
+// The key is 192 random bits, so a plain fast hash is enough here, a slow one only matters for guessable passwords
+export const hashKey = (key: string) => createHash("sha256").update(key).digest("hex");
+
+/** The key itself is shown to the user once, only its hash is stored */
+export const generateKey = () => {
+	const key = randomBytes(24).toString("base64url");
+
+	return { key, keyHash: hashKey(key) };
+};
+
 export const getUserFromKey = async (fastify: FastifyInstance, key: string) => {
-	const users = fastify.getUsersCollection();
-	const user = await users?.findOne({ key });
+	if (!key) return;
+
+	const user = await fastify.getUsersCollection()?.findOne({ keyHash: hashKey(key) });
 	if (!user) return;
 
 	return user as User;
@@ -52,7 +58,7 @@ export const generateRandomString = (length: number, chars = charsList) => {
 	const charactersLength = chars.length;
 
 	for (let i = 0; i < length; i++) {
-		result += chars.charAt(Math.floor(Math.random() * charactersLength));
+		result += chars.charAt(randomInt(charactersLength));
 	}
 
 	return result;
