@@ -11,6 +11,7 @@ import { existsSync } from "fs";
 import { dirname, resolve } from "path";
 import { fileURLToPath } from "url";
 import { mongoPlugin } from "./plugins/mongo.js";
+import { rateLimitPlugin } from "./plugins/rateLimit.js";
 
 const fastify = Fastify({
 	trustProxy: config.isBehindProxy,
@@ -21,6 +22,7 @@ const fastify = Fastify({
 });
 
 // Plugins
+fastify.register(rateLimitPlugin);
 fastify.register(mongoPlugin);
 fastify.register(fastifyCookie);
 fastify.register(fastifySession, {

@@ -60,6 +60,8 @@ The new language shows up in the picker by itself and is picked by default for b
 
 ## API
 
+Requests are limited per IP and answer `429` past the limit: 300 a minute for the API in general, 10 for uploading or replacing a course, 30 for records, 60 for downloads, 20 for key checks and the Steam login. Behind a proxy set `"isBehindProxy": true`, otherwise everyone shares the proxy's IP.
+
 ### Game
 
 The game uses `GET /api/courses/search`, `GET /api/courses/info/:code`, `POST /api/courses/upload`, `GET /api/courses/download`, `DELETE /api/courses/delete`, `GET /api/users/profile/:steamId` and `GET /api/key/validate`. Uploading a course that is already in the database (same CRC) answers `409` with the existing code in `data.duplicate`. On top of that:

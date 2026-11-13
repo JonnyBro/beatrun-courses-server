@@ -1,3 +1,4 @@
+import { limits } from "@/plugins/rateLimit.js";
 import { Course, CourseRecord } from "@/types.js";
 import { generateRandomString, getUserFromKey, getUserFromSteamId, randomNum } from "@/utils/functions.js";
 import {
@@ -25,6 +26,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get(
 		"/api/key/validate",
 		{
+			config: limits.key,
 			schema: {
 				headers: {
 					type: "object",
@@ -106,7 +108,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		/* eslint-enable @stylistic/indent */
 	});
 
-	fastify.post("/api/users/me/key", { preHandler: requireUser(fastify) }, async (req, reply) => {
+	fastify.post("/api/users/me/key", { preHandler: requireUser(fastify), config: limits.key }, async (req, reply) => {
 		const users = fastify.getUsersCollection()!;
 
 		let key: string;

@@ -1,4 +1,5 @@
 import config from "@/../config.json" with { type: "json" };
+import { limits } from "@/plugins/rateLimit.js";
 import { buildAuthUrl, checkLogin, getSteamProfile } from "@/modules/steam.js";
 import { createUser, sanitize } from "@/utils/functions.js";
 import { FastifyInstance, FastifyRequest } from "fastify";
@@ -10,13 +11,13 @@ const getRedirect = (req: FastifyRequest) => {
 };
 
 const router = (fastify: FastifyInstance, _options: object) => {
-	fastify.get("/auth", (req, reply) => {
+	fastify.get("/auth", { config: limits.auth }, (req, reply) => {
 		const callback = `${config.domain}/auth/callback?redirect=${encodeURIComponent(getRedirect(req))}`;
 
 		reply.redirect(buildAuthUrl(config.domain, callback));
 	});
 
-	fastify.get("/auth/callback", async (req, reply) => {
+	fastify.get("/auth/callback", { config: limits.auth }, async (req, reply) => {
 		let steamId: string;
 
 		try {

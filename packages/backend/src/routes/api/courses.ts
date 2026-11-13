@@ -1,5 +1,6 @@
 import { Course, CourseData, CourseRecord } from "@/types.js";
 import { generateCode, getUserFromKey, isCourseFileValid, randomNum } from "@/utils/functions.js";
+import { limits } from "@/plugins/rateLimit.js";
 import { compressCourse, CourseTooBigError, decompressCourse, MAX_COURSE_SIZE } from "@/utils/lzma.js";
 import { checkRun, parseSplits, savePendingRecord, saveRecord } from "@/utils/records.js";
 import {
@@ -119,6 +120,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.post(
 		"/api/courses/upload",
 		{
+			config: limits.upload,
 			bodyLimit: COURSE_BODY_LIMIT,
 			schema: {
 				headers: {
@@ -213,6 +215,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.post(
 		"/api/courses/update",
 		{
+			config: limits.upload,
 			bodyLimit: COURSE_BODY_LIMIT,
 			schema: {
 				headers: {
@@ -278,6 +281,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.get(
 		"/api/courses/download",
 		{
+			config: limits.download,
 			schema: {
 				headers: {
 					type: "object",
@@ -315,7 +319,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	);
 
 	// Course file for the website. Put it into garrysmod/data/beatrun/courses/<map>/ to load it from the local list
-	fastify.get("/api/courses/file/:code", async (req, reply) => {
+	fastify.get("/api/courses/file/:code", { config: limits.download }, async (req, reply) => {
 		const { code } = req.params as { code: string };
 
 		const course = await fastify.getCourse(code);
@@ -394,6 +398,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.post(
 		"/api/courses/records",
 		{
+			config: limits.records,
 			schema: {
 				headers: {
 					type: "object",
@@ -650,6 +655,7 @@ const router = (fastify: FastifyInstance, _options: object) => {
 	fastify.put(
 		"/api/courses/info/:code/file",
 		{
+			config: limits.upload,
 			preHandler: requireUser(fastify),
 			bodyLimit: COURSE_BODY_LIMIT,
 			schema: {
