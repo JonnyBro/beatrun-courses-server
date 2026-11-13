@@ -1,4 +1,4 @@
-import config from "@/../config.json" with { type: "json" };
+import config from "@/config.js";
 import { runMigrations } from "@/migrations/index.js";
 import { Course, User } from "@/types.js";
 import fastifyMongo, { mongodb } from "@fastify/mongodb";

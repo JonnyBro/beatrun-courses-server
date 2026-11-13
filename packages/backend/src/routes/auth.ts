@@ -1,4 +1,4 @@
-import config from "@/../config.json" with { type: "json" };
+import config from "@/config.js";
 import { limits } from "@/plugins/rateLimit.js";
 import { buildAuthUrl, checkLogin, getSteamProfile } from "@/modules/steam.js";
 import { createUser, sanitize } from "@/utils/functions.js";

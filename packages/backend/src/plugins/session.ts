@@ -1,4 +1,4 @@
-import config from "@/../config.json" with { type: "json" };
+import config from "@/config.js";
 import fastifyCookie from "@fastify/cookie";
 import fastifySession from "@fastify/session";
 import { FastifyInstance, Session } from "fastify";

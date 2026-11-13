@@ -24,10 +24,10 @@ Community version is hosted at **[courses.jbro.top](https://courses.jbro.top)**,
 ## Running
 
 1. `pnpm install`
-1. Copy `packages/backend/config.example.json` to `packages/backend/config.json` and fill it in.
+1. Copy `.env.example` to `.env` in the repository root and fill it in. Variables set in the environment (docker, pm2) override the file.
 1. `pnpm build`, then `pnpm start`
 
-The backend serves the website too, so everything lives on one origin (`domain` in the config). Put it behind a proxy with `"isBehindProxy": true` if you need HTTPS.
+The backend serves the website too, so everything lives on one origin (`DOMAIN`). Put it behind a proxy with `BEHIND_PROXY=true` if you need HTTPS.
 
 With pm2 you only need the backend:
 
@@ -40,9 +40,9 @@ An old database from the previous version works as is: missing fields and indexe
 ### Development
 
 `pnpm dev` starts the backend on `:6547` and Vite on `:5173`, Vite proxies `/api` and `/auth` to the backend.
-Set `"domain": "http://localhost:5173"` and `"production": false` in the config so Steam login comes back to the dev server.
+Set `DOMAIN=http://localhost:5173` and `PRODUCTION=false` in `.env` so Steam login comes back to the dev server. Vite takes the backend port from the same `.env`.
 
-With `"production": false` there are also test accounts that don't need Steam: `/auth/dev/admin`, `/auth/dev/user` and `/auth/dev/user2`, or the DEV button in the header.
+With `PRODUCTION=false` there are also test accounts that don't need Steam: `/auth/dev/admin`, `/auth/dev/user` and `/auth/dev/user2`, or the DEV button in the header.
 
 ---
 
@@ -60,7 +60,7 @@ The new language shows up in the picker by itself and is picked by default for b
 
 ## API
 
-Requests are limited per IP and answer `429` past the limit: 300 a minute for the API in general, 10 for uploading or replacing a course, 30 for records, 60 for downloads, 20 for key checks and the Steam login. Behind a proxy set `"isBehindProxy": true`, otherwise everyone shares the proxy's IP.
+Requests are limited per IP and answer `429` past the limit: 300 a minute for the API in general, 10 for uploading or replacing a course, 30 for records, 60 for downloads, 20 for key checks and the Steam login. Behind a proxy set `BEHIND_PROXY=true`, otherwise everyone shares the proxy's IP.
 
 ### Game
 

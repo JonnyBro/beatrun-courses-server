@@ -1,4 +1,4 @@
-import config from "@/../config.json" with { type: "json" };
+import config from "@/config.js";
 import pkg from "@/../package.json" with { type: "json" };
 import { adminRouter, coursesRouter, leaderboardRouter, usersRouter } from "@/routes/api/index.js";
 import authRouter from "@/routes/auth.js";
