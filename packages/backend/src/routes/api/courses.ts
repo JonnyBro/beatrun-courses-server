@@ -347,7 +347,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 		},
 	);
 
-	// Course file for the website. Put it into garrysmod/data/beatrun/courses/<map>/ to load it from the local list
 	fastify.get("/api/courses/file/:code", { config: limits.download }, async (req, reply) => {
 		const { code } = req.params as { code: string };
 
@@ -367,69 +366,6 @@ const router = (fastify: FastifyInstance, _options: object) => {
 			.status(200)
 			.send(file);
 	});
-
-	fastify.delete(
-		"/api/courses/delete",
-		{
-			schema: {
-				headers: {
-					type: "object",
-					required: ["authorization", "code"],
-					properties: {
-						authorization: { type: "string" },
-						code: { type: "string" },
-					},
-				},
-			},
-		},
-		async (req, reply) => {
-			const key = req.headers.authorization;
-			if (!key) {
-				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
-			}
-
-			const code = req.headers.code as string;
-			if (!code) {
-				return reply.status(400).send({ code: reply.statusCode, message: "Provide a course code" });
-			}
-
-			const user = await getUserFromToken(fastify, key, req.ip);
-			if (!user) {
-				return reply.status(401).send({ code: reply.statusCode, message: "Unauthorized" });
-			}
-
-			const course = await fastify.getCourse(code);
-			if (!course) {
-				return reply.status(404).send({ code: reply.statusCode, message: "Course not found" });
-			}
-
-			if (!user.admin && course.uploadedBy.steamId !== user.steamId) {
-				return reply.status(403).send({ code: reply.statusCode, message: "Forbidden" });
-			}
-
-			const courses = fastify.getCollection("courses");
-			const res = await courses?.deleteOne({ code });
-			if (res?.deletedCount === 0) {
-				return reply
-					.status(500)
-					.send({ code: reply.statusCode, message: "Error while deleting course. Report to administrator" });
-			}
-
-			await fastify.getCollection("records")?.deleteMany({ courseCode: code });
-			await fastify.getCollection("pendingRecords")?.deleteMany({ courseCode: code });
-
-			if (isActingAsAdmin(user, course)) {
-				await logAdminAction(fastify, user, "course.delete", code, {
-					name: course.name,
-					author: course.uploadedBy.steamId,
-				});
-			}
-
-			reply
-				.status(200)
-				.send({ code: reply.statusCode, message: `Course with code '${code}' deleted successfully` });
-		},
-	);
 
 	fastify.post(
 		"/api/courses/records",

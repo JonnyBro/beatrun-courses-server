@@ -66,7 +66,7 @@ Requests are limited per IP and answer `429` past the limit: 300 a minute for th
 
 ### Game
 
-The game uses `GET /api/courses/search`, `GET /api/courses/info/:code`, `POST /api/courses/upload`, `GET /api/courses/download`, `DELETE /api/courses/delete`, `GET /api/users/profile/:steamId` and `GET /api/key/validate`. Uploading a course that is already in the database (same CRC) answers `409` with the existing code in `data.duplicate`. Courses are checked the same way the game checks them before loading (limits, coordinates, entity classes, model paths, name, map name and Workshop id), a bad one answers `400` with the reason. `pnpm --filter ./packages/backend check-courses` runs this check over every course already in the database.
+The game uses `GET /api/courses/search`, `GET /api/courses/info/:code`, `POST /api/courses/upload`, `GET /api/courses/download`, `GET /api/users/profile/:steamId` and `GET /api/key/validate`. Courses can only be deleted on the site. Uploading a course that is already in the database (same CRC) answers `409` with the existing code in `data.duplicate`. Courses are checked the same way the game checks them before loading (limits, coordinates, entity classes, model paths, name, map name and Workshop id), a bad one answers `400` with the reason. `pnpm --filter ./packages/backend check-courses` runs this check over every course already in the database.
 
 The game signs in without copying a key:
 
