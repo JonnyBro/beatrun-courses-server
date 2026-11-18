@@ -346,7 +346,7 @@
 			"deleted": "Time deleted"
 		},
 		"pending": {
-			"hint": "Times that came in faster than the engine allows between checkpoints. They stay hidden until approved. Teleports on the map or a raised sv_maxvelocity can make a real run land here, hover the time to see each checkpoint.",
+			"hint": "Times that came in faster than the engine allows between checkpoints. They stay hidden until approved. Teleports on the map or a raised sv_maxvelocity can put a real run here too. Hover the time to see each checkpoint.",
 			"empty": "Nothing to review",
 			"reason": "Reason",
 			"approve": "Approve time",
