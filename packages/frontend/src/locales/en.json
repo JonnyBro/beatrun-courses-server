@@ -46,7 +46,7 @@
 		"signOut": "Sign out"
 	},
 	"footer": {
-		"tagline": "Beatrun courses · {key} in-game",
+		"tagline": "Beatrun courses - {key} in-game",
 		"source": "Source code"
 	},
 	"hud": {
@@ -96,7 +96,7 @@
 		"notFound": "Course not found",
 		"notFoundText": "There is no course with code {code}. It may have been deleted.",
 		"speedLimit": "speed limit {n}",
-		"byline": "by {author} · {when}",
+		"byline": "by {author} - {when}",
 		"codeCopied": "Code copied, paste it in the courses menu",
 		"workshop": "Workshop",
 		"play": {
@@ -180,7 +180,7 @@
 	"leaderboard": {
 		"title": "Leaderboard",
 		"scoring": "A course is worth 100 points for every player who finished it, up to 1000 from 10 players. The record holder gets all of them, everyone else gets {formula}.",
-		"formula": "course points × record / your time",
+		"formula": "course points x record / your time",
 		"creatorsScoring": "Creators are ranked by how many times their courses were downloaded, then by how many courses they made.",
 		"players": "Players",
 		"creators": "Creators",
@@ -315,7 +315,7 @@
 			"banText": "They won't be able to upload or update courses or submit times. The reason is shown to them on the site and in the game.",
 			"banReason": "Reason",
 			"banPlaceholder": "What they did",
-			"banHint": "{reason} · {date}",
+			"banHint": "{reason} - {date}",
 			"banned": "{name} is banned",
 			"unbanned": "{name} is unbanned"
 		},
@@ -323,7 +323,7 @@
 			"search": "Name, code, map or author",
 			"empty": "No courses found",
 			"editTitle": "Edit course",
-			"editText": "{code} · the course file itself is not changed.",
+			"editText": "{code}: the course file itself is not changed.",
 			"name": "Name",
 			"map": "Map",
 			"workshopId": "Workshop ID",
@@ -389,7 +389,7 @@
 				"renamed": "renamed to {name}",
 				"purged": "with all their content",
 				"removedRecords": "{n} time removed | {n} times removed",
-				"change": "{field}: {from} → {to}",
+				"change": "{field}: {from} -> {to}",
 				"time": "{time} by {player}",
 				"by": "author {author}"
 			}

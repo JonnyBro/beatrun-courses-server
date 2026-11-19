@@ -41,7 +41,7 @@ const defaultName = (device: Device) => {
 
 	const { os, branch } = device.system;
 
-	return branch === "unknown" ? OS_NAMES[os] : `${OS_NAMES[os]} · ${branch}`;
+	return branch === "unknown" ? OS_NAMES[os] : `${OS_NAMES[os]} | ${branch}`;
 };
 
 const shownIps = ref(new Set<string>());
@@ -137,14 +137,14 @@ const rename = useMutation({
 					</p>
 					<p class="text-sm text-muted-foreground">
 						<template v-if="device.signInCountry">
-							{{ $t("devices.country", { country: countryName(device.signInCountry) }) }} ·
+							{{ $t("devices.country", { country: countryName(device.signInCountry) }) }} |
 						</template>
 						<Hint :text="formatDateTime(device.lastUsedAt)">
 							<span class="cursor-help">
 								{{ $t("devices.lastUsed", { when: formatRelative(device.lastUsedAt) }) }}
 							</span>
 						</Hint>
-						·
+						|
 						<Hint :text="formatDateTime(device.createdAt)">
 							<span class="cursor-help">
 								{{ $t("devices.added", { when: formatRelative(device.createdAt) }) }}

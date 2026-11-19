@@ -90,7 +90,7 @@ watch(
 );
 
 watchEffect(() => {
-	if (profile.data.value) document.title = `${displayName(profile.data.value.user)} · Beatrun Courses`;
+	if (profile.data.value) document.title = `${displayName(profile.data.value.user)} | Beatrun Courses`;
 });
 </script>
 
@@ -169,7 +169,7 @@ watchEffect(() => {
 			<StatTile
 				:label="$t('profile.stats.rank')"
 				:tip="$t('profile.tips.rank')"
-				:value="profile.data.value.stats.rank ? `#${profile.data.value.stats.rank}` : '—'"
+				:value="profile.data.value.stats.rank ? `#${profile.data.value.stats.rank}` : '-'"
 				:hint="
 					profile.data.value.stats.rank
 						? $t('profile.stats.rankOf', { n: profile.data.value.stats.rankedPlayers })
@@ -280,7 +280,7 @@ watchEffect(() => {
 									<TableCell
 										class="hidden max-w-48 truncate font-hud text-sm text-muted-foreground md:table-cell"
 									>
-										{{ record.course?.mapName ?? "—" }}
+										{{ record.course?.mapName ?? "-" }}
 									</TableCell>
 									<TableCell><PositionBadge :position="record.position" star /></TableCell>
 									<TableCell class="text-right font-hud text-base">

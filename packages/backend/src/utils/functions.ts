@@ -50,7 +50,7 @@ export const sanitize = (string?: string, forceLowercase = false, strict = false
 
 	string = string.toString().trim();
 
-	let clean = string.replace(/[~`!@#$%^&*()=+[\]{}|\\;:'",<.>/?\u2018\u2019\u201C\u201D\u2013\u2014–—]/g, "");
+	let clean = string.replace(/[~`!@#$%^&*()=+[\]{}|\\;:'",<.>/?\u2018\u2019\u201C\u201D\u2013\u2014]/g, "");
 	clean = clean.replace(/&#\d+;/g, "");
 
 	if (strict) clean = clean.replace(/\s+/g, "_").replace(/[^\u0400-\u04FF\w-]/g, "");

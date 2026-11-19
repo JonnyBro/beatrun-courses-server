@@ -29,10 +29,10 @@ const log = useQuery({
 const isUserAction = (entry: AdminLogEntry) => entry.action.startsWith("user.");
 
 const str = (value: unknown) => {
-	if (typeof value === "string") return value || "—";
+	if (typeof value === "string") return value || "-";
 	if (typeof value === "number" || typeof value === "boolean") return String(value);
 
-	return value === null || value === undefined ? "—" : JSON.stringify(value);
+	return value === null || value === undefined ? "-" : JSON.stringify(value);
 };
 
 const describe = (entry: AdminLogEntry) => {
@@ -68,7 +68,7 @@ const describe = (entry: AdminLogEntry) => {
 			if (d.reason) parts.push(str(d.reason));
 	}
 
-	return parts.join(" · ");
+	return parts.join(" | ");
 };
 </script>
 
@@ -113,7 +113,7 @@ const describe = (entry: AdminLogEntry) => {
 									class="block truncate hover:text-hl"
 								>
 									{{
-										str(entry.details.username) === "—" ? entry.target : str(entry.details.username)
+										str(entry.details.username) === "-" ? entry.target : str(entry.details.username)
 									}}
 								</RouterLink>
 								<RouterLink

@@ -64,7 +64,7 @@ const notFound = computed(
 );
 
 watchEffect(() => {
-	if (course.data.value) document.title = `${course.data.value.name} · Beatrun Courses`;
+	if (course.data.value) document.title = `${course.data.value.name} | Beatrun Courses`;
 });
 
 const deleteOpen = ref(false);
@@ -137,14 +137,14 @@ const isMine = (steamId: string) => me.value?.steamId === steamId;
 							</template>
 						</i18n-t>
 						<template v-if="course.data.value.updatedAt">
-							·
+							|
 							<Hint :text="formatDateTime(course.data.value.updatedAt)">
 								<span class="cursor-help underline decoration-dotted underline-offset-4">
 									{{ $t("course.updated", { when: formatRelative(course.data.value.updatedAt) }) }}
 								</span>
 							</Hint>
 						</template>
-						<template v-if="course.data.value.mapTitle"> · {{ course.data.value.mapTitle }}</template>
+						<template v-if="course.data.value.mapTitle"> | {{ course.data.value.mapTitle }}</template>
 					</p>
 				</div>
 
